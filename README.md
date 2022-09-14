@@ -22,12 +22,12 @@ TODO (how to install / run the software)
 
 If you have any question, you can:
 
-* `open an issue <https://github.com/wanadev/matcap-editor/issues>`_ on Github,
-* or `ask on Discord <https://discord.gg/BmUkEdMuFp>`_.
+* [open an issue](https://github.com/wanadev/matcap-editor/issues>) on Github,
+* or [ask on Discord](https://discord.gg/BmUkEdMuFp>).
 
 ### Bugs
 
-If you found a bug, please `open an issue <https://github.com/wanadev/matcap-editor/issues>`_ on Github with as much information as possible:
+If you found a bug, please [open an issue](https://github.com/wanadev/matcap-editor/issues) on Github with as much information as possible:
 
 * Version of Matcap Editor you are using,
 * How you built it or from which website you are using it,
@@ -36,7 +36,7 @@ If you found a bug, please `open an issue <https://github.com/wanadev/matcap-edi
 
 ### Pull Requests
 
-Please consider `filing a bug <https://github.com/wanadev/matcap-editor/issues>`_ before starting to work on a new feature. This will allow us to discuss the best way to do it. This is of course not necessary if you just want to fix some typo or small errors in the code.
+Please consider [filing a bug](https://github.com/wanadev/matcap-editor/issues>) before starting to work on a new feature. This will allow us to discuss the best way to do it. This is of course not necessary if you just want to fix some typo or small errors in the code.
 
 Please note that your code must pass tests and follow the coding style (To be defined).
 
