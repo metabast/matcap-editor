@@ -13,8 +13,17 @@
 
 ## Usage
 
-TODO (how to install / run the software)
+```
+npm install
+npm run dev
+npm run build
+```
+view at http://localhost:3005
 
+TODO : docker node ?
+
+## Requirement
+node 16
 
 ## Contributing
 
