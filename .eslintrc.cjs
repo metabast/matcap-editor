@@ -28,6 +28,9 @@ module.exports = {
                 devDependencies: true, // devDependenciesのimportを許可
             },
         ],
+        "no-underscore-dangle": ["error", {
+            "allowAfterThis": true
+        }]
     },
     overrides: [{
         files: ['*.svelte'],
