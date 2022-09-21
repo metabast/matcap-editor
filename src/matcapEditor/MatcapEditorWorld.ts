@@ -16,11 +16,12 @@ import {
 } from 'three-mesh-bvh';
 import StatsSingle from '../commons/Stats';
 import MatcapEditorContent from './MatcapEditorContent';
-import { matcapEditor } from '../store';
+import { MatcapEditorStore } from '../store';
+import type { IMatcapEditorStore } from '../store';
 
-let exportDefault: number;
-matcapEditor.subscribe((value) => {
-    exportDefault = value.sizes.exportDefault;
+let store: IMatcapEditorStore;
+MatcapEditorStore.subscribe((value) => {
+    store = value;
 });
 
 BufferGeometry.prototype.computeBoundsTree = computeBoundsTree;
@@ -65,7 +66,7 @@ class MatcapEditorWorld {
             antialias: true,
         });
         this.renderer.outputEncoding = sRGBEncoding;
-        this.renderer.setSize(exportDefault, exportDefault);
+        this.renderer.setSize(store.sizes.exportDefault, store.sizes.exportDefault);
         this.renderer.setPixelRatio(1);
 
         this.camera.position.set(0, 0, 1);

@@ -2,7 +2,9 @@
     import { onMount } from 'svelte'; // eslint-disable-line
     import MatcapPreviewWorld from '../matcapPreview/MatcapPreviewWorld';
     import MatcapEditorWorld from '../matcapEditor/MatcapEditorWorld';
-    import { matcapEditor } from '../store';
+    import { MatcapEditorStore } from '../store';
+    import type { IMatcapEditorStore } from '../store';
+    import Lights from './Lights.svelte';
 
     // Force reload
 
@@ -12,10 +14,11 @@
         });
     }
 
-    let exportDefault: number;
-    matcapEditor.subscribe((value) => {
-        exportDefault = value.sizes.exportDefault;
+    let store: IMatcapEditorStore;
+    MatcapEditorStore.subscribe((value) => {
+        store = value;
     });
+
 
     onMount(() => {
         const worldPreview = new MatcapPreviewWorld();
@@ -28,9 +31,10 @@
 <canvas class="webgl" />
 <canvas
     class="webgl2"
-    width={String(exportDefault)}
-    height={String(exportDefault)}
+    width={String(store.sizes.exportDefault)}
+    height={String(store.sizes.exportDefault)}
 />
+<Lights />
 
 <style>
     .webgl {

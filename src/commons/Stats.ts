@@ -69,7 +69,7 @@ class StatsSingle extends Stats {
     }
 
     override end(): number {
-        return super.end() as number;
+        return super.end() ;
     }
 }
 export default StatsSingle;

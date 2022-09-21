@@ -18,9 +18,9 @@ class LightFabric {
         }
     }
 
-    static getLightInstance(_TYPE: string): Light {
+    static getLightInstance(_TYPE: string): SpotLight | RectAreaLight | PointLight {
         const TYPE: string = _TYPE || createLightParams.lightType;
-        let light: Light;
+        let light: SpotLight | RectAreaLight | PointLight;
         switch (TYPE) {
             case 'Point':
                 light = new PointLight(
