@@ -103,6 +103,18 @@ class LightModel {
         }
     }
 
+    setPositionX(value: number) {
+        this._light.position.x = value;
+    }
+
+    setPositionY(value: number) {
+        this._light.position.y = value;
+    }
+
+    setPositionZ(value: number) {
+        this._light.position.z = value;
+    }
+
     update() {
         if (this._lookAtTarget) {
             this._light.lookAt(this._positionTarget);

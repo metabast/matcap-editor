@@ -69,6 +69,10 @@ class MatcapEditorContent {
 
     private lightPosition: Vector3 = new Vector3();
 
+    private blobURL: string;
+
+    private exported = false;
+
     constructor(world: MatcapEditorWorld) {
         this.world = world;
 
@@ -136,12 +140,25 @@ class MatcapEditorContent {
         this.ambiantLight.color = store.ambiant.color;
         this.world.scene.add(this.ambiantLight);
 
-        events.on('matcap:ambiant:update', this.onAmbiantChanged);
-
         this.world.scene.add(this.arrowHelper);
 
         this.world.canvas.addEventListener('mouseover', this.onMouseOver);
         this.world.canvas.addEventListener('mouseout', this.onMouseOut);
+
+        events.on('matcap:ambiant:update', this.onAmbiantChanged);
+        events.on('matcap:snapshot', this.snapshot);
+        events.on('matcap:export:png', this.snapshot);
+        events.on(
+            'matcap:light:update:distance',
+            () => this.updateLightDistance,
+        );
+        events.on('matcap:light:delete', () => this.deleteLight);
+        events.on('matcap:light:startMoving', () => this.onLightStartMoving);
+        events.on('matcap:light:stopMoving', this.onLightStopMoving);
+
+        this.world.canvas.addEventListener('pointerup', this.onPointerUp);
+
+        events.emit('matcap:content:ready', this);
     }
 
     private onAmbiantChanged = () => {
@@ -167,14 +184,7 @@ class MatcapEditorContent {
         );
     };
 
-    private onPointerUp = (event: PointerEvent) => {
-        store.isUILightVisible = !store.isUILightVisible;
-        MatcapEditorStore.set(store);
-        this.currentLightModel = null;
-        this.snapshot();
-    };
-
-    private onPointerDown = (event) => {
+    private onPointerDown = () => {
         if (!this.hitSphere) return;
 
         const positionOnSphere = this.hitSphere.point.clone();
@@ -290,6 +300,74 @@ class MatcapEditorContent {
         }
     };
 
-    private snapshot(exported = false) {}
+    private onPointerUp = () => {
+        store.isUILightVisible = !store.isUILightVisible;
+        MatcapEditorStore.set(store);
+        this.currentLightModel = null;
+        this.snapshot();
+    };
+
+    private onLightStartMoving = (lightModel: LightModel) => {
+        this.currentLightModel = lightModel;
+    };
+
+    private onLightStopMoving = () => {
+        this.currentLightModel = null;
+        this.snapshot();
+    };
+
+    private updateLightDistance = (lightModel: LightModel): void => {
+        const lightPosition = lightModel.positionOnSphere.clone();
+        lightPosition.add(
+            lightModel.sphereFaceNormal
+                .clone()
+                .multiplyScalar(lightModel.distance),
+        );
+        lightModel.setPositionX(lightPosition.x);
+        lightModel.setPositionY(lightPosition.y);
+        if (store.create.front) lightModel.setPositionZ(lightPosition.z);
+        else lightModel.setPositionZ(-lightPosition.z);
+
+        this.snapshot();
+    };
+
+    private deleteLight = (lightModel: LightModel) => {
+        this.world.scene.remove(lightModel.light);
+    };
+
+    private snapshot = (exported = false) => {
+        this.exported = exported;
+        const arrowHelperVisibleState = this.arrowHelper.visible;
+        this.arrowHelper.visible = false;
+        if (this.exported) {
+            this.world.renderer.setPixelRatio(store.sizes.exportRatio);
+        } else {
+            this.world.renderer.setPixelRatio(1);
+        }
+        this.world.renderer.render(this.world.scene, this.cameraSnapshot);
+        this.arrowHelper.visible = arrowHelperVisibleState;
+        this.world.renderer.domElement.toBlob(
+            this.onBlobReady,
+            'image/png',
+            1.0,
+        );
+    };
+
+    private onBlobReady = (blob: Blob) => {
+        const url = URL.createObjectURL(blob);
+        this.blobURL = url;
+        if (this.exported) {
+            this.exportPNG();
+            this.world.renderer.setPixelRatio(1);
+        } else events.emit('matcap:updateFromEditor', { url });
+    };
+
+    private exportPNG = () => {
+        if (!this.blobURL) return;
+        const a = document.createElement('a');
+        a.href = this.blobURL;
+        a.download = 'matcap.png';
+        a.click();
+    };
 }
 export default MatcapEditorContent;
