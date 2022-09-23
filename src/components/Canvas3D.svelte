@@ -19,7 +19,6 @@
         store = value;
     });
 
-
     onMount(() => {
         const worldPreview = new MatcapPreviewWorld();
         worldPreview.init();

@@ -8,7 +8,7 @@ class Events {
         this.emitter = createNanoEvents();
     }
 
-    on(event: string, callback: () => void): void {
+    on(event: string, callback: (args) => void): void {
         this.emitter.on(event, callback);
     }
 

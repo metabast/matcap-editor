@@ -1,6 +1,6 @@
-import { derived, writable } from 'svelte/store';
-import type {Writable} from 'svelte/store';
-import { Color, PointLight, RectAreaLight, SpotLight } from 'three';
+import { writable } from 'svelte/store';
+import { Color } from 'three';
+import type LightModel from './matcapEditor/LightModel';
 
 interface ISize {
     view: number;
@@ -9,20 +9,20 @@ interface ISize {
     exportRatio: number;
 }
 
-interface IMaterial{
+interface IMaterial {
     roughness: number;
     metalness: number;
 }
 
-interface IAmbiant{
+interface IAmbiant {
     color: Color;
     intensity: number;
 }
-interface IArea{
+interface IArea {
     width: number;
     height: number;
 }
-interface ICreate{
+interface ICreate {
     front: boolean;
     lightType: string;
     color: number;
@@ -32,12 +32,12 @@ interface ICreate{
 }
 export interface IMatcapEditorStore {
     sizes: ISize;
-    ratio:number;
-    material:IMaterial;
-    ambiant:IAmbiant;
-    create:ICreate;
-    lights: PointLight | RectAreaLight | SpotLight[];
-    isUILightVisible:boolean;
+    ratio: number;
+    material: IMaterial;
+    ambiant: IAmbiant;
+    create: ICreate;
+    lights: LightModel[];
+    isUILightVisible: boolean;
 }
 export const MatcapEditorStore = writable<IMatcapEditorStore>({
     sizes: {
@@ -78,7 +78,6 @@ export type { IStoreUI };
 export const StoreUI = writable<IStoreUI>({
     isUILightVisible: true,
 });
-
 
 interface MaterialParametersInterface {
     roughness: number;
