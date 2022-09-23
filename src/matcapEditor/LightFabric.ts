@@ -1,10 +1,9 @@
 import { Light, PointLight, RectAreaLight, SpotLight } from 'three';
-import { createLightParameters } from '../store';
-import type { CreateLightParametersInterface } from '../store';
+import { MatcapEditorStore, type IMatcapEditorStore } from '../store';
 
-let createLightParams: CreateLightParametersInterface;
-createLightParameters.subscribe((value) => {
-    createLightParams = value;
+let store: IMatcapEditorStore;
+MatcapEditorStore.subscribe((value) => {
+    store = value;
 });
 
 class LightFabric {
@@ -18,28 +17,30 @@ class LightFabric {
         }
     }
 
-    static getLightInstance(_TYPE: string): SpotLight | RectAreaLight | PointLight {
-        const TYPE: string = _TYPE || createLightParams.lightType;
+    static getLightInstance(
+        _TYPE: string,
+    ): SpotLight | RectAreaLight | PointLight {
+        const TYPE: string = _TYPE || store.create.lightType;
         let light: SpotLight | RectAreaLight | PointLight;
         switch (TYPE) {
             case 'Point':
                 light = new PointLight(
-                    createLightParams.color,
-                    createLightParams.intensity,
+                    store.create.color,
+                    store.create.intensity,
                 );
                 break;
             case 'Area':
                 light = new RectAreaLight(
-                    createLightParams.color,
-                    createLightParams.intensity,
-                    createLightParams.area.width,
-                    createLightParams.area.height,
+                    store.create.color,
+                    store.create.intensity,
+                    store.create.area.width,
+                    store.create.area.height,
                 );
                 break;
             case 'Spot':
                 light = new SpotLight(
-                    createLightParams.color,
-                    createLightParams.intensity,
+                    store.create.color,
+                    store.create.intensity,
                 );
                 break;
 

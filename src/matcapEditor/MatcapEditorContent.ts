@@ -17,8 +17,7 @@ import {
 
 import { getScreenPosition } from 'src/commons/VectorHelpers';
 import events from '../commons/Events';
-import { MatcapEditorStore } from '../store';
-import type { IMatcapEditorStore } from '../store';
+import { MatcapEditorStore, type IMatcapEditorStore } from '../store';
 import type MatcapEditorWorld from './MatcapEditorWorld';
 import LightModel from './LightModel';
 import LightFabric from './LightFabric';

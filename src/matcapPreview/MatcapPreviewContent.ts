@@ -1,4 +1,5 @@
 import events from 'src/commons/Events';
+import { PreviewStore, type IPreviewStore } from 'src/store';
 import {
     Clock,
     Mesh,
@@ -8,6 +9,11 @@ import {
     TorusKnotGeometry,
 } from 'three';
 import type MatcapEditorWorld from './MatcapPreviewWorld';
+
+let store: IPreviewStore;
+PreviewStore.subscribe((newStore) => {
+    store = newStore;
+});
 
 class MatcapPreviewContent {
     private world: MatcapEditorWorld;
@@ -30,17 +36,22 @@ class MatcapPreviewContent {
         this.world.scene.add(this.torusKnot);
 
         events.on('matcap:updateFromEditor', this.onmatcapUpdated);
+        events.on('object:power:update', this.onObjectPowerUpdate);
     }
 
     private onmatcapUpdated = (matcapURL: { url: string }) => {
         this.matcapLoader.load(matcapURL.url, (texture: Texture) => {
-            this.torusKnotMaterial.color.setScalar(1);
+            this.torusKnotMaterial.color.setScalar(store.power);
             (this.torusKnot.material as MeshMatcapMaterial).matcap = texture;
             (this.torusKnot.material as MeshMatcapMaterial).needsUpdate = true;
         });
     };
 
+    private onObjectPowerUpdate = (): void => {
+        this.torusKnotMaterial.color.setScalar(store.power);
+    };
+
     // eslint-disable-next-line class-methods-use-this
-    update(clock: Clock) {}
+    public update(clock: Clock) {}
 }
 export default MatcapPreviewContent;
