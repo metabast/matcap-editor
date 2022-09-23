@@ -148,12 +148,9 @@ class MatcapEditorContent {
         events.on('matcap:ambiant:update', this.onAmbiantChanged);
         events.on('matcap:snapshot', this.snapshot);
         events.on('matcap:export:png', this.snapshot);
-        events.on(
-            'matcap:light:update:distance',
-            () => this.updateLightDistance,
-        );
-        events.on('matcap:light:delete', () => this.deleteLight);
-        events.on('matcap:light:startMoving', () => this.onLightStartMoving);
+        events.on('matcap:light:update:distance', this.updateLightDistance);
+        events.on('matcap:light:delete', this.deleteLight);
+        events.on('matcap:light:startMoving', this.onLightStartMoving);
         events.on('matcap:light:stopMoving', this.onLightStopMoving);
 
         this.world.canvas.addEventListener('pointerup', this.onPointerUp);
@@ -164,6 +161,7 @@ class MatcapEditorContent {
     private onAmbiantChanged = () => {
         this.ambiantLight.intensity = store.ambiant.intensity;
         this.ambiantLight.color = store.ambiant.color;
+        this.snapshot();
     };
 
     private onMouseOver = () => {
@@ -301,7 +299,7 @@ class MatcapEditorContent {
     };
 
     private onPointerUp = () => {
-        store.isUILightVisible = !store.isUILightVisible;
+        store.isUILightVisible = true;
         MatcapEditorStore.set(store);
         this.currentLightModel = null;
         this.snapshot();
@@ -335,8 +333,8 @@ class MatcapEditorContent {
         this.world.scene.remove(lightModel.light);
     };
 
-    private snapshot = (exported = false) => {
-        this.exported = exported;
+    private snapshot = (payload: { exported: false } = undefined) => {
+        this.exported = payload?.exported;
         const arrowHelperVisibleState = this.arrowHelper.visible;
         this.arrowHelper.visible = false;
         if (this.exported) {

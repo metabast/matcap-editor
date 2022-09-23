@@ -4,7 +4,7 @@
     import MatcapEditorWorld from '../matcapEditor/MatcapEditorWorld';
     import { MatcapEditorStore } from '../store';
     import type { IMatcapEditorStore } from '../store';
-    import Lights from './Lights.svelte';
+    import MatcapLights from './MatcapLights.svelte';
 
     // Force reload
 
@@ -33,7 +33,7 @@
     width={String(store.sizes.exportDefault)}
     height={String(store.sizes.exportDefault)}
 />
-<Lights />
+<MatcapLights />
 
 <style>
     .webgl {

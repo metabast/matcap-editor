@@ -21,5 +21,5 @@ class Events {
         return createNanoEvents();
     }
 }
-
-export default new Events();
+const events = new Events();
+export default events;
