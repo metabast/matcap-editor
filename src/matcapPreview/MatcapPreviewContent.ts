@@ -1,4 +1,6 @@
+/* eslint-disable no-param-reassign */
 import events from 'src/commons/Events';
+import { MeshMatcapPBRMaterial } from 'src/materials/MeshMatcapPBRMaterial';
 import { PreviewStore, type IPreviewStore } from 'src/store';
 import {
     Clock,
@@ -27,8 +29,9 @@ class MatcapPreviewContent {
     constructor(world: MatcapEditorWorld) {
         this.world = world;
 
-        const torusKnotGeometry = new TorusKnotGeometry(0.5, 0.1, 256, 32);
-        this.torusKnotMaterial = new MeshMatcapMaterial();
+        const torusKnotGeometry = new TorusKnotGeometry(0.5, 0.4, 256, 32);
+        // const torusKnotGeometry = new SphereGeometry(1, 64, 64);
+        this.torusKnotMaterial = new MeshMatcapPBRMaterial();
         this.torusKnotMaterial.color.setScalar(0);
 
         this.matcapLoader = new TextureLoader();
@@ -37,18 +40,42 @@ class MatcapPreviewContent {
 
         events.on('matcap:updateFromEditor', this.onmatcapUpdated);
         events.on('object:power:update', this.onObjectPowerUpdate);
+        events.on('object:roughness:update', this.onObjectRoughnessUpdate);
+        events.on('object:metalness:update', this.onObjectMetalnessUpdate);
     }
 
-    private onmatcapUpdated = (matcapURL: { url: string }) => {
+    private onmatcapUpdated = (matcapURL: {
+        url: string;
+        textureIndex: number;
+    }) => {
         this.matcapLoader.load(matcapURL.url, (texture: Texture) => {
             this.torusKnotMaterial.color.setScalar(store.power);
-            (this.torusKnot.material as MeshMatcapMaterial).matcap = texture;
-            (this.torusKnot.material as MeshMatcapMaterial).needsUpdate = true;
+            if (matcapURL.textureIndex === 0) {
+                (this.torusKnot.material as MeshMatcapPBRMaterial).matcap =
+                    texture;
+            } else {
+                (
+                    this.torusKnot.material as MeshMatcapPBRMaterial
+                ).roughnessMap = texture;
+            }
+            (this.torusKnot.material as MeshMatcapPBRMaterial).needsUpdate =
+                true;
         });
     };
 
     private onObjectPowerUpdate = (): void => {
         this.torusKnotMaterial.color.setScalar(store.power);
+    };
+
+    private onObjectRoughnessUpdate = (): void => {
+        // this.customUniforms.uRoughness.value = store.roughness;
+        (this.torusKnot.material as MeshMatcapPBRMaterial).roughness =
+            store.roughness;
+    };
+
+    private onObjectMetalnessUpdate = (): void => {
+        (this.torusKnot.material as MeshMatcapPBRMaterial).metalness =
+            store.metalness;
     };
 
     // eslint-disable-next-line class-methods-use-this

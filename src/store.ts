@@ -33,6 +33,7 @@ interface ICreate {
 export interface IMatcapEditorStore {
     sizes: ISize;
     ratio: number;
+    textureIndex: number;
     material: IMaterial;
     ambiant: IAmbiant;
     create: ICreate;
@@ -47,9 +48,10 @@ export const MatcapEditorStore = writable<IMatcapEditorStore>({
         exportRatio: 1,
     },
     ratio: 256 / 200,
+    textureIndex: 0,
     material: {
-        roughness: 0.25,
-        metalness: 0.5,
+        roughness: 0,
+        metalness: 1,
     },
     ambiant: {
         color: new Color(),
@@ -72,7 +74,11 @@ export const MatcapEditorStore = writable<IMatcapEditorStore>({
 
 export interface IPreviewStore {
     power: number;
+    roughness: number;
+    metalness: number;
 }
 export const PreviewStore = writable<IPreviewStore>({
     power: 1,
+    roughness: 0,
+    metalness: 1,
 });

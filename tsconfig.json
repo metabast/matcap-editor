@@ -13,9 +13,9 @@
          */
         "allowJs": true,
         "checkJs": true,
-        "paths" :{
+        "paths": {
             "src/*": ["./src/*"]
-        },
+        }
     },
     "include": [
         "src/**/*.d.ts",

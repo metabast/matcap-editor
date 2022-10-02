@@ -28,5 +28,17 @@
         .onChange((value) => {
             events.emit('object:power:update');
         });
+
+    grObjects
+        .add(store, 'roughness', { min: 0, max: 1, h: 25 })
+        .onChange((value) => {
+            events.emit('object:roughness:update');
+        });
+    grObjects
+        .add(store, 'metalness', { min: 0, max: 1, h: 25 })
+        .onChange((value) => {
+            events.emit('object:metalness:update');
+        });
+
     grObjects.open();
 </script>

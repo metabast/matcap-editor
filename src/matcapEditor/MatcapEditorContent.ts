@@ -26,6 +26,7 @@ const data = {
     halfSize: 0.3,
     widthSegments: 256,
     heightSegments: 256,
+    textureIndex: 0,
 };
 data.heightSegments = data.widthSegments / (4 / 3);
 
@@ -33,7 +34,6 @@ let store: IMatcapEditorStore;
 MatcapEditorStore.subscribe((value) => {
     store = value;
 });
-
 class MatcapEditorContent {
     private world: MatcapEditorWorld;
 
@@ -356,7 +356,11 @@ class MatcapEditorContent {
         if (this.exported) {
             this.exportPNG();
             this.world.renderer.setPixelRatio(1);
-        } else events.emit('matcap:updateFromEditor', { url });
+        } else
+            events.emit('matcap:updateFromEditor', {
+                url,
+                textureIndex: store.textureIndex,
+            });
     };
 
     private exportPNG = () => {
