@@ -6,6 +6,7 @@
     import type { IMatcapEditorStore } from '../store';
     import MatcapLights from './MatcapLights.svelte';
     import PreviewProperties from './PreviewProperties.svelte';
+    import CanvasSnapshots from './CanvasSnapshots.svelte';
 
     // Force reload
 
@@ -28,6 +29,7 @@
     });
 </script>
 
+<CanvasSnapshots />
 <canvas class="webgl" />
 <canvas
     class="webgl2"

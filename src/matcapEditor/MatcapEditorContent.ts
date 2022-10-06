@@ -72,6 +72,12 @@ class MatcapEditorContent {
 
     private exported = false;
 
+    private snapshotCounter = 0;
+
+    private snapshotsArray: string[] = [];
+
+    private snapshotLimit = 1;
+
     constructor(world: MatcapEditorWorld) {
         this.world = world;
 
@@ -147,6 +153,7 @@ class MatcapEditorContent {
         events.on('matcap:ambiant:update', this.onAmbiantChanged);
         events.on('matcap:snapshot', this.snapshot);
         events.on('matcap:export:png', this.snapshot);
+        events.on('matcap:generate', this.snapshots);
         events.on('matcap:light:update:distance', this.updateLightDistance);
         events.on('matcap:light:delete', this.deleteLight);
         events.on('matcap:light:startMoving', this.onLightStartMoving);
@@ -332,6 +339,20 @@ class MatcapEditorContent {
         this.world.scene.remove(lightModel.light);
     };
 
+    private snapshots = () => {
+        this.snapshotCounter = 0;
+        this.snapshotsArray = [];
+        this.snapshotLimit = 9;
+        this.nextSnapshot();
+    };
+
+    private nextSnapshot = () => {
+        this.sphereRenderMaterial.roughness =
+            this.snapshotCounter / (this.snapshotLimit - 1);
+
+        this.snapshot();
+    };
+
     private snapshot = (payload: { exported: false } = undefined) => {
         this.exported = payload?.exported;
         const arrowHelperVisibleState = this.arrowHelper.visible;
@@ -356,11 +377,23 @@ class MatcapEditorContent {
         if (this.exported) {
             this.exportPNG();
             this.world.renderer.setPixelRatio(1);
-        } else
+        } else {
             events.emit('matcap:updateFromEditor', {
                 url,
                 textureIndex: store.textureIndex,
             });
+        }
+        this.snapshotCounter += 1;
+        this.snapshotsArray.push(url);
+
+        if (this.snapshotCounter < this.snapshotLimit) {
+            this.nextSnapshot();
+        } else {
+            events.emit('matcap:snapshots:ready', [...this.snapshotsArray]);
+            this.snapshotCounter = 0;
+            this.snapshotsArray = [];
+            this.snapshotLimit = 1;
+        }
     };
 
     private exportPNG = () => {

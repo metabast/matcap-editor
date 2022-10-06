@@ -32,6 +32,10 @@
         events.emit('matcap:export:png', { exported: true });
     });
 
+    gui.add('button', { name: 'generate' }).onChange(() => {
+        events.emit('matcap:generate', { exported: true });
+    });
+
     gui.add(store.create, 'front');
 
     gui.add('grid', {

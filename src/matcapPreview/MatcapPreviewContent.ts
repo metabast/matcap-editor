@@ -38,7 +38,13 @@ class MatcapPreviewContent {
         this.torusKnot = new Mesh(torusKnotGeometry, this.torusKnotMaterial);
         this.world.scene.add(this.torusKnot);
 
-        events.on('matcap:updateFromEditor', this.onmatcapUpdated);
+        this.matcapLoader.load('./matcaps.png', (texture) => {
+            (this.torusKnot.material as MeshMatcapPBRMaterial).matcap = texture;
+            (this.torusKnot.material as MeshMatcapPBRMaterial).needsUpdate =
+                true;
+        });
+        // events.on('matcap:updateFromEditor', this.onmatcapUpdated);
+        events.on('matcap:editor:snapshots:ready', this.onSnapshotsReady);
         events.on('object:power:update', this.onObjectPowerUpdate);
         events.on('object:roughness:update', this.onObjectRoughnessUpdate);
         events.on('object:metalness:update', this.onObjectMetalnessUpdate);
@@ -58,6 +64,14 @@ class MatcapPreviewContent {
                     this.torusKnot.material as MeshMatcapPBRMaterial
                 ).roughnessMap = texture;
             }
+            (this.torusKnot.material as MeshMatcapPBRMaterial).needsUpdate =
+                true;
+        });
+    };
+
+    private onSnapshotsReady = (snapshots: { matcap: string }): void => {
+        this.matcapLoader.load(snapshots.matcap, (texture: Texture) => {
+            (this.torusKnot.material as MeshMatcapPBRMaterial).matcap = texture;
             (this.torusKnot.material as MeshMatcapPBRMaterial).needsUpdate =
                 true;
         });
