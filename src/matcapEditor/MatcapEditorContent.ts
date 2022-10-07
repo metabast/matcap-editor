@@ -389,7 +389,9 @@ class MatcapEditorContent {
         if (this.snapshotCounter < this.snapshotLimit) {
             this.nextSnapshot();
         } else {
-            events.emit('matcap:snapshots:ready', [...this.snapshotsArray]);
+            events.emit('matcap:snapshots:blobs:ready', [
+                ...this.snapshotsArray,
+            ]);
             this.snapshotCounter = 0;
             this.snapshotsArray = [];
             this.snapshotLimit = 1;

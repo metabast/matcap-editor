@@ -32,13 +32,17 @@
     grObjects
         .add(store, 'roughness', { min: 0, max: 1, h: 25 })
         .onChange((value) => {
+            store.metalness = 1 - value;
             events.emit('object:roughness:update');
-        });
+        })
+        .listen();
     grObjects
         .add(store, 'metalness', { min: 0, max: 1, h: 25 })
         .onChange((value) => {
-            events.emit('object:metalness:update');
-        });
+            store.roughness = 1 - value;
+            events.emit('object:roughness:update');
+        })
+        .listen();
 
     grObjects.open();
 </script>

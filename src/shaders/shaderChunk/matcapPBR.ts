@@ -1,5 +1,5 @@
 export default /* glsl */ `
-vec3 outgoingLight = diffuseColor.rgb * matcapColor.rgb;
+vec3 outgoingLight = vec3( 0.0 );
 
 vec4 matcap0 = getCellMatcap(matcap, uv, 0., 2.);
 vec4 matcap1 = getCellMatcap(matcap, uv, 1., 2.);

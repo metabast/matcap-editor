@@ -16,7 +16,7 @@
         events.emit('matcap:editor:snapshots:ready', { matcap: url });
     };
 
-    events.on('matcap:snapshots:ready', (urls: [string]) => {
+    events.on('matcap:snapshots:blobs:ready', (urls: [string]) => {
         const promises = [];
         for (let i = 0; i < urls.length; i++) {
             const url: string = urls[i];
@@ -24,7 +24,6 @@
             promises.push(
                 new Promise((resolve) => {
                     img.onload = () => {
-                        // context.drawImage(img, 0, 0);
                         var posY = Math.floor(i / 3);
                         var posX = i % 3;
                         context.drawImage(
@@ -34,21 +33,15 @@
                             256,
                             256,
                         );
+                        resolve(true);
                     };
                     img.src = url;
-                    console.log('img.src', img.src);
-
-                    resolve(true);
                 }),
             );
         }
         Promise.all(promises).then(() => {
-            console.log('all promises done');
-
-            setTimeout(() => {
-                canvas.toBlob(onBlobReady, 'image/png', 1.0);
-                events.emit('matcap:snapshots:rendered');
-            }, 1000);
+            canvas.toBlob(onBlobReady, 'image/png', 1.0);
+            events.emit('matcap:snapshots:rendered');
         });
     });
 </script>

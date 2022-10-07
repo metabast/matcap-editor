@@ -71,6 +71,7 @@ class MatcapPreviewContent {
 
     private onSnapshotsReady = (snapshots: { matcap: string }): void => {
         this.matcapLoader.load(snapshots.matcap, (texture: Texture) => {
+            this.torusKnotMaterial.color.setScalar(store.power);
             (this.torusKnot.material as MeshMatcapPBRMaterial).matcap = texture;
             (this.torusKnot.material as MeshMatcapPBRMaterial).needsUpdate =
                 true;
