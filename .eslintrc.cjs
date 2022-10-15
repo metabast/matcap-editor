@@ -30,7 +30,10 @@ module.exports = {
         ],
         "no-underscore-dangle": ["error", {
             "allowAfterThis": true
-        }]
+        }],
+        'no-param-reassign': 'off',
+        'no-plusplus': 'off',
+        'import/prefer-default-export': 'off',
     },
     overrides: [{
         files: ['*.svelte'],

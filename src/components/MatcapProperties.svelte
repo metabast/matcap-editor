@@ -3,6 +3,8 @@
     import { MatcapEditorStore, type IMatcapEditorStore } from 'src/store';
     import events, { emitSnapshot } from 'src/commons/Events';
     import { debounce, throttle } from 'src/commons/Utils';
+    import type MatcapEditorContent from 'src/matcapEditor/MatcapEditorContent';
+    import { SetSphereMaterialParamsCommand } from 'src/commands/SetSphereMaterialParamsCommand';
 
     let store: IMatcapEditorStore;
     MatcapEditorStore.subscribe((newStore) => {
@@ -189,15 +191,30 @@
 
     events.on('matcap:light:update:current', updateCurrentLight);
 
-    events.on('matcap:content:ready', (content) => {
+    events.on('matcap:content:ready', (content: MatcapEditorContent) => {
         grMat
             .add(content.sphereRenderMaterial, 'roughness', {
                 min: 0,
                 max: 1,
                 step: 0.01,
             })
-            .onChange(emitSnapshot)
+            .onChange(
+                debounce(() => {
+                    content.world.editor.execute(
+                        new SetSphereMaterialParamsCommand(
+                            content.world.editor,
+                            {
+                                name: 'roughness',
+                                value: content.sphereRenderMaterial.roughness,
+                            },
+                        ),
+                        'update material roughness',
+                    );
+                }, 200),
+            )
             .listen();
+        console.log(grMat);
+
         grMat
             .add(content.sphereRenderMaterial, 'metalness', {
                 min: 0,

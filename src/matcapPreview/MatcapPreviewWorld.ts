@@ -1,3 +1,4 @@
+import type Editor from 'src/Editor';
 import {
     Clock,
     PerspectiveCamera,
@@ -13,6 +14,8 @@ import MatcapEditorContent from './MatcapPreviewContent';
 // eslint-disable-next-line import/extensions
 
 class MatcapPreviewWorld {
+    private _editor: Editor;
+
     canvas: HTMLCanvasElement;
 
     scene: Scene;
@@ -30,6 +33,15 @@ class MatcapPreviewWorld {
     resize: Resize;
 
     content: MatcapEditorContent;
+
+    constructor(editor: Editor) {
+        this._editor = editor;
+        this._editor.matcapPreviewWorld = this;
+    }
+
+    public get editor() {
+        return this._editor;
+    }
 
     init() {
         this.stats = new StatsSingle();

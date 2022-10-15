@@ -9,13 +9,13 @@ import {
     PlaneGeometry,
     Raycaster,
     SphereGeometry,
-    SpotLight,
     Vector2,
     Vector3,
     type Intersection,
 } from 'three';
 
 import { getScreenPosition } from 'src/commons/VectorHelpers';
+import { AddLightCommand } from 'src/commands';
 import events, { emitSnapshot } from '../commons/Events';
 import { MatcapEditorStore, type IMatcapEditorStore } from '../store';
 import type MatcapEditorWorld from './MatcapEditorWorld';
@@ -100,6 +100,7 @@ class MatcapEditorContent {
         });
         this._sphereRenderMaterial.roughness = store.material.roughness;
         this._sphereRenderMaterial.metalness = store.material.metalness;
+
         this.sphereRender = new Mesh(
             sphereRenderGeometry,
             this._sphereRenderMaterial,
@@ -152,7 +153,7 @@ class MatcapEditorContent {
         events.on('matcap:light:delete', this.deleteLight);
         events.on('matcap:light:startMoving', this.onLightStartMoving);
         events.on('matcap:light:stopMoving', this.onLightStopMoving);
-
+        events.on('matcap:material:update', this.onMaterialUpdate);
         this._world.canvas.addEventListener('pointerup', this.onPointerUp);
 
         events.emit('matcap:content:ready', this);
@@ -177,6 +178,7 @@ class MatcapEditorContent {
     private onAmbiantChanged = () => {
         this.ambiantLight.intensity = store.ambiant.intensity;
         this.ambiantLight.color = store.ambiant.color;
+        RenderManager.snapshot();
         emitSnapshot();
     };
 
@@ -219,10 +221,6 @@ class MatcapEditorContent {
             instanceOfLight.position.z = this.lightPosition.z;
         else instanceOfLight.position.z = -this.lightPosition.z;
 
-        this._world.scene.add(instanceOfLight);
-        if (store.create.lightType === 'Spot')
-            this._world.scene.add((instanceOfLight as SpotLight).target);
-
         const screenPosition = getScreenPosition(
             positionOnSphere
                 .clone()
@@ -239,9 +237,10 @@ class MatcapEditorContent {
         lightModel.sphereFaceNormal = this.hitSphere.face.normal.clone();
         lightModel.distance = Number(store.create.distance);
 
-        events.emit('matcap:editor:light:added', lightModel);
-
-        RenderManager.snapshot();
+        this.world.editor.execute(
+            new AddLightCommand(this.world.editor, lightModel),
+            'Add light',
+        );
     };
 
     private onPointerMove = (event: PointerEvent) => {
@@ -345,11 +344,13 @@ class MatcapEditorContent {
         emitSnapshot();
     };
 
+    private onMaterialUpdate = () => {};
+
     private deleteLight = (lightModel: LightModel) => {
         this._world.scene.remove(lightModel.light);
         store.lights.splice(store.lights.indexOf(lightModel), 1);
         MatcapEditorStore.set(store);
-        emitSnapshot();
+        RenderManager.snapshot();
     };
 }
 export default MatcapEditorContent;

@@ -14,6 +14,7 @@ import {
     disposeBoundsTree,
     acceleratedRaycast,
 } from 'three-mesh-bvh';
+import type Editor from 'src/Editor';
 import StatsSingle from '../commons/Stats';
 import MatcapEditorContent from './MatcapEditorContent';
 import { MatcapEditorStore } from '../store';
@@ -30,6 +31,8 @@ Mesh.prototype.raycast = acceleratedRaycast;
 // eslint-disable-next-line import/extensions
 
 class MatcapEditorWorld {
+    private _editor: Editor;
+
     canvas: HTMLCanvasElement;
 
     scene: Scene;
@@ -45,6 +48,15 @@ class MatcapEditorWorld {
     content: MatcapEditorContent;
 
     halfSize: number;
+
+    constructor(editor: Editor) {
+        this._editor = editor;
+        this._editor.matcapEditorWorld = this;
+    }
+
+    public get editor() {
+        return this._editor;
+    }
 
     init() {
         this.stats = new StatsSingle();
@@ -66,7 +78,10 @@ class MatcapEditorWorld {
             antialias: true,
         });
         this.renderer.outputEncoding = sRGBEncoding;
-        this.renderer.setSize(store.sizes.exportDefault, store.sizes.exportDefault);
+        this.renderer.setSize(
+            store.sizes.exportDefault,
+            store.sizes.exportDefault,
+        );
         this.renderer.setPixelRatio(1);
 
         this.camera.position.set(0, 0, 1);

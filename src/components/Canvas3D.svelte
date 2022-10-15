@@ -7,6 +7,7 @@
     import MatcapLights from './MatcapLights.svelte';
     import PreviewProperties from './PreviewProperties.svelte';
     import CanvasSnapshots from './CanvasSnapshots.svelte';
+    import Editor from 'src/Editor';
 
     // Force reload
 
@@ -22,9 +23,10 @@
     });
 
     onMount(() => {
-        const worldPreview = new MatcapPreviewWorld();
+        const editor = new Editor();
+        const worldPreview = new MatcapPreviewWorld(editor);
         worldPreview.init();
-        const worldEditor = new MatcapEditorWorld();
+        const worldEditor = new MatcapEditorWorld(editor);
         worldEditor.init();
     });
 </script>
