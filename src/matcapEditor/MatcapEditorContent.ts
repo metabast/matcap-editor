@@ -21,6 +21,7 @@ import { MatcapEditorStore, type IMatcapEditorStore } from '../store';
 import type MatcapEditorWorld from './MatcapEditorWorld';
 import LightModel from './LightModel';
 import LightFabric from './LightFabric';
+import RenderManager from './RenderManager';
 
 const data = {
     halfSize: 0.3,
@@ -35,15 +36,15 @@ MatcapEditorStore.subscribe((value) => {
     store = value;
 });
 class MatcapEditorContent {
-    private world: MatcapEditorWorld;
+    private _world: MatcapEditorWorld;
 
-    private cameraSnapshot: OrthographicCamera;
+    private _cameraSnapshot: OrthographicCamera;
 
     private plane: Mesh;
 
     private sphereRender: Mesh;
 
-    private sphereRenderMaterial: MeshPhysicalMaterial;
+    private _sphereRenderMaterial: MeshPhysicalMaterial;
 
     private sphereNormal: Mesh;
 
@@ -51,7 +52,7 @@ class MatcapEditorContent {
 
     private ambiantLight: AmbientLight = new AmbientLight(0x000000);
 
-    private arrowHelper: ArrowHelper = new ArrowHelper(
+    private _arrowHelper: ArrowHelper = new ArrowHelper(
         new Vector3(),
         new Vector3(),
         1,
@@ -68,22 +69,12 @@ class MatcapEditorContent {
 
     private lightPosition: Vector3 = new Vector3();
 
-    private blobURL: string;
-
-    private exported = false;
-
-    private snapshotCounter = 0;
-
-    private snapshotsArray: string[] = [];
-
-    private snapshotLimit = 1;
-
     constructor(world: MatcapEditorWorld) {
-        this.world = world;
+        this._world = world;
 
         const halfSize = 0.3;
 
-        this.cameraSnapshot = new OrthographicCamera(
+        this._cameraSnapshot = new OrthographicCamera(
             -halfSize,
             halfSize,
             halfSize,
@@ -91,7 +82,7 @@ class MatcapEditorContent {
             0.5,
             200,
         );
-        this.cameraSnapshot.position.set(0, 0, 1);
+        this._cameraSnapshot.position.set(0, 0, 1);
 
         const planeGeometry = new PlaneGeometry(2, 2);
         const planeMaterial = new MeshBasicMaterial({ color: 0x000000 });
@@ -104,14 +95,14 @@ class MatcapEditorContent {
             data.widthSegments,
             data.heightSegments,
         );
-        this.sphereRenderMaterial = new MeshPhysicalMaterial({
+        this._sphereRenderMaterial = new MeshPhysicalMaterial({
             color: 0xffffff,
         });
-        this.sphereRenderMaterial.roughness = store.material.roughness;
-        this.sphereRenderMaterial.metalness = store.material.metalness;
+        this._sphereRenderMaterial.roughness = store.material.roughness;
+        this._sphereRenderMaterial.metalness = store.material.metalness;
         this.sphereRender = new Mesh(
             sphereRenderGeometry,
-            this.sphereRenderMaterial,
+            this._sphereRenderMaterial,
         );
 
         const sphereNormalGeometry = new SphereGeometry(
@@ -137,23 +128,23 @@ class MatcapEditorContent {
         this.sphereRender.geometry.computeBoundsTree();
         this.sphereNormal.geometry.computeBoundsTree();
 
-        this.world.scene.add(this.plane);
-        this.world.scene.add(this.sphereRender);
-        this.world.scene.add(this.sphereNormal);
+        this._world.scene.add(this.plane);
+        this._world.scene.add(this.sphereRender);
+        this._world.scene.add(this.sphereNormal);
 
         this.ambiantLight.intensity = store.ambiant.intensity;
         this.ambiantLight.color = store.ambiant.color;
-        this.world.scene.add(this.ambiantLight);
+        this._world.scene.add(this.ambiantLight);
 
-        this.world.scene.add(this.arrowHelper);
+        this._world.scene.add(this._arrowHelper);
 
-        this.world.canvas.addEventListener('mouseover', this.onMouseOver);
-        this.world.canvas.addEventListener('mouseout', this.onMouseOut);
+        RenderManager.initialize(this);
+
+        this._world.canvas.addEventListener('mouseover', this.onMouseOver);
+        this._world.canvas.addEventListener('mouseout', this.onMouseOut);
 
         events.on('matcap:ambiant:update', this.onAmbiantChanged);
-        events.on('matcap:snapshot', this.snapshot);
-        events.on('matcap:export:png', this.snapshot);
-        events.on('matcap:generate', this.snapshots);
+
         events.on(
             'matcap:light:update:distance',
             MatcapEditorContent.updateLightDistance,
@@ -162,30 +153,46 @@ class MatcapEditorContent {
         events.on('matcap:light:startMoving', this.onLightStartMoving);
         events.on('matcap:light:stopMoving', this.onLightStopMoving);
 
-        this.world.canvas.addEventListener('pointerup', this.onPointerUp);
+        this._world.canvas.addEventListener('pointerup', this.onPointerUp);
 
         events.emit('matcap:content:ready', this);
+    }
+
+    public get world(): MatcapEditorWorld {
+        return this._world;
+    }
+
+    public get arrowHelper(): ArrowHelper {
+        return this._arrowHelper;
+    }
+
+    public get sphereRenderMaterial(): MeshPhysicalMaterial {
+        return this._sphereRenderMaterial;
+    }
+
+    public get cameraSnapshot(): OrthographicCamera {
+        return this._cameraSnapshot;
     }
 
     private onAmbiantChanged = () => {
         this.ambiantLight.intensity = store.ambiant.intensity;
         this.ambiantLight.color = store.ambiant.color;
-        this.snapshot();
+        emitSnapshot();
     };
 
     private onMouseOver = () => {
-        this.arrowHelper.visible = true;
-        this.world.canvas.addEventListener('pointermove', this.onPointerMove);
-        this.world.canvas.addEventListener('pointerdown', this.onPointerDown);
+        this._arrowHelper.visible = true;
+        this._world.canvas.addEventListener('pointermove', this.onPointerMove);
+        this._world.canvas.addEventListener('pointerdown', this.onPointerDown);
     };
 
     private onMouseOut = () => {
-        this.arrowHelper.visible = false;
-        this.world.canvas.removeEventListener(
+        this._arrowHelper.visible = false;
+        this._world.canvas.removeEventListener(
             'pointermove',
             this.onPointerMove,
         );
-        this.world.canvas.removeEventListener(
+        this._world.canvas.removeEventListener(
             'pointerdown',
             this.onPointerDown,
         );
@@ -212,15 +219,15 @@ class MatcapEditorContent {
             instanceOfLight.position.z = this.lightPosition.z;
         else instanceOfLight.position.z = -this.lightPosition.z;
 
-        this.world.scene.add(instanceOfLight);
+        this._world.scene.add(instanceOfLight);
         if (store.create.lightType === 'Spot')
-            this.world.scene.add((instanceOfLight as SpotLight).target);
+            this._world.scene.add((instanceOfLight as SpotLight).target);
 
         const screenPosition = getScreenPosition(
             positionOnSphere
                 .clone()
                 .add(this.hitSphere.face.normal.clone().multiplyScalar(0.1)),
-            this.world.camera,
+            this._world.camera,
             store.sizes.exportDefault,
             store.sizes.exportDefault,
         );
@@ -234,7 +241,7 @@ class MatcapEditorContent {
 
         events.emit('matcap:editor:light:added', lightModel);
 
-        this.snapshot();
+        RenderManager.snapshot();
     };
 
     private onPointerMove = (event: PointerEvent) => {
@@ -243,20 +250,20 @@ class MatcapEditorContent {
             -((event.offsetY * store.ratio) / store.sizes.exportDefault) * 2 +
                 1,
         );
-        this.raycaster.setFromCamera(this.pointer, this.world.camera);
+        this.raycaster.setFromCamera(this.pointer, this._world.camera);
         const hits = this.raycaster.intersectObjects(this.meshesIntersectable);
         const hit = hits[0];
 
         if (!hit) return;
 
         if (hit.object === this.sphereNormal) {
-            this.arrowHelper.setColor('#e5ff00');
+            this._arrowHelper.setColor('#e5ff00');
             this.raycaster.set(
                 hit.point,
                 new Vector3().subVectors(new Vector3(), hit.point).normalize(),
             );
         } else if (hit.object === this.plane) {
-            this.arrowHelper.setColor('#00ffee');
+            this._arrowHelper.setColor('#00ffee');
             this.raycaster.set(
                 hit.point,
                 new Vector3().subVectors(new Vector3(), hit.point).normalize(),
@@ -267,9 +274,9 @@ class MatcapEditorContent {
 
         if (!hit2) return;
 
-        this.arrowHelper.setDirection(hit2.face.normal);
-        this.arrowHelper.setLength(0.1);
-        this.arrowHelper.position.copy(hit2.point);
+        this._arrowHelper.setDirection(hit2.face.normal);
+        this._arrowHelper.setLength(0.1);
+        this._arrowHelper.position.copy(hit2.point);
 
         this.hitSphere = hit2;
 
@@ -296,7 +303,7 @@ class MatcapEditorContent {
                     .add(
                         this.hitSphere.face.normal.clone().multiplyScalar(0.1),
                     ),
-                this.world.camera,
+                this._world.camera,
                 store.sizes.exportDefault,
                 store.sizes.exportDefault,
             );
@@ -311,7 +318,7 @@ class MatcapEditorContent {
         store.isUILightVisible = true;
         MatcapEditorStore.set(store);
         this.currentLightModel = null;
-        this.snapshot();
+        RenderManager.snapshot();
     };
 
     private onLightStartMoving = (lightModel: LightModel) => {
@@ -320,7 +327,7 @@ class MatcapEditorContent {
 
     private onLightStopMoving = () => {
         this.currentLightModel = null;
-        this.snapshot();
+        RenderManager.snapshot();
     };
 
     private static updateLightDistance = (lightModel: LightModel): void => {
@@ -339,77 +346,10 @@ class MatcapEditorContent {
     };
 
     private deleteLight = (lightModel: LightModel) => {
-        this.world.scene.remove(lightModel.light);
+        this._world.scene.remove(lightModel.light);
         store.lights.splice(store.lights.indexOf(lightModel), 1);
         MatcapEditorStore.set(store);
         emitSnapshot();
-    };
-
-    private snapshots = () => {
-        this.snapshotCounter = 0;
-        this.snapshotsArray = [];
-        this.snapshotLimit = 9;
-        this.nextSnapshot();
-    };
-
-    private nextSnapshot = () => {
-        this.sphereRenderMaterial.roughness =
-            this.snapshotCounter / (this.snapshotLimit - 1);
-
-        this.snapshot();
-    };
-
-    private snapshot = (payload: { exported: false } = undefined) => {
-        this.exported = payload?.exported;
-        const arrowHelperVisibleState = this.arrowHelper.visible;
-        this.arrowHelper.visible = false;
-        if (this.exported) {
-            this.world.renderer.setPixelRatio(store.sizes.exportRatio);
-        } else {
-            this.world.renderer.setPixelRatio(1);
-        }
-        this.world.renderer.render(this.world.scene, this.cameraSnapshot);
-        this.arrowHelper.visible = arrowHelperVisibleState;
-        this.world.renderer.domElement.toBlob(
-            this.onBlobReady,
-            'image/png',
-            1.0,
-        );
-    };
-
-    private onBlobReady = (blob: Blob) => {
-        const url = URL.createObjectURL(blob);
-        this.blobURL = url;
-        if (this.exported) {
-            this.exportPNG();
-            this.world.renderer.setPixelRatio(1);
-        } else {
-            events.emit('matcap:updateFromEditor', {
-                url,
-                textureIndex: store.textureIndex,
-            });
-        }
-        this.snapshotCounter += 1;
-        this.snapshotsArray.push(url);
-
-        if (this.snapshotCounter < this.snapshotLimit) {
-            this.nextSnapshot();
-        } else {
-            events.emit('matcap:snapshots:blobs:ready', [
-                ...this.snapshotsArray,
-            ]);
-            this.snapshotCounter = 0;
-            this.snapshotsArray = [];
-            this.snapshotLimit = 1;
-        }
-    };
-
-    private exportPNG = () => {
-        if (!this.blobURL) return;
-        const a = document.createElement('a');
-        a.href = this.blobURL;
-        a.download = 'matcap.png';
-        a.click();
     };
 }
 export default MatcapEditorContent;

@@ -18,7 +18,7 @@ PreviewStore.subscribe((newStore) => {
 });
 
 class MatcapPreviewContent {
-    private world: MatcapEditorWorld;
+    private _world: MatcapEditorWorld;
 
     private matcapLoader: TextureLoader;
 
@@ -27,7 +27,7 @@ class MatcapPreviewContent {
     private torusKnot: Mesh;
 
     constructor(world: MatcapEditorWorld) {
-        this.world = world;
+        this._world = world;
 
         const torusKnotGeometry = new TorusKnotGeometry(0.5, 0.4, 256, 32);
         // const torusKnotGeometry = new SphereGeometry(1, 64, 64);
@@ -36,33 +36,17 @@ class MatcapPreviewContent {
 
         this.matcapLoader = new TextureLoader();
         this.torusKnot = new Mesh(torusKnotGeometry, this.torusKnotMaterial);
-        this.world.scene.add(this.torusKnot);
+        this._world.scene.add(this.torusKnot);
 
-        // events.on('matcap:updateFromEditor', this.onmatcapUpdated);
         events.on('matcap:editor:snapshots:ready', this.onSnapshotsReady);
         events.on('object:power:update', this.onObjectPowerUpdate);
         events.on('object:roughness:update', this.onObjectRoughnessUpdate);
         events.on('object:metalness:update', this.onObjectMetalnessUpdate);
     }
 
-    private onmatcapUpdated = (matcapURL: {
-        url: string;
-        textureIndex: number;
-    }) => {
-        this.matcapLoader.load(matcapURL.url, (texture: Texture) => {
-            this.torusKnotMaterial.color.setScalar(store.power);
-            if (matcapURL.textureIndex === 0) {
-                (this.torusKnot.material as MeshMatcapORMMaterial).matcap =
-                    texture;
-            } else {
-                (
-                    this.torusKnot.material as MeshMatcapORMMaterial
-                ).roughnessMap = texture;
-            }
-            (this.torusKnot.material as MeshMatcapORMMaterial).needsUpdate =
-                true;
-        });
-    };
+    public get world() {
+        return this._world;
+    }
 
     private onSnapshotsReady = (snapshots: {
         matcap: string;

@@ -33,7 +33,6 @@ interface ICreate {
 export interface IMatcapEditorStore {
     sizes: ISize;
     ratio: number;
-    textureIndex: number;
     material: IMaterial;
     ambiant: IAmbiant;
     create: ICreate;
@@ -48,7 +47,6 @@ export const MatcapEditorStore = writable<IMatcapEditorStore>({
         exportRatio: 1,
     },
     ratio: 256 / 200,
-    textureIndex: 0,
     material: {
         roughness: 0,
         metalness: 1,
