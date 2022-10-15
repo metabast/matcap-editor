@@ -340,6 +340,9 @@ class MatcapEditorContent {
 
     private deleteLight = (lightModel: LightModel) => {
         this.world.scene.remove(lightModel.light);
+        store.lights.splice(store.lights.indexOf(lightModel), 1);
+        MatcapEditorStore.set(store);
+        emitSnapshot();
     };
 
     private snapshots = () => {

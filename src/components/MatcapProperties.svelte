@@ -180,7 +180,6 @@
         }
 
         gr.add('button', { name: 'delete', title: 'delete' }).onChange(() => {
-            store.lights.splice(store.lights.indexOf(lightModel), 1);
             events.emit('matcap:light:delete', lightModel);
             gr.clear();
         });
