@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
 import events from 'src/commons/Events';
-import { MeshMatcapPBRMaterial } from 'src/materials/MeshMatcapPBRMaterial';
+import { MeshMatcapORMMaterial } from 'src/materials/MeshMatcapORMMaterial';
 import { PreviewStore, type IPreviewStore } from 'src/store';
 import {
     Clock,
@@ -31,7 +31,7 @@ class MatcapPreviewContent {
 
         const torusKnotGeometry = new TorusKnotGeometry(0.5, 0.4, 256, 32);
         // const torusKnotGeometry = new SphereGeometry(1, 64, 64);
-        this.torusKnotMaterial = new MeshMatcapPBRMaterial();
+        this.torusKnotMaterial = new MeshMatcapORMMaterial();
         this.torusKnotMaterial.color.setScalar(0);
 
         this.matcapLoader = new TextureLoader();
@@ -39,8 +39,8 @@ class MatcapPreviewContent {
         this.world.scene.add(this.torusKnot);
 
         this.matcapLoader.load('./matcaps.png', (texture) => {
-            (this.torusKnot.material as MeshMatcapPBRMaterial).matcap = texture;
-            (this.torusKnot.material as MeshMatcapPBRMaterial).needsUpdate =
+            (this.torusKnot.material as MeshMatcapORMMaterial).matcap = texture;
+            (this.torusKnot.material as MeshMatcapORMMaterial).needsUpdate =
                 true;
         });
         // events.on('matcap:updateFromEditor', this.onmatcapUpdated);
@@ -57,14 +57,14 @@ class MatcapPreviewContent {
         this.matcapLoader.load(matcapURL.url, (texture: Texture) => {
             this.torusKnotMaterial.color.setScalar(store.power);
             if (matcapURL.textureIndex === 0) {
-                (this.torusKnot.material as MeshMatcapPBRMaterial).matcap =
+                (this.torusKnot.material as MeshMatcapORMMaterial).matcap =
                     texture;
             } else {
                 (
-                    this.torusKnot.material as MeshMatcapPBRMaterial
+                    this.torusKnot.material as MeshMatcapORMMaterial
                 ).roughnessMap = texture;
             }
-            (this.torusKnot.material as MeshMatcapPBRMaterial).needsUpdate =
+            (this.torusKnot.material as MeshMatcapORMMaterial).needsUpdate =
                 true;
         });
     };
@@ -72,8 +72,8 @@ class MatcapPreviewContent {
     private onSnapshotsReady = (snapshots: { matcap: string }): void => {
         this.matcapLoader.load(snapshots.matcap, (texture: Texture) => {
             this.torusKnotMaterial.color.setScalar(store.power);
-            (this.torusKnot.material as MeshMatcapPBRMaterial).matcap = texture;
-            (this.torusKnot.material as MeshMatcapPBRMaterial).needsUpdate =
+            (this.torusKnot.material as MeshMatcapORMMaterial).matcap = texture;
+            (this.torusKnot.material as MeshMatcapORMMaterial).needsUpdate =
                 true;
         });
     };
@@ -84,12 +84,12 @@ class MatcapPreviewContent {
 
     private onObjectRoughnessUpdate = (): void => {
         // this.customUniforms.uRoughness.value = store.roughness;
-        (this.torusKnot.material as MeshMatcapPBRMaterial).roughness =
+        (this.torusKnot.material as MeshMatcapORMMaterial).roughness =
             store.roughness;
     };
 
     private onObjectMetalnessUpdate = (): void => {
-        (this.torusKnot.material as MeshMatcapPBRMaterial).metalness =
+        (this.torusKnot.material as MeshMatcapORMMaterial).metalness =
             store.metalness;
     };
 

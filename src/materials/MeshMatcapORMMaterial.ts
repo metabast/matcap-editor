@@ -6,10 +6,10 @@ import {
     type MeshMatcapMaterialParameters,
 } from 'three';
 
-import matcapPBRUniform from '../shaders/shaderChunk/matcapPBRUniform';
-import matcapPBR from '../shaders/shaderChunk/matcapPBR';
+import matcapORMUniform from '../shaders/shaderChunk/matcapORMUniform';
+import matcapORM from '../shaders/shaderChunk/matcapORM';
 
-export class MeshMatcapPBRMaterial extends MeshMatcapMaterial {
+export class MeshMatcapORMMaterial extends MeshMatcapMaterial {
     private customUniforms: {
         uRoughness: { value: number };
         uRoughnessMap: { value: Texture };
@@ -33,11 +33,11 @@ export class MeshMatcapPBRMaterial extends MeshMatcapMaterial {
             );
             shader.fragmentShader = shader.fragmentShader.replace(
                 '#define MATCAP',
-                matcapPBRUniform,
+                matcapORMUniform,
             );
             shader.fragmentShader = shader.fragmentShader.replace(
                 'vec3 outgoingLight = diffuseColor.rgb * matcapColor.rgb;',
-                matcapPBR,
+                matcapORM,
             );
         };
     }
