@@ -1,7 +1,8 @@
 <script lang="ts">
     import { Gui } from 'uil';
     import { MatcapEditorStore, type IMatcapEditorStore } from 'src/store';
-    import events from 'src/commons/Events';
+    import events, { emitSnapshot } from 'src/commons/Events';
+    import { debounce, throttle } from 'src/commons/Utils';
 
     let store: IMatcapEditorStore;
     MatcapEditorStore.subscribe((newStore) => {
@@ -96,9 +97,7 @@
             min: 0,
             max: 10,
             step: 0.01,
-        }).onChange(() => {
-            events.emit('matcap:snapshot');
-        });
+        }).onChange(emitSnapshot);
         gr.add(lightModel, 'distance', {
             min: 0,
             max: 10,
@@ -111,23 +110,19 @@
         };
         gr.add(colorObj, 'color', { ctype: 'hex' }).onChange(() => {
             lightModel.light.color.setHex(colorObj.color);
-            events.emit('matcap:snapshot');
+            emitSnapshot();
         });
         if (lightModel.light.type === 'PointLight') {
             gr.add(lightModel.light, 'distance', {
                 min: 0,
                 max: 10,
                 step: 0.01,
-            }).onChange(() => {
-                events.emit('matcap:snapshot');
-            });
+            }).onChange(emitSnapshot);
             gr.add(lightModel.light, 'decay', {
                 min: 0,
                 max: 100,
                 step: 0.01,
-            }).onChange(() => {
-                events.emit('matcap:snapshot');
-            });
+            }).onChange(emitSnapshot);
         }
         if (lightModel.light.type === 'RectAreaLight') {
             gr.add(lightModel, 'lookAtTarget');
@@ -136,16 +131,12 @@
                 min: 0,
                 max: 100,
                 step: 0.01,
-            }).onChange(() => {
-                events.emit('matcap:snapshot');
-            });
+            }).onChange(emitSnapshot);
             gr.add(lightModel.light, 'height', {
                 min: 0,
                 max: 100,
                 step: 0.01,
-            }).onChange(() => {
-                events.emit('matcap:snapshot');
-            });
+            }).onChange(emitSnapshot);
 
             gr.add('number', {
                 name: 'target',
@@ -156,7 +147,7 @@
                 lightModel.positionTargetX = value[0];
                 lightModel.positionTargetY = value[1];
                 lightModel.positionTargetZ = value[2];
-                events.emit('matcap:snapshot');
+                emitSnapshot();
             });
         }
         if (lightModel.light.type === 'SpotLight') {
@@ -165,18 +156,14 @@
                 max: Math.PI / 2,
                 step: 0.001,
                 precision: 3,
-            }).onChange(() => {
-                events.emit('matcap:snapshot');
-            });
+            }).onChange(emitSnapshot);
 
             gr.add(lightModel.light, 'penumbra', {
                 min: 0,
                 max: 1,
                 step: 0.001,
                 precision: 3,
-            }).onChange(() => {
-                events.emit('matcap:snapshot');
-            });
+            }).onChange(emitSnapshot);
 
             gr.add('number', {
                 name: 'target',
@@ -188,8 +175,7 @@
                 lightModel.positionTargetX = value[0];
                 lightModel.positionTargetY = value[1];
                 lightModel.positionTargetZ = value[2];
-                console.log(lightModel.light);
-                events.emit('matcap:snapshot');
+                emitSnapshot();
             });
         }
 
@@ -211,9 +197,7 @@
                 max: 1,
                 step: 0.01,
             })
-            .onChange((value) => {
-                events.emit('matcap:snapshot');
-            })
+            .onChange(emitSnapshot)
             .listen();
         grMat
             .add(content.sphereRenderMaterial, 'metalness', {
@@ -221,9 +205,7 @@
                 max: 1,
                 step: 0.01,
             })
-            .onChange((value) => {
-                events.emit('matcap:snapshot');
-            })
+            .onChange(emitSnapshot)
             .listen();
         let colorObj = {
             color: content.sphereRenderMaterial.specularColor.getHex(),
@@ -232,7 +214,7 @@
 
         grMat.add(colorObj, 'color', { ctype: 'hex' }).onChange(() => {
             content.sphereRenderMaterial.color.setHex(colorObj.color);
-            events.emit('matcap:snapshot');
+            emitSnapshot();
         });
     });
 </script>

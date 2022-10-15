@@ -76,9 +76,11 @@ export interface IPreviewStore {
     power: number;
     roughness: number;
     metalness: number;
+    showGrid: boolean;
 }
 export const PreviewStore = writable<IPreviewStore>({
     power: 1,
     roughness: 0,
     metalness: 1,
+    showGrid: false,
 });

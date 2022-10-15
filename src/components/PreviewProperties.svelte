@@ -44,5 +44,9 @@
         })
         .listen();
 
+    grObjects.add(store, 'showGrid').onChange((value) => {
+        PreviewStore.set(store);
+    });
+
     grObjects.open();
 </script>

@@ -69,8 +69,17 @@ class MatcapPreviewContent {
         });
     };
 
-    private onSnapshotsReady = (snapshots: { matcap: string }): void => {
+    private onSnapshotsReady = (snapshots: {
+        matcap: string;
+        refreshNb: number;
+    }): void => {
         this.matcapLoader.load(snapshots.matcap, (texture: Texture) => {
+            if (snapshots.refreshNb === 1) {
+                store.roughness = 0;
+                store.metalness = 1;
+                this.onObjectRoughnessUpdate();
+                this.onObjectMetalnessUpdate();
+            }
             this.torusKnotMaterial.color.setScalar(store.power);
             (this.torusKnot.material as MeshMatcapORMMaterial).matcap = texture;
             (this.torusKnot.material as MeshMatcapORMMaterial).needsUpdate =

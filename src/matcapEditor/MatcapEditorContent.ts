@@ -16,7 +16,7 @@ import {
 } from 'three';
 
 import { getScreenPosition } from 'src/commons/VectorHelpers';
-import events from '../commons/Events';
+import events, { emitSnapshot } from '../commons/Events';
 import { MatcapEditorStore, type IMatcapEditorStore } from '../store';
 import type MatcapEditorWorld from './MatcapEditorWorld';
 import LightModel from './LightModel';
@@ -154,7 +154,10 @@ class MatcapEditorContent {
         events.on('matcap:snapshot', this.snapshot);
         events.on('matcap:export:png', this.snapshot);
         events.on('matcap:generate', this.snapshots);
-        events.on('matcap:light:update:distance', this.updateLightDistance);
+        events.on(
+            'matcap:light:update:distance',
+            MatcapEditorContent.updateLightDistance,
+        );
         events.on('matcap:light:delete', this.deleteLight);
         events.on('matcap:light:startMoving', this.onLightStartMoving);
         events.on('matcap:light:stopMoving', this.onLightStopMoving);
@@ -320,7 +323,7 @@ class MatcapEditorContent {
         this.snapshot();
     };
 
-    private updateLightDistance = (lightModel: LightModel): void => {
+    private static updateLightDistance = (lightModel: LightModel): void => {
         const lightPosition = lightModel.positionOnSphere.clone();
         lightPosition.add(
             lightModel.sphereFaceNormal
@@ -332,7 +335,7 @@ class MatcapEditorContent {
         if (store.create.front) lightModel.setPositionZ(lightPosition.z);
         else lightModel.setPositionZ(-lightPosition.z);
 
-        this.snapshot();
+        emitSnapshot();
     };
 
     private deleteLight = (lightModel: LightModel) => {

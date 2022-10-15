@@ -1,5 +1,7 @@
 import { createNanoEvents } from 'nanoevents';
 import type { Emitter } from 'nanoevents';
+import { debounce } from './Utils';
+import { debounceDelay } from './Constants';
 
 class Events {
     emitter: Emitter;
@@ -23,3 +25,9 @@ class Events {
 }
 const events = new Events();
 export default events;
+
+const emitSnapshot = debounce((value) => {
+    events.emit('matcap:snapshot');
+}, debounceDelay);
+
+export { emitSnapshot };

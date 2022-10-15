@@ -1,10 +1,17 @@
 <script lang="ts">
     import events from 'src/commons/Events';
+    import { PreviewStore, type IPreviewStore } from 'src/store';
     import { onMount } from 'svelte';
     import Canvas3D from './Canvas3D.svelte';
 
+    let store: IPreviewStore;
+    PreviewStore.subscribe((newStore) => {
+        store = newStore;
+    });
+
     let canvas: HTMLCanvasElement;
     let context: CanvasRenderingContext2D;
+    let refreshNb: number = 0;
 
     onMount(() => {
         canvas = document.querySelector('canvas.snapshots');
@@ -13,11 +20,15 @@
 
     const onBlobReady = (blob) => {
         const url = URL.createObjectURL(blob);
-        events.emit('matcap:editor:snapshots:ready', { matcap: url });
+        events.emit('matcap:editor:snapshots:ready', {
+            matcap: url,
+            refreshNb,
+        });
     };
 
     events.on('matcap:snapshots:blobs:ready', (urls: [string]) => {
         const promises = [];
+        refreshNb = urls.length;
         for (let i = 0; i < urls.length; i++) {
             const url: string = urls[i];
             const img = new Image();
@@ -41,19 +52,29 @@
         }
         Promise.all(promises).then(() => {
             canvas.toBlob(onBlobReady, 'image/png', 1.0);
-            events.emit('matcap:snapshots:rendered');
         });
     });
 </script>
 
-<canvas class="snapshots" width="768" height="768" />
+<canvas
+    class="snapshots"
+    width="768"
+    height="768"
+    style="z-index: {store.showGrid ? '1' : '-1'};"
+/>
+
+<code class="store">{store.showGrid}</code>
 
 <style>
     .snapshots {
         position: absolute;
-        z-index: -1;
         width: 512px;
         height: 512px;
         bottom: 0;
+    }
+    .store {
+        position: absolute;
+        bottom: 0;
+        right: 0;
     }
 </style>
