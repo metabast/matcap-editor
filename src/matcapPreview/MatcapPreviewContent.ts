@@ -38,11 +38,6 @@ class MatcapPreviewContent {
         this.torusKnot = new Mesh(torusKnotGeometry, this.torusKnotMaterial);
         this.world.scene.add(this.torusKnot);
 
-        this.matcapLoader.load('./matcaps.png', (texture) => {
-            (this.torusKnot.material as MeshMatcapORMMaterial).matcap = texture;
-            (this.torusKnot.material as MeshMatcapORMMaterial).needsUpdate =
-                true;
-        });
         // events.on('matcap:updateFromEditor', this.onmatcapUpdated);
         events.on('matcap:editor:snapshots:ready', this.onSnapshotsReady);
         events.on('object:power:update', this.onObjectPowerUpdate);
