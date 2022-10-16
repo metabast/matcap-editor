@@ -4,11 +4,34 @@
     import events, { emitSnapshot } from 'src/commons/Events';
     import { debounce, throttle } from 'src/commons/Utils';
     import type MatcapEditorContent from 'src/matcapEditor/MatcapEditorContent';
-    import { SetSphereMaterialParamsCommand } from 'src/commands/SetSphereMaterialParamsCommand';
+    import {
+        SetSphereMaterialParamsCommand,
+        type SphereMaterialPaneCtrl,
+    } from 'src/commands/SetSphereMaterialParamsCommand';
+    import { onMount } from 'svelte';
+    import type { RootApi } from 'tweakpane/dist/types/blade/root/api/root';
+    import { Pane } from 'tweakpane';
+    import type { FolderApi } from '@tweakpane/core';
+    import { Color } from 'three';
+    import {
+        SetMaterialColorCommand,
+        type MaterialColorPaneCtrl,
+    } from 'src/commands/SetMaterialColorCommand';
 
     let store: IMatcapEditorStore;
     MatcapEditorStore.subscribe((newStore) => {
         store = newStore;
+    });
+    let materialFolder: FolderApi;
+    let pane: Pane;
+    onMount(() => {
+        pane = new Pane({
+            container: document.querySelector('.matcap-editor-pane'),
+        });
+
+        materialFolder = pane.addFolder({
+            title: 'Material',
+        });
     });
 
     const gui = new Gui({
@@ -18,6 +41,7 @@
         `,
         w: 200,
     });
+
     let sizes = store.sizes.exportRatios.map(
         (value) => value * store.sizes.exportDefault,
     );
@@ -192,45 +216,112 @@
     events.on('matcap:light:update:current', updateCurrentLight);
 
     events.on('matcap:content:ready', (content: MatcapEditorContent) => {
-        grMat
-            .add(content.sphereRenderMaterial, 'roughness', {
+        const oldValue = {
+            roughness: Number(content.sphereRenderMaterial.roughness),
+            metalness: Number(content.sphereRenderMaterial.metalness),
+            color: `#${content.sphereRenderMaterial.color.getHexString()}`,
+        };
+
+        const roughnessCtrl: SphereMaterialPaneCtrl = {
+            value: Number(content.sphereRenderMaterial.roughness),
+            oldValue: Number(content.sphereRenderMaterial.roughness),
+            history: true,
+        };
+        materialFolder
+            .addInput(content.sphereRenderMaterial, 'roughness', {
                 min: 0,
                 max: 1,
                 step: 0.01,
             })
-            .onChange(
-                debounce(() => {
+            .on('change', (event) => {
+                if (event.last && roughnessCtrl.history) {
                     content.world.editor.execute(
                         new SetSphereMaterialParamsCommand(
                             content.world.editor,
                             {
                                 name: 'roughness',
                                 value: content.sphereRenderMaterial.roughness,
+                                oldValue: Number(oldValue.roughness),
                             },
+                            pane,
+                            roughnessCtrl,
                         ),
                         'update material roughness',
                     );
-                }, 200),
-            )
-            .listen();
-        console.log(grMat);
+                    oldValue.roughness = Number(
+                        content.sphereRenderMaterial.roughness,
+                    );
+                }
+            });
 
-        grMat
-            .add(content.sphereRenderMaterial, 'metalness', {
+        const metalnessCtrl: SphereMaterialPaneCtrl = {
+            value: Number(content.sphereRenderMaterial.metalness),
+            oldValue: Number(content.sphereRenderMaterial.metalness),
+            history: true,
+        };
+        materialFolder
+            .addInput(content.sphereRenderMaterial, 'metalness', {
                 min: 0,
                 max: 1,
                 step: 0.01,
             })
-            .onChange(emitSnapshot)
-            .listen();
-        let colorObj = {
-            color: content.sphereRenderMaterial.specularColor.getHex(),
-            specularColor: content.sphereRenderMaterial.specularColor.getHex(),
-        };
+            .on('change', (event) => {
+                if (event.last && metalnessCtrl.history) {
+                    content.world.editor.execute(
+                        new SetSphereMaterialParamsCommand(
+                            content.world.editor,
+                            {
+                                name: 'metalness',
+                                value: content.sphereRenderMaterial.metalness,
+                                oldValue: Number(oldValue.roughness),
+                            },
+                            pane,
+                            metalnessCtrl,
+                        ),
+                        'update material metalness',
+                    );
+                    oldValue.metalness = Number(
+                        content.sphereRenderMaterial.metalness,
+                    );
+                }
+            });
 
-        grMat.add(colorObj, 'color', { ctype: 'hex' }).onChange(() => {
-            content.sphereRenderMaterial.color.setHex(colorObj.color);
-            emitSnapshot();
+        let colorObj: MaterialColorPaneCtrl = {
+            value: `#${content.sphereRenderMaterial.color.getHexString()}`,
+            oldValue: content.sphereRenderMaterial.color.getHex(),
+            history: true,
+        };
+        materialFolder.addInput(colorObj, 'value').on('change', (event) => {
+            content.sphereRenderMaterial.color.set(colorObj.value);
+            if (event.last && colorObj.history) {
+                content.world.editor.execute(
+                    new SetMaterialColorCommand(
+                        content.world.editor,
+                        {
+                            name: 'color',
+                            value: content.sphereRenderMaterial.color.getHex(),
+                            oldValue: colorObj.oldValue,
+                        },
+                        content.sphereRenderMaterial,
+                        pane,
+                        colorObj,
+                    ),
+                    'update material color',
+                );
+                colorObj.oldValue = new Color(colorObj.value).getHex();
+            }
         });
     });
 </script>
+
+<div class="matcap-editor-pane" />
+
+<style>
+    .matcap-editor-pane {
+        position: fixed;
+        right: 200px;
+        top: 0;
+        z-index: 1;
+        user-select: none;
+    }
+</style>

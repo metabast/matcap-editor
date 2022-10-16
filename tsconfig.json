@@ -15,7 +15,11 @@
         "checkJs": true,
         "paths": {
             "src/*": ["./src/*"]
-        }
+        },
+        "lib": ["DOM", "ES2015"],
+        "noImplicitAny": true,
+        "noUnusedLocals": true,
+        "noUnusedParameters": true
     },
     "include": [
         "src/**/*.d.ts",
