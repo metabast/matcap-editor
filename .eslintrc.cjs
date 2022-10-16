@@ -34,6 +34,7 @@ module.exports = {
         'no-param-reassign': 'off',
         'no-plusplus': 'off',
         'import/prefer-default-export': 'off',
+        'class-methods-use-this': 'off',
     },
     overrides: [{
         files: ['*.svelte'],
