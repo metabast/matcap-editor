@@ -1,17 +1,9 @@
 import events from 'src/commons/Events';
 import type { FolderApi, TabPageApi } from '@tweakpane/core';
-import {
-    SetMaterialColorCommand,
-    type MaterialColorPaneCtrl,
-} from 'src/commands/SetMaterialColorCommand';
 import { Color } from 'three';
 import type { Pane } from 'tweakpane';
-import { MatcapEditorStore, type IMatcapEditorStore } from 'src/store';
-import {
-    SetObjectPropertyCommand,
-    type ObjectPropertyPaneCtrl,
-} from 'src/commands/SetObjectPropertyCommand';
 import { SetAmbiantLightCommand } from 'src/commands/SetAmbiantLightCommand';
+import type { ValuesPaneCtrl } from 'src/types/PanesTypes';
 import type MatcapEditorContent from '../MatcapEditorContent';
 
 const data: { pane: Pane; paneContainer: FolderApi | TabPageApi } = {
@@ -19,13 +11,8 @@ const data: { pane: Pane; paneContainer: FolderApi | TabPageApi } = {
     paneContainer: null,
 };
 
-let store: IMatcapEditorStore;
-MatcapEditorStore.subscribe((newStore) => {
-    store = newStore;
-});
-
 const generate = (content: MatcapEditorContent) => {
-    const intensityCtrl: ObjectPropertyPaneCtrl = {
+    const intensityCtrl: ValuesPaneCtrl = {
         value: Number(content.ambiantLight.intensity),
         oldValue: Number(content.ambiantLight.intensity),
         history: true,
@@ -58,7 +45,7 @@ const generate = (content: MatcapEditorContent) => {
             }
         });
 
-    const colorObj: MaterialColorPaneCtrl = {
+    const colorObj: ValuesPaneCtrl = {
         value: `#${content.ambiantLight.color.getHexString()}`,
         oldValue: content.ambiantLight.color.getHex(),
         history: true,

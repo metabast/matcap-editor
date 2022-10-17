@@ -1,15 +1,9 @@
-import {
-    SetSphereMaterialParamsCommand,
-    type SphereMaterialPaneCtrl,
-} from 'src/commands/SetSphereMaterialParamsCommand';
+import { SetSphereMaterialParamsCommand } from 'src/commands/SetSphereMaterialParamsCommand';
 import events from 'src/commons/Events';
 import type { FolderApi, TabPageApi } from '@tweakpane/core';
-import {
-    SetMaterialColorCommand,
-    type MaterialColorPaneCtrl,
-} from 'src/commands/SetMaterialColorCommand';
 import { Color } from 'three';
 import type { Pane } from 'tweakpane';
+import type { ValuesPaneCtrl } from 'src/types/PanesTypes';
 import type MatcapEditorContent from '../MatcapEditorContent';
 
 const data: { pane: Pane; paneContainer: FolderApi | TabPageApi } = {
@@ -18,7 +12,7 @@ const data: { pane: Pane; paneContainer: FolderApi | TabPageApi } = {
 };
 
 const generate = (content: MatcapEditorContent) => {
-    const roughnessCtrl: SphereMaterialPaneCtrl = {
+    const roughnessCtrl: ValuesPaneCtrl = {
         value: Number(content.sphereRenderMaterial.roughness),
         oldValue: Number(content.sphereRenderMaterial.roughness),
         history: true,
@@ -50,7 +44,7 @@ const generate = (content: MatcapEditorContent) => {
             }
         });
 
-    const metalnessCtrl: SphereMaterialPaneCtrl = {
+    const metalnessCtrl: ValuesPaneCtrl = {
         value: Number(content.sphereRenderMaterial.metalness),
         oldValue: Number(content.sphereRenderMaterial.metalness),
         history: true,
@@ -82,7 +76,7 @@ const generate = (content: MatcapEditorContent) => {
             }
         });
 
-    const colorObj: MaterialColorPaneCtrl = {
+    const colorObj: ValuesPaneCtrl = {
         value: `#${content.sphereRenderMaterial.color.getHexString()}`,
         oldValue: content.sphereRenderMaterial.color.getHex(),
         history: true,
@@ -93,14 +87,13 @@ const generate = (content: MatcapEditorContent) => {
             content.sphereRenderMaterial.color.set(colorObj.value);
             if (event.last && colorObj.history) {
                 content.world.editor.execute(
-                    new SetMaterialColorCommand(
+                    new SetSphereMaterialParamsCommand(
                         content.world.editor,
                         {
                             name: 'color',
                             value: content.sphereRenderMaterial.color.getHex(),
                             oldValue: colorObj.oldValue,
                         },
-                        content.sphereRenderMaterial,
                         data.pane,
                         colorObj,
                     ),

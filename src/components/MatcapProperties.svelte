@@ -7,7 +7,6 @@
     import { Pane } from 'tweakpane';
     import type { FolderApi } from '@tweakpane/core';
     import type LightModel from 'src/matcapEditor/LightModel';
-    import SphereMaterialPaneFolder from 'src/matcapEditor/panes/SphereMaterialPaneFolder';
     import ExportMatcapPaneFolder from 'src/matcapEditor/panes/ExportMatcapPaneFolder';
     import SpherePaneFolder from 'src/matcapEditor/panes/SpherePaneFolder';
 
@@ -56,28 +55,6 @@
     }).onChange((value) => {
         store.create.lightType = value;
     });
-
-    let grMat = gui.add('group', { name: 'Material', h: 30 });
-
-    let grAmbiant = gui.add('group', { name: 'Ambiant', h: 30 });
-
-    const colorObj = { ambiantColor: 0xffffff };
-    grAmbiant.add(colorObj, 'ambiantColor', { ctype: 'hex' }).onChange(() => {
-        store.ambiant.color.setHex(colorObj.ambiantColor);
-        events.emit('matcap:ambiant:update');
-    });
-
-    grAmbiant
-        .add(store.ambiant, 'intensity', {
-            name: 'ambiant',
-            min: 0,
-            max: 2,
-            step: 0.01,
-            precision: 2,
-        })
-        .onChange((value) => {
-            events.emit('matcap:ambiant:update');
-        });
 
     let grCreate = gui.add('group', { name: 'Create', h: 30 });
     grCreate.add(store.create, 'distance', {

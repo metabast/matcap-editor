@@ -1,10 +1,10 @@
 import { Command } from 'src/Command';
-import events, { emitSnapshot } from 'src/commons/Events';
+import { emitSnapshot } from 'src/commons/Events';
 import type Editor from 'src/Editor';
 import type MatcapEditorWorld from 'src/matcapEditor/MatcapEditorWorld';
-import type { Color, MeshPhysicalMaterial } from 'three';
+import { Color, type MeshPhysicalMaterial } from 'three';
 import type { Pane } from 'tweakpane';
-import type { FolderApi } from '@tweakpane/core';
+import type { ValuesCommand, ValuesPaneCtrl } from 'src/types/PanesTypes';
 
 export type SphereMaterialPaneCtrl = {
     value: number | string | Color;
@@ -22,17 +22,17 @@ class SetSphereMaterialParamsCommand extends Command {
 
     private material: MeshPhysicalMaterial;
 
-    private parameters: SphereMaterialParams;
+    private parameters: ValuesCommand;
 
     private pane: Pane;
 
-    private paneCtrl: SphereMaterialPaneCtrl;
+    private paneCtrl: ValuesPaneCtrl;
 
     constructor(
         editor: Editor,
-        parameters: SphereMaterialParams,
+        parameters: ValuesCommand,
         pane: Pane,
-        paneCtrl: SphereMaterialPaneCtrl,
+        paneCtrl: ValuesPaneCtrl,
     ) {
         super(editor);
         this.type = 'SetSphereMaterialParamsCommand';
@@ -46,27 +46,43 @@ class SetSphereMaterialParamsCommand extends Command {
     }
 
     execute(): void {
-        this.material[this.parameters.name] = this.parameters.value;
-        this.paneCtrl.history = false;
-
-        this.paneCtrl.value = this.parameters.value;
-
-        this.pane.refresh();
-
-        this.paneCtrl.history = true;
+        this.apply(this.parameters.value);
         emitSnapshot();
     }
 
     undo(): void {
-        this.material[this.parameters.name] = this.parameters.oldValue;
+        this.apply(this.parameters.oldValue);
+        emitSnapshot();
+    }
+
+    apply(value: number | string | Color): void {
+        switch (this.parameters.name) {
+            case 'roughness':
+                this.material.roughness = Number(value);
+                break;
+
+            case 'metalness':
+                this.material.metalness = Number(value);
+                break;
+
+            case 'color':
+                this.material.color.setHex(Number(value));
+                break;
+            default:
+                break;
+        }
+
         this.paneCtrl.history = false;
 
-        this.paneCtrl.value = this.parameters.oldValue;
+        if (this.parameters.name === 'color') {
+            this.paneCtrl.value = `#${new Color(value).getHexString()}`;
+        } else {
+            this.paneCtrl.value = value;
+        }
 
         this.pane.refresh();
 
         this.paneCtrl.history = true;
-        emitSnapshot();
     }
 }
 

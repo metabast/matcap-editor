@@ -1,14 +1,10 @@
 import { Command } from 'src/Command';
 import { emitSnapshot } from 'src/commons/Events';
 import type Editor from 'src/Editor';
+import type { ValuesCommand, ValuesPaneCtrl } from 'src/types/PanesTypes';
 import { Color, type AmbientLight } from 'three';
 import type { Pane } from 'tweakpane';
 
-export type ObjectPropertyPaneCtrl = {
-    value: number | string;
-    oldValue: number | string;
-    history: boolean;
-};
 export type ObjectPropertyParams = {
     name: string;
     value: number | string;
@@ -16,20 +12,20 @@ export type ObjectPropertyParams = {
 };
 
 class SetAmbiantLightCommand extends Command {
-    private parameters: ObjectPropertyParams;
+    private parameters: ValuesCommand;
 
     private ambientLight: AmbientLight;
 
     private pane: Pane;
 
-    private paneCtrl: ObjectPropertyPaneCtrl;
+    private paneCtrl: ValuesPaneCtrl;
 
     constructor(
         editor: Editor,
-        parameters: ObjectPropertyParams,
+        parameters: ValuesCommand,
         ambientLight: AmbientLight,
         pane: Pane,
-        paneCtrl: ObjectPropertyPaneCtrl,
+        paneCtrl: ValuesPaneCtrl,
     ) {
         super(editor);
         this.type = 'SetAmbiantLightCommand';
@@ -51,7 +47,7 @@ class SetAmbiantLightCommand extends Command {
         emitSnapshot();
     }
 
-    apply(value: number | string): void {
+    apply(value: number | string | Color): void {
         switch (this.parameters.name) {
             case 'intensity':
                 this.ambientLight.intensity = Number(value);
