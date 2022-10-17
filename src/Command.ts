@@ -33,8 +33,6 @@ class Command extends Object {
 
     public editor: Editor;
 
-    public object: object;
-
     public json: CommandJSON;
 
     constructor(editor: Editor) {

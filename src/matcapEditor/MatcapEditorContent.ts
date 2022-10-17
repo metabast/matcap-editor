@@ -50,7 +50,7 @@ class MatcapEditorContent {
 
     private meshesIntersectable: Array<Mesh> = [];
 
-    private ambiantLight: AmbientLight = new AmbientLight(0x000000);
+    private _ambiantLight: AmbientLight = new AmbientLight(0x000000);
 
     private _arrowHelper: ArrowHelper = new ArrowHelper(
         new Vector3(),
@@ -133,9 +133,9 @@ class MatcapEditorContent {
         this._world.scene.add(this.sphereRender);
         this._world.scene.add(this.sphereNormal);
 
-        this.ambiantLight.intensity = store.ambiant.intensity;
-        this.ambiantLight.color = store.ambiant.color;
-        this._world.scene.add(this.ambiantLight);
+        this._ambiantLight.intensity = store.ambiant.intensity;
+        this._ambiantLight.color = store.ambiant.color;
+        this._world.scene.add(this._ambiantLight);
 
         this._world.scene.add(this._arrowHelper);
 
@@ -175,9 +175,13 @@ class MatcapEditorContent {
         return this._cameraSnapshot;
     }
 
+    public get ambiantLight(): AmbientLight {
+        return this._ambiantLight;
+    }
+
     private onAmbiantChanged = () => {
-        this.ambiantLight.intensity = store.ambiant.intensity;
-        this.ambiantLight.color = store.ambiant.color;
+        this._ambiantLight.intensity = store.ambiant.intensity;
+        this._ambiantLight.color = store.ambiant.color;
         RenderManager.snapshot();
         emitSnapshot();
     };

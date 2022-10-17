@@ -4,6 +4,7 @@ import type Editor from 'src/Editor';
 import type MatcapEditorWorld from 'src/matcapEditor/MatcapEditorWorld';
 import type { Color, MeshPhysicalMaterial } from 'three';
 import type { Pane } from 'tweakpane';
+import type { FolderApi } from '@tweakpane/core';
 
 export type SphereMaterialPaneCtrl = {
     value: number | string | Color;
