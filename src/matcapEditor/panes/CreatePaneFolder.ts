@@ -1,0 +1,3 @@
+const CreatePaneFolder = {
+    generate() {},
+};

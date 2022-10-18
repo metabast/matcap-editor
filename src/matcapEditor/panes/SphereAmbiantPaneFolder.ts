@@ -18,14 +18,13 @@ const generate = (content: MatcapEditorContent) => {
         history: true,
     };
     data.paneContainer
-        .addInput(content.ambiantLight, 'intensity', {
+        .addInput(intensityCtrl, 'value', {
             min: 0,
             max: 2,
             step: 0.01,
         })
         .on('change', (event) => {
-            const word = 'intensity';
-            content.ambiantLight[word] = Number(event.value);
+            content.ambiantLight.intensity = Number(event.value);
             if (event.last && intensityCtrl.history) {
                 content.world.editor.execute(
                     new SetAmbiantLightCommand(
@@ -33,7 +32,7 @@ const generate = (content: MatcapEditorContent) => {
                         {
                             name: 'intensity',
                             value: content.ambiantLight.intensity,
-                            oldValue: Number(intensityCtrl.value),
+                            oldValue: Number(intensityCtrl.oldValue),
                         },
                         content.ambiantLight,
                         data.pane,
@@ -45,33 +44,31 @@ const generate = (content: MatcapEditorContent) => {
             }
         });
 
-    const colorObj: ValuesPaneCtrl = {
+    const colorCtrl: ValuesPaneCtrl = {
         value: `#${content.ambiantLight.color.getHexString()}`,
         oldValue: content.ambiantLight.color.getHex(),
         history: true,
     };
-    data.paneContainer
-        .addInput(colorObj, 'value', { label: 'color' })
-        .on('change', (event) => {
-            content.ambiantLight.color.set(colorObj.value);
-            if (event.last && colorObj.history) {
-                content.world.editor.execute(
-                    new SetAmbiantLightCommand(
-                        content.world.editor,
-                        {
-                            name: 'color',
-                            value: content.ambiantLight.color.getHex(),
-                            oldValue: colorObj.oldValue,
-                        },
-                        content.ambiantLight,
-                        data.pane,
-                        colorObj,
-                    ),
-                    'update material color',
-                );
-                colorObj.oldValue = new Color(colorObj.value).getHex();
-            }
-        });
+    data.paneContainer.addInput(colorCtrl, 'value', { label: 'color' }).on('change', (event) => {
+        content.ambiantLight.color.set(colorCtrl.value);
+        if (event.last && colorCtrl.history) {
+            content.world.editor.execute(
+                new SetAmbiantLightCommand(
+                    content.world.editor,
+                    {
+                        name: 'color',
+                        value: content.ambiantLight.color.getHex(),
+                        oldValue: colorCtrl.oldValue,
+                    },
+                    content.ambiantLight,
+                    data.pane,
+                    colorCtrl,
+                ),
+                'update material color',
+            );
+            colorCtrl.oldValue = new Color(colorCtrl.value).getHex();
+        }
+    });
 };
 const SphereAmbiantPaneFolder = {
     initialize(pane: Pane, paneContainer?: TabPageApi) {

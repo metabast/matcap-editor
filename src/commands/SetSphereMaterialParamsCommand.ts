@@ -16,7 +16,7 @@ export type SphereMaterialParams = {
     value: number | string | Color;
     oldValue: number | string | Color;
 };
-
+type PropertiesAllowed = 'roughness' | 'metalness' | 'color';
 class SetSphereMaterialParamsCommand extends Command {
     private world: MatcapEditorWorld;
 
@@ -28,12 +28,7 @@ class SetSphereMaterialParamsCommand extends Command {
 
     private paneCtrl: ValuesPaneCtrl;
 
-    constructor(
-        editor: Editor,
-        parameters: ValuesCommand,
-        pane: Pane,
-        paneCtrl: ValuesPaneCtrl,
-    ) {
+    constructor(editor: Editor, parameters: ValuesCommand, pane: Pane, paneCtrl: ValuesPaneCtrl) {
         super(editor);
         this.type = 'SetSphereMaterialParamsCommand';
         this.name = 'Set Sphere Material Params';
@@ -56,27 +51,15 @@ class SetSphereMaterialParamsCommand extends Command {
     }
 
     apply(value: number | string | Color): void {
-        switch (this.parameters.name) {
-            case 'roughness':
-                this.material.roughness = Number(value);
-                break;
-
-            case 'metalness':
-                this.material.metalness = Number(value);
-                break;
-
-            case 'color':
-                this.material.color.setHex(Number(value));
-                break;
-            default:
-                break;
-        }
+        const name = this.parameters.name as PropertiesAllowed;
 
         this.paneCtrl.history = false;
 
-        if (this.parameters.name === 'color') {
+        if (name === 'color') {
+            this.material.color.setHex(Number(value));
             this.paneCtrl.value = `#${new Color(value).getHexString()}`;
         } else {
+            this.material[name] = Number(value);
             this.paneCtrl.value = value;
         }
 

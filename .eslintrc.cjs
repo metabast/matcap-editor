@@ -35,6 +35,7 @@ module.exports = {
         'no-plusplus': 'off',
         'import/prefer-default-export': 'off',
         'class-methods-use-this': 'off',
+        'max-classes-per-file': ['error', 4]
     },
     overrides: [{
         files: ['*.svelte'],

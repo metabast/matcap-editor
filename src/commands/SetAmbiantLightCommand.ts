@@ -5,12 +5,7 @@ import type { ValuesCommand, ValuesPaneCtrl } from 'src/types/PanesTypes';
 import { Color, type AmbientLight } from 'three';
 import type { Pane } from 'tweakpane';
 
-export type ObjectPropertyParams = {
-    name: string;
-    value: number | string;
-    oldValue: number | string;
-};
-
+type PropertiesAllowed = 'intensity' | 'color';
 class SetAmbiantLightCommand extends Command {
     private parameters: ValuesCommand;
 
@@ -32,9 +27,9 @@ class SetAmbiantLightCommand extends Command {
         this.name = 'Set ambientLight Params';
         this.updatable = true;
         this.parameters = parameters;
-        this.ambientLight = ambientLight;
         this.pane = pane;
         this.paneCtrl = paneCtrl;
+        this.ambientLight = ambientLight;
     }
 
     execute(): void {
@@ -48,23 +43,14 @@ class SetAmbiantLightCommand extends Command {
     }
 
     apply(value: number | string | Color): void {
-        switch (this.parameters.name) {
-            case 'intensity':
-                this.ambientLight.intensity = Number(value);
-                break;
-
-            case 'color':
-                this.ambientLight.color.setHex(Number(value));
-                break;
-            default:
-                break;
-        }
+        const name = this.parameters.name as PropertiesAllowed;
 
         this.paneCtrl.history = false;
-
-        if (this.parameters.name === 'color') {
+        if (name === 'color') {
+            this.ambientLight.color.setHex(Number(value));
             this.paneCtrl.value = `#${new Color(value).getHexString()}`;
         } else {
+            this.ambientLight[name] = Number(value);
             this.paneCtrl.value = value;
         }
 
