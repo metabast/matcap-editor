@@ -3,11 +3,11 @@ import { PointLight, RectAreaLight, SpotLight, Vector2, Vector3 } from 'three';
 type LightType = PointLight | RectAreaLight | SpotLight;
 
 class LightModel {
-    private _light: LightType = undefined;
+    private _light: LightType;
 
     private _screenPosition: Vector2 = new Vector2();
 
-    private _distance = 0;
+    private _distance: number;
 
     private _sphereFaceNormal: Vector3 = undefined;
 
@@ -15,7 +15,14 @@ class LightModel {
 
     private _positionTarget: Vector3 = new Vector3(0, 0, 0);
 
-    private _lookAtTarget = true;
+    private _lookAtTarget: boolean;
+
+    private _front: boolean;
+
+    constructor() {
+        this._lookAtTarget = true;
+        this._front = true;
+    }
 
     get light() {
         return this._light;
@@ -34,7 +41,7 @@ class LightModel {
         this._screenPosition = value;
     }
 
-    get distance() {
+    get distance(): number {
         return this._distance;
     }
 
@@ -90,7 +97,7 @@ class LightModel {
         }
     }
 
-    get lookAtTarget() {
+    get lookAtTarget(): boolean {
         return this._lookAtTarget;
     }
 
@@ -101,6 +108,16 @@ class LightModel {
         } else {
             this._light.rotation.set(0, 0, 0);
         }
+    }
+
+    get front(): boolean {
+        return this._front;
+    }
+
+    set front(value: boolean) {
+        this._front = value;
+        if (this.front) this.setPositionZ(this.light.position.z);
+        else this.setPositionZ(-this.light.position.z);
     }
 
     setPositionX(value: number) {
@@ -120,6 +137,16 @@ class LightModel {
             this._light.lookAt(this._positionTarget);
         }
     }
+
+    static updateLightDistance = (lightModel: LightModel): void => {
+        const lightPosition = lightModel.positionOnSphere.clone();
+        lightPosition.add(lightModel.sphereFaceNormal.clone().multiplyScalar(lightModel.distance));
+        lightModel.setPositionX(lightPosition.x);
+        lightModel.setPositionY(lightPosition.y);
+
+        if (lightModel.front) lightModel.setPositionZ(lightPosition.z);
+        else lightModel.setPositionZ(-lightPosition.z);
+    };
 }
 
 export default LightModel;

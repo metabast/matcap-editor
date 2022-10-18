@@ -2,15 +2,15 @@ import { Command } from 'src/Command';
 import { emitSnapshot } from 'src/commons/Events';
 import type Editor from 'src/Editor';
 import type { ValuesCommand, ValuesPaneCtrl } from 'src/types/PanesTypes';
-import { Color, type AmbientLight } from 'three';
+import { Color, PointLight, RectAreaLight, SpotLight } from 'three';
 import type { Pane } from 'tweakpane';
 
 type PropertiesAllowed = 'intensity' | 'color';
 type SelectedTypes = number | Color;
-class SetAmbiantLightCommand extends Command {
+class SetLightPropertyCommand extends Command {
     private parameters: ValuesCommand;
 
-    private ambientLight: AmbientLight;
+    private light: RectAreaLight | PointLight | SpotLight;
 
     private pane: Pane;
 
@@ -19,18 +19,18 @@ class SetAmbiantLightCommand extends Command {
     constructor(
         editor: Editor,
         parameters: ValuesCommand,
-        ambientLight: AmbientLight,
+        light: RectAreaLight | PointLight | SpotLight,
         pane: Pane,
         paneCtrl: ValuesPaneCtrl,
     ) {
         super(editor);
-        this.type = 'SetAmbiantLightCommand';
-        this.name = 'Set ambientLight Params';
+        this.type = 'SetLightPropertyCommand';
+        this.name = 'Set Light Property';
         this.updatable = true;
         this.parameters = parameters;
         this.pane = pane;
         this.paneCtrl = paneCtrl;
-        this.ambientLight = ambientLight;
+        this.light = light;
     }
 
     execute(): void {
@@ -48,10 +48,10 @@ class SetAmbiantLightCommand extends Command {
 
         this.paneCtrl.history = false;
         if (name === 'color') {
-            this.ambientLight.color.setHex(Number(value));
+            this.light.color.setHex(Number(value));
             this.paneCtrl.value = `#${new Color(value).getHexString()}`;
         } else {
-            this.ambientLight[name] = Number(value);
+            this.light[name] = Number(value);
             this.paneCtrl.value = value;
         }
 
@@ -61,4 +61,4 @@ class SetAmbiantLightCommand extends Command {
     }
 }
 
-export { SetAmbiantLightCommand };
+export { SetLightPropertyCommand };

@@ -1,16 +1,17 @@
 import { Command } from 'src/Command';
 import { emitSnapshot } from 'src/commons/Events';
 import type Editor from 'src/Editor';
+import LightModel from 'src/matcapEditor/LightModel';
 import type { ValuesCommand, ValuesPaneCtrl } from 'src/types/PanesTypes';
-import { Color, type AmbientLight } from 'three';
+import type { Vector3 } from 'three';
 import type { Pane } from 'tweakpane';
 
-type PropertiesAllowed = 'intensity' | 'color';
-type SelectedTypes = number | Color;
-class SetAmbiantLightCommand extends Command {
+type PropertiesAllowed = 'distance' | 'lookAtTarget' | 'front';
+type SelectedTypes = number | boolean | Vector3;
+class SetLightModelPropertyCommand extends Command {
     private parameters: ValuesCommand;
 
-    private ambientLight: AmbientLight;
+    private lightModel: LightModel;
 
     private pane: Pane;
 
@@ -19,18 +20,18 @@ class SetAmbiantLightCommand extends Command {
     constructor(
         editor: Editor,
         parameters: ValuesCommand,
-        ambientLight: AmbientLight,
+        lightModel: LightModel,
         pane: Pane,
         paneCtrl: ValuesPaneCtrl,
     ) {
         super(editor);
-        this.type = 'SetAmbiantLightCommand';
-        this.name = 'Set ambientLight Params';
+        this.type = 'SetLightModelPropertyCommand';
+        this.name = 'Set LightModel Property';
         this.updatable = true;
         this.parameters = parameters;
         this.pane = pane;
         this.paneCtrl = paneCtrl;
-        this.ambientLight = ambientLight;
+        this.lightModel = lightModel;
     }
 
     execute(): void {
@@ -45,15 +46,25 @@ class SetAmbiantLightCommand extends Command {
 
     apply(value: SelectedTypes): void {
         const name = this.parameters.name as PropertiesAllowed;
-
         this.paneCtrl.history = false;
-        if (name === 'color') {
-            this.ambientLight.color.setHex(Number(value));
-            this.paneCtrl.value = `#${new Color(value).getHexString()}`;
-        } else {
-            this.ambientLight[name] = Number(value);
-            this.paneCtrl.value = value;
+
+        switch (name) {
+            case 'distance':
+                this.lightModel[name] = value as number;
+                LightModel.updateLightDistance(this.lightModel);
+                break;
+
+            case 'front':
+                this.lightModel[name] = value as boolean;
+
+                LightModel.updateLightDistance(this.lightModel);
+                break;
+
+            default:
+                this.lightModel[name] = Boolean(value);
+                break;
         }
+        this.paneCtrl.value = value;
 
         this.pane.refresh();
 
@@ -61,4 +72,4 @@ class SetAmbiantLightCommand extends Command {
     }
 }
 
-export { SetAmbiantLightCommand };
+export { SetLightModelPropertyCommand };

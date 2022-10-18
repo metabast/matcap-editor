@@ -9,6 +9,8 @@
     import type LightModel from 'src/matcapEditor/LightModel';
     import ExportMatcapPaneFolder from 'src/matcapEditor/panes/ExportMatcapPaneFolder';
     import SpherePaneFolder from 'src/matcapEditor/panes/SpherePaneFolder';
+    import CreatePaneFolder from 'src/matcapEditor/panes/CreatePaneFolder';
+    import LightPaneFolder from 'src/matcapEditor/panes/LightPaneFolder';
 
     let store: IMatcapEditorStore;
     MatcapEditorStore.subscribe((newStore) => {
@@ -20,6 +22,8 @@
         pane = new Pane({
             container: document.querySelector('.matcap-editor-pane'),
         });
+
+        CreatePaneFolder.initialize(pane);
 
         pane.addInput(store.create, 'front', {
             label: 'front/back',
@@ -35,9 +39,7 @@
         // SphereMaterialPaneFolder.initialize(pane);
         SpherePaneFolder.initialize(pane);
 
-        currentLightFolder = pane.addFolder({
-            title: 'Current Light',
-        });
+        LightPaneFolder.initialize(pane);
     });
 
     const gui = new Gui({
@@ -47,27 +49,6 @@
         `,
         w: 200,
     });
-
-    gui.add('grid', {
-        values: ['Area', 'Point', 'Spot'],
-        selectable: true,
-        value: store.create.lightType,
-    }).onChange((value) => {
-        store.create.lightType = value;
-    });
-
-    let grCreate = gui.add('group', { name: 'Create', h: 30 });
-    grCreate.add(store.create, 'distance', {
-        min: 0,
-        max: 10,
-        step: 0.1,
-    });
-    grCreate.add(store.create, 'intensity', {
-        min: 0,
-        max: 10,
-        step: 0.1,
-    });
-    grCreate.add(store.create, 'color', { ctype: 'hex' });
 
     let gr = gui.add('group', { name: 'current light', h: 30 });
 
@@ -79,7 +60,6 @@
         }
         currentLight = lightModel;
         gr.clear();
-        currentLightFolder.dispose();
 
         gr.add(lightModel.light, 'intensity', {
             min: 0,
@@ -113,19 +93,6 @@
             }).onChange(emitSnapshot);
         }
         if (lightModel.light.type === 'RectAreaLight') {
-            gr.add(lightModel, 'lookAtTarget');
-
-            gr.add(lightModel.light, 'width', {
-                min: 0,
-                max: 100,
-                step: 0.01,
-            }).onChange(emitSnapshot);
-            gr.add(lightModel.light, 'height', {
-                min: 0,
-                max: 100,
-                step: 0.01,
-            }).onChange(emitSnapshot);
-
             gr.add('number', {
                 name: 'target',
                 value: lightModel.positionTarget.toArray(),

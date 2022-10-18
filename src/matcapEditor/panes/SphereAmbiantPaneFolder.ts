@@ -50,7 +50,7 @@ const generate = (content: MatcapEditorContent) => {
         history: true,
     };
     data.paneContainer.addInput(colorCtrl, 'value', { label: 'color' }).on('change', (event) => {
-        content.ambiantLight.color.set(colorCtrl.value);
+        content.ambiantLight.color.set(colorCtrl.value as Color);
         if (event.last && colorCtrl.history) {
             content.world.editor.execute(
                 new SetAmbiantLightCommand(
@@ -66,7 +66,7 @@ const generate = (content: MatcapEditorContent) => {
                 ),
                 'update material color',
             );
-            colorCtrl.oldValue = new Color(colorCtrl.value).getHex();
+            colorCtrl.oldValue = new Color(colorCtrl.value as Color).getHex();
         }
     });
 };

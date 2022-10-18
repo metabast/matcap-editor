@@ -1,4 +1,4 @@
-import type { FolderApi, TabApi, TabPageApi } from '@tweakpane/core';
+import type { FolderApi, TabApi } from '@tweakpane/core';
 import type { Pane } from 'tweakpane';
 import SphereAmbiantPaneFolder from './SphereAmbiantPaneFolder';
 import SphereMaterialPaneFolder from './SphereMaterialPaneFolder';

@@ -38,9 +38,7 @@ const generate = (content: MatcapEditorContent) => {
                     ),
                     'update material roughness',
                 );
-                roughnessCtrl.oldValue = Number(
-                    content.sphereRenderMaterial.roughness,
-                );
+                roughnessCtrl.oldValue = Number(content.sphereRenderMaterial.roughness);
             }
         });
 
@@ -70,9 +68,7 @@ const generate = (content: MatcapEditorContent) => {
                     ),
                     'update material metalness',
                 );
-                metalnessCtrl.oldValue = Number(
-                    content.sphereRenderMaterial.metalness,
-                );
+                metalnessCtrl.oldValue = Number(content.sphereRenderMaterial.metalness);
             }
         });
 
@@ -81,27 +77,25 @@ const generate = (content: MatcapEditorContent) => {
         oldValue: content.sphereRenderMaterial.color.getHex(),
         history: true,
     };
-    data.paneContainer
-        .addInput(colorObj, 'value', { label: 'color' })
-        .on('change', (event) => {
-            content.sphereRenderMaterial.color.set(colorObj.value);
-            if (event.last && colorObj.history) {
-                content.world.editor.execute(
-                    new SetSphereMaterialParamsCommand(
-                        content.world.editor,
-                        {
-                            name: 'color',
-                            value: content.sphereRenderMaterial.color.getHex(),
-                            oldValue: colorObj.oldValue,
-                        },
-                        data.pane,
-                        colorObj,
-                    ),
-                    'update material color',
-                );
-                colorObj.oldValue = new Color(colorObj.value).getHex();
-            }
-        });
+    data.paneContainer.addInput(colorObj, 'value', { label: 'color' }).on('change', (event) => {
+        content.sphereRenderMaterial.color.set(colorObj.value as Color);
+        if (event.last && colorObj.history) {
+            content.world.editor.execute(
+                new SetSphereMaterialParamsCommand(
+                    content.world.editor,
+                    {
+                        name: 'color',
+                        value: content.sphereRenderMaterial.color.getHex(),
+                        oldValue: colorObj.oldValue,
+                    },
+                    data.pane,
+                    colorObj,
+                ),
+                'update material color',
+            );
+            colorObj.oldValue = new Color(colorObj.value as Color).getHex();
+        }
+    });
 };
 const SphereMaterialPaneFolder = {
     initialize(pane: Pane, paneContainer?: TabPageApi) {
