@@ -33,7 +33,7 @@ class LightModel {
         this.update();
     }
 
-    get screenPosition() {
+    get screenPosition(): Vector2 {
         return this._screenPosition;
     }
 
@@ -49,7 +49,7 @@ class LightModel {
         this._distance = value;
     }
 
-    get sphereFaceNormal() {
+    get sphereFaceNormal(): Vector3 {
         return this._sphereFaceNormal;
     }
 
@@ -57,7 +57,7 @@ class LightModel {
         this._sphereFaceNormal = value;
     }
 
-    get positionOnSphere() {
+    get positionOnSphere(): Vector3 {
         return this._positionOnSphere;
     }
 
@@ -65,7 +65,7 @@ class LightModel {
         this._positionOnSphere = value;
     }
 
-    get positionTarget() {
+    get positionTarget(): Vector3 {
         return this._positionTarget;
     }
 

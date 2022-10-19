@@ -7,6 +7,7 @@ import LightColor from './lightInput/LightColor';
 import LightDistance from './lightInput/LightDistance';
 import LightIntensity from './lightInput/LightIntensity';
 import LightModelBoolean from './lightInput/LightModelBoolean';
+import LightTarget from './lightInput/LightTarget';
 import RectAreaLightSize from './lightInput/RectAreaLightSize';
 
 export type DataLightPaneFolder = {
@@ -44,6 +45,7 @@ const updateCurrentLight = (lightModel: LightModel): void => {
         RectAreaLightSize.addInput(data, 'height');
         LightModelBoolean.addInput(data, 'lookAtTarget');
     }
+    LightTarget.addInput(data);
 };
 
 const LightPaneFolder = {

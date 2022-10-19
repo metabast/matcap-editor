@@ -12,7 +12,7 @@
     // Force reload
 
     if (import.meta.hot) {
-        import.meta.hot.dispose((data) => {
+        import.meta.hot.dispose(() => {
             import.meta.hot.invalidate();
         });
     }
@@ -33,11 +33,7 @@
 
 <CanvasSnapshots />
 <canvas class="webgl" />
-<canvas
-    class="webgl2"
-    width={String(store.sizes.exportDefault)}
-    height={String(store.sizes.exportDefault)}
-/>
+<canvas class="webgl2" width={String(store.sizes.exportDefault)} height={String(store.sizes.exportDefault)} />
 <MatcapLights />
 
 <PreviewProperties />

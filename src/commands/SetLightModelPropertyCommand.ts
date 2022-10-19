@@ -6,7 +6,7 @@ import type { ValuesCommand, ValuesPaneCtrl } from 'src/types/PanesTypes';
 import type { Vector3 } from 'three';
 import type { Pane } from 'tweakpane';
 
-type PropertiesAllowed = 'distance' | 'lookAtTarget' | 'front';
+type PropertiesAllowed = 'distance' | 'lookAtTarget' | 'front' | 'positionTarget';
 type SelectedTypes = number | boolean | Vector3;
 class SetLightModelPropertyCommand extends Command {
     private parameters: ValuesCommand;
@@ -60,8 +60,15 @@ class SetLightModelPropertyCommand extends Command {
                 LightModel.updateLightDistance(this.lightModel);
                 break;
 
+            case 'lookAtTarget':
+                this.lightModel[name] = value as boolean;
+                break;
+
+            case 'positionTarget':
+                this.lightModel[name] = value as Vector3;
+                break;
+
             default:
-                this.lightModel[name] = Boolean(value);
                 break;
         }
         this.paneCtrl.value = value;
