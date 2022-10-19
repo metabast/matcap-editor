@@ -7,10 +7,10 @@
     import { Pane } from 'tweakpane';
     import type { FolderApi } from '@tweakpane/core';
     import type LightModel from 'src/matcapEditor/LightModel';
-    import ExportMatcapPaneFolder from 'src/matcapEditor/panes/ExportMatcapPaneFolder';
     import SpherePaneFolder from 'src/matcapEditor/panes/SpherePaneFolder';
     import CreatePaneFolder from 'src/matcapEditor/panes/CreatePaneFolder';
     import LightPaneFolder from 'src/matcapEditor/panes/LightPaneFolder';
+    import ExportMatcapPaneFolder from 'src/matcapEditor/panes/ExportMatcapPaneFolder';
 
     let store: IMatcapEditorStore;
     MatcapEditorStore.subscribe((newStore) => {
@@ -50,7 +50,7 @@
         w: 200,
     });
 
-    let gr = gui.add('group', { name: 'current light', h: 30 });
+    const gr = gui.add('group', { name: 'current light', h: 30 });
 
     let currentLight: LightModel = null;
 
@@ -73,7 +73,7 @@
         }).onChange(() => {
             events.emit('matcap:light:update:distance', lightModel);
         });
-        let colorObj = {
+        const colorObj = {
             color: lightModel.light.color.getHex(),
         };
         gr.add(colorObj, 'color', { ctype: 'hex' }).onChange(() => {

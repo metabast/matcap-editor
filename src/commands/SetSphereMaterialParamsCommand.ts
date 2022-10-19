@@ -17,6 +17,7 @@ export type SphereMaterialParams = {
     oldValue: number | string | Color;
 };
 type PropertiesAllowed = 'roughness' | 'metalness' | 'color';
+type SelectedTypes = number | Color;
 class SetSphereMaterialParamsCommand extends Command {
     private world: MatcapEditorWorld;
 
@@ -41,16 +42,16 @@ class SetSphereMaterialParamsCommand extends Command {
     }
 
     execute(): void {
-        this.apply(this.parameters.value);
+        this.apply(this.parameters.value as SelectedTypes);
         emitSnapshot();
     }
 
     undo(): void {
-        this.apply(this.parameters.oldValue);
+        this.apply(this.parameters.oldValue as SelectedTypes);
         emitSnapshot();
     }
 
-    apply(value: number | string | Color): void {
+    apply(value: SelectedTypes): void {
         const name = this.parameters.name as PropertiesAllowed;
 
         this.paneCtrl.history = false;

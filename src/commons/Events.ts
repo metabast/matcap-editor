@@ -10,7 +10,7 @@ class Events {
         this.emitter = createNanoEvents();
     }
 
-    on(event: string, callback: (args) => void): void {
+    on(event: string, callback: (...args: any) => void): void {
         this.emitter.on(event, callback);
     }
 
@@ -26,7 +26,7 @@ class Events {
 const events = new Events();
 export default events;
 
-const emitSnapshot = debounce((value) => {
+const emitSnapshot = debounce(() => {
     events.emit('matcap:snapshot');
 }, debounceDelay);
 
