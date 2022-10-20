@@ -1,12 +1,9 @@
 <script lang="ts">
-    import { Gui } from 'uil';
     import { MatcapEditorStore, type IMatcapEditorStore } from 'src/store';
-    import events, { emitSnapshot } from 'src/commons/Events';
+    import events from 'src/commons/Events';
 
     import { onMount } from 'svelte';
     import { Pane } from 'tweakpane';
-    import type { FolderApi } from '@tweakpane/core';
-    import type LightModel from 'src/matcapEditor/LightModel';
     import SpherePaneFolder from 'src/matcapEditor/panes/SpherePaneFolder';
     import CreatePaneFolder from 'src/matcapEditor/panes/CreatePaneFolder';
     import LightPaneFolder from 'src/matcapEditor/panes/LightPaneFolder';
@@ -16,7 +13,6 @@
     MatcapEditorStore.subscribe((newStore) => {
         store = newStore;
     });
-    let currentLightFolder: FolderApi;
     let pane: Pane;
     onMount(() => {
         pane = new Pane({
@@ -42,116 +38,17 @@
         LightPaneFolder.initialize(pane);
     });
 
-    const gui = new Gui({
-        css: `
-            top: 202px;
-            right: 0px;
-        `,
-        w: 200,
-    });
-
-    const gr = gui.add('group', { name: 'current light', h: 30 });
-
-    let currentLight: LightModel = null;
-
-    const updateCurrentLight = (lightModel: LightModel) => {
-        if (currentLight === lightModel) {
-            return;
-        }
-        currentLight = lightModel;
-        gr.clear();
-
-        gr.add(lightModel.light, 'intensity', {
-            min: 0,
-            max: 10,
-            step: 0.01,
-        }).onChange(emitSnapshot);
-        gr.add(lightModel, 'distance', {
-            min: 0,
-            max: 10,
-            step: 0.01,
-        }).onChange(() => {
-            events.emit('matcap:light:update:distance', lightModel);
-        });
-        const colorObj = {
-            color: lightModel.light.color.getHex(),
-        };
-        gr.add(colorObj, 'color', { ctype: 'hex' }).onChange(() => {
-            lightModel.light.color.setHex(colorObj.color);
-            emitSnapshot();
-        });
-        if (lightModel.light.type === 'PointLight') {
-            gr.add(lightModel.light, 'distance', {
-                min: 0,
-                max: 10,
-                step: 0.01,
-            }).onChange(emitSnapshot);
-            gr.add(lightModel.light, 'decay', {
-                min: 0,
-                max: 100,
-                step: 0.01,
-            }).onChange(emitSnapshot);
-        }
-        if (lightModel.light.type === 'RectAreaLight') {
-            gr.add('number', {
-                name: 'target',
-                value: lightModel.positionTarget.toArray(),
-                step: 0.01,
-                h: 25,
-            }).onChange((value) => {
-                lightModel.positionTargetX = value[0];
-                lightModel.positionTargetY = value[1];
-                lightModel.positionTargetZ = value[2];
-                emitSnapshot();
-            });
-        }
-        if (lightModel.light.type === 'SpotLight') {
-            gr.add(lightModel.light, 'angle', {
-                min: 0,
-                max: Math.PI / 2,
-                step: 0.001,
-                precision: 3,
-            }).onChange(emitSnapshot);
-
-            gr.add(lightModel.light, 'penumbra', {
-                min: 0,
-                max: 1,
-                step: 0.001,
-                precision: 3,
-            }).onChange(emitSnapshot);
-
-            gr.add('number', {
-                name: 'target',
-                value: [0, 0, 0],
-                step: 0.01,
-                h: 25,
-            }).onChange((value) => {
-                console.log(value);
-                lightModel.positionTargetX = value[0];
-                lightModel.positionTargetY = value[1];
-                lightModel.positionTargetZ = value[2];
-                emitSnapshot();
-            });
-        }
-
-        gr.add('button', { name: 'delete', title: 'delete' }).onChange(() => {
-            events.emit('matcap:light:delete', lightModel);
-            gr.clear();
-        });
-
-        gr.open();
-    };
-
-    events.on('matcap:light:update:current', updateCurrentLight);
+    $: getStyles = () => `
+        top: ${store.sizes.view + 2}px;
+    `;
 </script>
 
-<div class="matcap-editor-pane" />
+<div class="matcap-editor-pane" style={getStyles()} />
 
 <style>
     .matcap-editor-pane {
         position: fixed;
-        right: 200px;
-        top: 0;
+        right: 0px;
         z-index: 1;
         user-select: none;
     }

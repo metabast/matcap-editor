@@ -9,6 +9,7 @@ import LightIntensity from './lightInput/LightIntensity';
 import LightModelBoolean from './lightInput/LightModelBoolean';
 import LightTarget from './lightInput/LightTarget';
 import RectAreaLightSize from './lightInput/RectAreaLightSize';
+import SpotLightInput from './lightInput/SpotLightInput';
 
 export type DataLightPaneFolder = {
     pane: Pane;
@@ -44,8 +45,17 @@ const updateCurrentLight = (lightModel: LightModel): void => {
         RectAreaLightSize.addInput(data, 'width');
         RectAreaLightSize.addInput(data, 'height');
         LightModelBoolean.addInput(data, 'lookAtTarget');
+        LightTarget.addInput(data);
     }
-    LightTarget.addInput(data);
+    if (lightModel.light.type === 'SpotLight') {
+        SpotLightInput.addInput(data, 'distance');
+        SpotLightInput.addInput(data, 'angle');
+        SpotLightInput.addInput(data, 'penumbra');
+        SpotLightInput.addInput(data, 'decay');
+    }
+    data.paneContainer.addButton({ title: 'Delete' }).on('click', () => {
+        events.emit('matcap:light:delete', lightModel);
+    });
 };
 
 const LightPaneFolder = {

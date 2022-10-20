@@ -1,19 +1,7 @@
-import {
-    BufferGeometry,
-    Clock,
-    Mesh,
-    OrthographicCamera,
-    Scene,
-    sRGBEncoding,
-    WebGLRenderer,
-} from 'three';
+import { BufferGeometry, Clock, Mesh, OrthographicCamera, Scene, sRGBEncoding, WebGLRenderer } from 'three';
 // eslint-disable-next-line import/extensions
 import { RectAreaLightUniformsLib } from 'three/examples/jsm/lights/RectAreaLightUniformsLib.js';
-import {
-    computeBoundsTree,
-    disposeBoundsTree,
-    acceleratedRaycast,
-} from 'three-mesh-bvh';
+import { computeBoundsTree, disposeBoundsTree, acceleratedRaycast } from 'three-mesh-bvh';
 import type Editor from 'src/Editor';
 import StatsSingle from '../commons/Stats';
 import MatcapEditorContent from './MatcapEditorContent';
@@ -65,23 +53,13 @@ class MatcapEditorWorld {
         this.scene = new Scene();
         RectAreaLightUniformsLib.init();
         this.halfSize = 0.5;
-        this.camera = new OrthographicCamera(
-            -this.halfSize,
-            this.halfSize,
-            this.halfSize,
-            -this.halfSize,
-            0.5,
-            200,
-        );
+        this.camera = new OrthographicCamera(-this.halfSize, this.halfSize, this.halfSize, -this.halfSize, 0.5, 200);
         this.renderer = new WebGLRenderer({
             canvas: this.canvas,
             antialias: true,
         });
         this.renderer.outputEncoding = sRGBEncoding;
-        this.renderer.setSize(
-            store.sizes.exportDefault,
-            store.sizes.exportDefault,
-        );
+        this.renderer.setSize(store.sizes.exportDefault, store.sizes.exportDefault);
         this.renderer.setPixelRatio(1);
 
         this.camera.position.set(0, 0, 1);
