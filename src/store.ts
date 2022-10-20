@@ -39,14 +39,16 @@ export interface IMatcapEditorStore {
     lights: LightModel[];
     isUILightVisible: boolean;
 }
+
+const viewSize = 256;
 export const MatcapEditorStore = writable<IMatcapEditorStore>({
     sizes: {
-        view: 200,
+        view: viewSize,
         exportDefault: 256,
         exportRatios: [0.5, 1, 2, 4],
         exportRatio: 1,
     },
-    ratio: 256 / 200,
+    ratio: 256 / viewSize,
     material: {
         roughness: 0,
         metalness: 1,

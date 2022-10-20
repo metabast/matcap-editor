@@ -29,11 +29,16 @@
         const worldEditor = new MatcapEditorWorld(editor);
         worldEditor.init();
     });
+
+    $: getStyles = () => `
+            width: ${store.sizes.view}px!important;
+            height: ${store.sizes.view}px!important;
+        `;
 </script>
 
 <CanvasSnapshots />
 <canvas class="webgl" />
-<canvas class="webgl2" width={String(store.sizes.exportDefault)} height={String(store.sizes.exportDefault)} />
+<canvas class="webgl2" width={String(store.sizes.view)} height={String(store.sizes.view)} style={getStyles()} />
 <MatcapLights />
 
 <PreviewProperties />
@@ -49,8 +54,6 @@
         right: 0;
         outline: none;
         background-color: black;
-        width: 200px !important;
-        height: 200px !important;
         border: 1px solid white;
     }
 </style>
