@@ -42,6 +42,7 @@ class MatcapPreviewContent {
 
     private onSnapshotsReady = (snapshots: { matcap: string; refreshNb: number }): void => {
         this.matcapLoader.load(snapshots.matcap, (texture: Texture) => {
+            texture.encoding = sRGBEncoding;
             if (snapshots.refreshNb === 1) {
                 store.roughness = 0;
                 store.metalness = 1;
