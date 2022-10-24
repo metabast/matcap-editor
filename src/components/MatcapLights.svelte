@@ -40,6 +40,10 @@
         events.emit('matcap:light:startMoving', lightModel);
     };
 
+    events.on('matcap:ui:light:update:current', (lightModel: LightModel) => {
+        currentLight = lightModel;
+    });
+
     events.on('matcap:editor:light:added', lightAdded);
 </script>
 

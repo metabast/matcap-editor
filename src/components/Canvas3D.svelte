@@ -1,7 +1,5 @@
 <script lang="ts">
     import { onMount } from 'svelte'; // eslint-disable-line
-    import MatcapPreviewWorld from '../matcapPreview/MatcapPreviewWorld';
-    import MatcapEditorWorld from '../matcapEditor/MatcapEditorWorld';
     import { MatcapEditorStore } from '../store';
     import type { IMatcapEditorStore } from '../store';
     import MatcapLights from './MatcapLights.svelte';
@@ -23,11 +21,7 @@
     });
 
     onMount(() => {
-        const editor = new Editor();
-        const worldPreview = new MatcapPreviewWorld(editor);
-        worldPreview.init();
-        const worldEditor = new MatcapEditorWorld(editor);
-        worldEditor.init();
+        new Editor();
     });
 
     $: getStyles = () => `

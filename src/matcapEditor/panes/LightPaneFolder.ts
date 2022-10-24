@@ -1,4 +1,5 @@
 import type { FolderApi } from '@tweakpane/core';
+import { DeleteLightCommand } from 'src/commands/DeleteLightCommand';
 import events from 'src/commons/Events';
 import type { Pane } from 'tweakpane';
 import type LightModel from '../LightModel';
@@ -28,14 +29,18 @@ const generate = (content: MatcapEditorContent) => {
     data.content = content;
 };
 
+const clean = (): void => {
+    data.paneContainer.children.forEach((child) => {
+        child.dispose();
+    });
+};
+
 const updateCurrentLight = (lightModel: LightModel): void => {
     if (data.currentLightModel === lightModel) return;
 
     data.currentLightModel = lightModel;
 
-    data.paneContainer.children.forEach((child) => {
-        child.dispose();
-    });
+    clean();
 
     LightModelBoolean.addInput(data, 'front');
     LightIntensity.addInput(data);
@@ -54,7 +59,8 @@ const updateCurrentLight = (lightModel: LightModel): void => {
         SpotLightInput.addInput(data, 'decay');
     }
     data.paneContainer.addButton({ title: 'Delete' }).on('click', () => {
-        events.emit('matcap:light:delete', lightModel);
+        clean();
+        data.content.world.editor.execute(new DeleteLightCommand(data.content.world.editor, data.currentLightModel));
     });
 };
 

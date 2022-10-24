@@ -16,6 +16,8 @@ import {
 
 import { getScreenPosition } from 'src/commons/VectorHelpers';
 import { AddLightCommand } from 'src/commands';
+import { SetLightModelPositionCommand } from 'src/commands/SetLightPositionCommand';
+import type { LightModelPositions, ValuesCommand } from 'src/types/PanesTypes';
 import events, { emitSnapshot } from '../commons/Events';
 import { MatcapEditorStore, type IMatcapEditorStore } from '../store';
 import type MatcapEditorWorld from './MatcapEditorWorld';
@@ -194,7 +196,7 @@ class MatcapEditorContent {
         lightModel.distance = Number(store.create.distance);
         lightModel.front = Boolean(store.create.front);
 
-        this.world.editor.execute(new AddLightCommand(this.world.editor, lightModel), 'Add light');
+        this.world.editor.execute(new AddLightCommand(this.world.editor, lightModel));
     };
 
     private onPointerMove = (event: PointerEvent) => {
@@ -244,12 +246,24 @@ class MatcapEditorContent {
                 store.sizes.exportDefault,
             );
             this.currentLightModel.screenPosition = screenPosition;
-            this.currentLightModel.positionOnSphere = positionOnSphere;
+            // this.currentLightModel.positionOnSphere = positionOnSphere;
             this.currentLightModel.sphereFaceNormal = this.hitSphere.face.normal.clone();
         }
     };
 
     private onPointerUp = () => {
+        if (this.currentLightModel) {
+            const parameters = {
+                name: 'position',
+                value: this.currentLightModel.positions,
+                oldValue: this.currentLightModel.oldPositions,
+            } as ValuesCommand;
+
+            this.world.editor.execute(
+                new SetLightModelPositionCommand(this.world.editor, parameters, this.currentLightModel),
+            );
+        }
+
         store.isUILightVisible = true;
         MatcapEditorStore.set(store);
         this.currentLightModel = null;
@@ -258,6 +272,7 @@ class MatcapEditorContent {
 
     private onLightStartMoving = (lightModel: LightModel) => {
         this.currentLightModel = lightModel;
+        lightModel.pickCurrentPositions();
     };
 
     private onLightStopMoving = () => {
@@ -267,7 +282,7 @@ class MatcapEditorContent {
 
     private onMaterialUpdate = () => {};
 
-    private deleteLight = (lightModel: LightModel) => {
+    public deleteLight = (lightModel: LightModel) => {
         this._world.scene.remove(lightModel.light);
         store.lights.splice(store.lights.indexOf(lightModel), 1);
         MatcapEditorStore.set(store);

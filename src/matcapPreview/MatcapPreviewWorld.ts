@@ -1,11 +1,5 @@
 import type Editor from 'src/Editor';
-import {
-    Clock,
-    PerspectiveCamera,
-    Scene,
-    sRGBEncoding,
-    WebGLRenderer,
-} from 'three';
+import { Clock, PerspectiveCamera, Scene, sRGBEncoding, WebGLRenderer } from 'three';
 // eslint-disable-next-line import/extensions
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import Resize from '../commons/Resize';
@@ -36,7 +30,6 @@ class MatcapPreviewWorld {
 
     constructor(editor: Editor) {
         this._editor = editor;
-        this._editor.matcapPreviewWorld = this;
     }
 
     public get editor() {
@@ -48,12 +41,7 @@ class MatcapPreviewWorld {
 
         this.canvas = document.querySelector('canvas.webgl');
         this.scene = new Scene();
-        this.camera = new PerspectiveCamera(
-            75,
-            window.innerWidth / window.innerHeight,
-            0.1,
-            1000,
-        );
+        this.camera = new PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
         // scene.background = new THREE.Color(0xffffff);
         this.renderer = new WebGLRenderer({
             canvas: this.canvas,

@@ -1,3 +1,4 @@
+import type { LightModelPositions } from 'src/types/PanesTypes';
 import { PointLight, RectAreaLight, SpotLight, Vector2, Vector3 } from 'three';
 
 type LightType = PointLight | RectAreaLight | SpotLight;
@@ -18,6 +19,8 @@ class LightModel {
     private _lookAtTarget: boolean;
 
     private _front: boolean;
+
+    private _oldPositions: LightModelPositions;
 
     constructor() {
         this._lookAtTarget = true;
@@ -120,6 +123,17 @@ class LightModel {
         else this.setPositionZ(-this.light.position.z);
     }
 
+    get oldPositions(): LightModelPositions {
+        return this._oldPositions;
+    }
+
+    get positions(): LightModelPositions {
+        return {
+            screenPosition: this.screenPosition.clone(),
+            position: this.light.position.clone(),
+        };
+    }
+
     setPositionX(value: number) {
         this._light.position.x = value;
     }
@@ -136,6 +150,13 @@ class LightModel {
         if (this._lookAtTarget) {
             this._light.lookAt(this._positionTarget);
         }
+    }
+
+    pickCurrentPositions() {
+        this._oldPositions = {
+            screenPosition: this.screenPosition.clone(),
+            position: this.light.position.clone(),
+        };
     }
 
     static updateLightDistance = (lightModel: LightModel): void => {

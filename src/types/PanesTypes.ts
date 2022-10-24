@@ -12,8 +12,13 @@ export type ColorPaneCtrl = {
     history: boolean;
 };
 
+export type LightModelPositions = {
+    position: Vector3;
+    screenPosition: Vector2;
+};
+
 export type ValuesCommand = {
     name: string;
-    value: number | string | Color | boolean | Vector2 | Vector3;
-    oldValue: number | string | Color | boolean | Vector2 | Vector3;
+    value: number | string | Color | boolean | Vector2 | Vector3 | LightModelPositions;
+    oldValue: number | string | Color | boolean | Vector2 | Vector3 | LightModelPositions;
 };

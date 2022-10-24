@@ -39,7 +39,6 @@ class MatcapEditorWorld {
 
     constructor(editor: Editor) {
         this._editor = editor;
-        this._editor.matcapEditorWorld = this;
     }
 
     public get editor() {

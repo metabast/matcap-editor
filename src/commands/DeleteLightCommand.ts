@@ -2,24 +2,24 @@ import { Command } from 'src/Command';
 import type Editor from 'src/Editor';
 import type LightModel from 'src/matcapEditor/LightModel';
 
-class AddLightCommand extends Command {
+class DeleteLightCommand extends Command {
     private lightModel: LightModel;
 
     constructor(editor: Editor, lightModel: LightModel) {
         super(editor);
-        this.type = 'AddLightCommand';
-        this.name = 'Add Light';
+        this.type = 'DeleteLightCommand';
+        this.name = 'Delete Light';
         this.updatable = true;
         this.lightModel = lightModel;
     }
 
     execute() {
-        this.editor.addLight(this.lightModel);
+        this.editor.deleteLight(this.lightModel);
     }
 
     undo() {
-        this.editor.deleteLight(this.lightModel);
+        this.editor.addLight(this.lightModel);
     }
 }
 
-export { AddLightCommand };
+export { DeleteLightCommand };
