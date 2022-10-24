@@ -32,7 +32,6 @@
 
         ExportMatcapPaneFolder.initialize(pane);
 
-        // SphereMaterialPaneFolder.initialize(pane);
         SpherePaneFolder.initialize(pane);
 
         LightPaneFolder.initialize(pane);

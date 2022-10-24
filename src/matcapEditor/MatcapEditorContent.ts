@@ -173,6 +173,7 @@ class MatcapEditorContent {
         this.lightPosition.add(this.hitSphere.face.normal.clone().multiplyScalar(store.create.distance));
 
         const instanceOfLight = LightFabric.getLightInstance(store.create.lightType);
+
         instanceOfLight.position.x = this.lightPosition.x;
         instanceOfLight.position.y = this.lightPosition.y;
         if (store.create.front) instanceOfLight.position.z = this.lightPosition.z;

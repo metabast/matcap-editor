@@ -2,14 +2,7 @@
 import events from 'src/commons/Events';
 import { MeshMatcapORMMaterial } from 'src/materials/MeshMatcapORMMaterial';
 import { PreviewStore, type IPreviewStore } from 'src/store';
-import {
-    Clock,
-    Mesh,
-    MeshMatcapMaterial,
-    Texture,
-    TextureLoader,
-    TorusKnotGeometry,
-} from 'three';
+import { Clock, Mesh, MeshMatcapMaterial, sRGBEncoding, Texture, TextureLoader, TorusKnotGeometry } from 'three';
 import type MatcapEditorWorld from './MatcapPreviewWorld';
 
 let store: IPreviewStore;
@@ -30,7 +23,6 @@ class MatcapPreviewContent {
         this._world = world;
 
         const torusKnotGeometry = new TorusKnotGeometry(0.5, 0.4, 256, 32);
-        // const torusKnotGeometry = new SphereGeometry(1, 64, 64);
         this.torusKnotMaterial = new MeshMatcapORMMaterial();
         this.torusKnotMaterial.color.setScalar(0);
 
@@ -48,10 +40,7 @@ class MatcapPreviewContent {
         return this._world;
     }
 
-    private onSnapshotsReady = (snapshots: {
-        matcap: string;
-        refreshNb: number;
-    }): void => {
+    private onSnapshotsReady = (snapshots: { matcap: string; refreshNb: number }): void => {
         this.matcapLoader.load(snapshots.matcap, (texture: Texture) => {
             if (snapshots.refreshNb === 1) {
                 store.roughness = 0;
@@ -61,8 +50,7 @@ class MatcapPreviewContent {
             }
             this.torusKnotMaterial.color.setScalar(store.power);
             (this.torusKnot.material as MeshMatcapORMMaterial).matcap = texture;
-            (this.torusKnot.material as MeshMatcapORMMaterial).needsUpdate =
-                true;
+            (this.torusKnot.material as MeshMatcapORMMaterial).needsUpdate = true;
         });
     };
 
@@ -71,14 +59,11 @@ class MatcapPreviewContent {
     };
 
     private onObjectRoughnessUpdate = (): void => {
-        // this.customUniforms.uRoughness.value = store.roughness;
-        (this.torusKnot.material as MeshMatcapORMMaterial).roughness =
-            store.roughness;
+        (this.torusKnot.material as MeshMatcapORMMaterial).roughness = store.roughness;
     };
 
     private onObjectMetalnessUpdate = (): void => {
-        (this.torusKnot.material as MeshMatcapORMMaterial).metalness =
-            store.metalness;
+        (this.torusKnot.material as MeshMatcapORMMaterial).metalness = store.metalness;
     };
 
     // eslint-disable-next-line class-methods-use-this

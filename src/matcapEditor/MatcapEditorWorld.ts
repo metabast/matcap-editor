@@ -59,6 +59,8 @@ class MatcapEditorWorld {
             antialias: true,
         });
         this.renderer.outputEncoding = sRGBEncoding;
+        this.renderer.physicallyCorrectLights = true;
+
         this.renderer.setSize(store.sizes.exportDefault, store.sizes.exportDefault);
         this.renderer.setPixelRatio(1);
 

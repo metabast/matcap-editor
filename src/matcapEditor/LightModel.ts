@@ -24,7 +24,7 @@ class LightModel {
         this._front = true;
     }
 
-    get light() {
+    get light(): LightType {
         return this._light;
     }
 
