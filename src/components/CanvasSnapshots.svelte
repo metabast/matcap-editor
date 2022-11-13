@@ -62,18 +62,11 @@
     style="z-index: {store.showGrid ? '1' : '-1'};"
 />
 
-<code class="store">{store.showGrid}</code>
-
 <style>
     .snapshots {
         position: absolute;
         width: 512px;
         height: 512px;
         bottom: 0;
-    }
-    .store {
-        position: absolute;
-        bottom: 0;
-        right: 0;
     }
 </style>

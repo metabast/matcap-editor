@@ -17,7 +17,7 @@ import {
 import { getScreenPosition } from 'src/commons/VectorHelpers';
 import { AddLightCommand } from 'src/commands';
 import { SetLightModelPositionCommand } from 'src/commands/SetLightPositionCommand';
-import type { LightModelPositions, ValuesCommand } from 'src/types/PanesTypes';
+import type { ValuesCommand } from 'src/types/PanesTypes';
 import events, { emitSnapshot } from '../commons/Events';
 import { MatcapEditorStore, type IMatcapEditorStore } from '../store';
 import type MatcapEditorWorld from './MatcapEditorWorld';
