@@ -1,10 +1,11 @@
 <script lang="ts">
     import { PreviewStore, type IPreviewStore } from 'src/store';
-    import { Gui } from 'uil';
+    import { onMount } from 'svelte';
+    import { Pane } from 'tweakpane';
     import events from '../commons/Events';
 
     if (import.meta.hot) {
-        import.meta.hot.dispose((data) => {
+        import.meta.hot.dispose(() => {
             import.meta.hot.invalidate();
         });
     }
@@ -14,39 +15,55 @@
         store = newStore;
     });
 
-    const gui = new Gui({
-        css: `
-        top: 50px;
-        left: 0px;
-    `,
-        w: 200,
-    });
+    let pane: Pane;
+    onMount(() => {
+        pane = new Pane({
+            container: document.querySelector('.matcap-preview-pane'),
+            title: 'Preview',
+        });
 
-    let grObjects = gui.add('group', { name: 'Objects', h: 30 });
-    grObjects
-        .add(store, 'power', { min: 0, max: 10, h: 25 })
-        .onChange((value) => {
+        pane.addInput(store, 'power', {
+            min: 0,
+            max: 10,
+            step: 0.01,
+        }).on('change', () => {
             events.emit('object:power:update');
         });
 
-    grObjects
-        .add(store, 'roughness', { min: 0, max: 1, h: 25 })
-        .onChange((value) => {
-            store.metalness = 1 - value;
+        pane.addInput(store, 'roughness', {
+            min: 0,
+            max: 1,
+            step: 0.01,
+        }).on('change', (event) => {
+            store.metalness = 1 - event.value;
             events.emit('object:roughness:update');
-        })
-        .listen();
-    grObjects
-        .add(store, 'metalness', { min: 0, max: 1, h: 25 })
-        .onChange((value) => {
-            store.roughness = 1 - value;
-            events.emit('object:roughness:update');
-        })
-        .listen();
+            pane.refresh();
+        });
 
-    grObjects.add(store, 'showGrid').onChange((value) => {
-        PreviewStore.set(store);
+        pane.addInput(store, 'metalness', {
+            min: 0,
+            max: 1,
+            step: 0.01,
+        }).on('change', (event) => {
+            store.roughness = 1 - event.value;
+            events.emit('object:metalness:update');
+            pane.refresh();
+        });
+
+        pane.addInput(store, 'showGrid').on('change', () => {
+            PreviewStore.set(store);
+        });
     });
-
-    grObjects.open();
 </script>
+
+<div class="matcap-preview-pane" />
+
+<style>
+    .matcap-preview-pane {
+        position: fixed;
+        left: 0px;
+        top: 50px;
+        z-index: 1;
+        user-select: none;
+    }
+</style>
