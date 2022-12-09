@@ -1,10 +1,14 @@
 import { SetLightModelPropertyCommand } from 'src/commands/SetLightModelPropertyCommand';
+import events from 'src/commons/Events';
 import LightModel from 'src/matcapEditor/LightModel';
 import type { ValuesPaneCtrl } from 'src/types/PanesTypes';
 import type { DataLightPaneFolder } from '../LightPaneFolder';
 
 const LightModelBoolean = {
-    addInput(data: DataLightPaneFolder, propertyName: 'front' | 'lookAtTarget') {
+    addInput(
+        data: DataLightPaneFolder,
+        propertyName: 'front' | 'lookAtTarget',
+    ) {
         const paneCtrl: ValuesPaneCtrl = {
             value: Boolean(data.currentLightModel[propertyName]),
             oldValue: Boolean(data.currentLightModel[propertyName]),
@@ -35,9 +39,22 @@ const LightModelBoolean = {
                         ),
                         `update light model ${propertyName}`,
                     );
-                    paneCtrl.oldValue = Boolean(data.currentLightModel[propertyName]);
+                    paneCtrl.oldValue = Boolean(
+                        data.currentLightModel[propertyName],
+                    );
                 }
             });
+
+        events.on('light:change', (payload) => {
+            console.log(propertyName);
+            // paneCtrl.history = false;
+            // console.log
+            if (payload.propertyName === propertyName) {
+                paneCtrl.value = payload.value;
+                data.pane.refresh();
+            }
+            // paneCtrl.history = true;
+        });
     },
 };
 

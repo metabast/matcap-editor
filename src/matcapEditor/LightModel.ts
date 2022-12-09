@@ -161,12 +161,18 @@ class LightModel {
 
     static updateLightDistance = (lightModel: LightModel): void => {
         const lightPosition = lightModel.positionOnSphere.clone();
-        lightPosition.add(lightModel.sphereFaceNormal.clone().multiplyScalar(lightModel.distance));
+        lightPosition.add(
+            lightModel.sphereFaceNormal
+                .clone()
+                .multiplyScalar(lightModel.distance),
+        );
         lightModel.setPositionX(lightPosition.x);
         lightModel.setPositionY(lightPosition.y);
 
         if (lightModel.front) lightModel.setPositionZ(lightPosition.z);
         else lightModel.setPositionZ(-lightPosition.z);
+        // lightModel.lookAtTarget = true;
+        // lightModel.light.lookAt(lightModel.positionTarget);
     };
 }
 

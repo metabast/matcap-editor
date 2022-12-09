@@ -1,12 +1,16 @@
 import { Command } from 'src/Command';
-import { emitSnapshot } from 'src/commons/Events';
+import events, { emitSnapshot } from 'src/commons/Events';
 import type Editor from 'src/Editor';
 import LightModel from 'src/matcapEditor/LightModel';
 import type { ValuesCommand, ValuesPaneCtrl } from 'src/types/PanesTypes';
 import type { Vector3 } from 'three';
 import type { Pane } from 'tweakpane';
 
-type PropertiesAllowed = 'distance' | 'lookAtTarget' | 'front' | 'positionTarget';
+type PropertiesAllowed =
+    | 'distance'
+    | 'lookAtTarget'
+    | 'front'
+    | 'positionTarget';
 type SelectedTypes = number | boolean | Vector3;
 class SetLightModelPropertyCommand extends Command {
     private parameters: ValuesCommand;
@@ -56,8 +60,14 @@ class SetLightModelPropertyCommand extends Command {
 
             case 'front':
                 this.lightModel[name] = value as boolean;
-
                 LightModel.updateLightDistance(this.lightModel);
+                // this.lightModel.lookAtTarget = true;
+                // console.log(this.paneCtrl);
+                events.emit('light:change', {
+                    value: true,
+                    propertyName: 'lookAtTarget',
+                });
+
                 break;
 
             case 'lookAtTarget':
