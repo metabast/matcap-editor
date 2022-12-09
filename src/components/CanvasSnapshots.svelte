@@ -2,7 +2,6 @@
     import events from 'src/commons/Events';
     import { PreviewStore, type IPreviewStore } from 'src/store';
     import { onMount } from 'svelte';
-    import Canvas3D from './Canvas3D.svelte';
 
     let store: IPreviewStore;
     PreviewStore.subscribe((newStore) => {
@@ -18,7 +17,7 @@
         context = canvas.getContext('2d');
     });
 
-    const onBlobReady = (blob) => {
+    const onBlobReady = (blob: Blob) => {
         const url = URL.createObjectURL(blob);
         events.emit('matcap:editor:snapshots:ready', {
             matcap: url,
@@ -63,18 +62,11 @@
     style="z-index: {store.showGrid ? '1' : '-1'};"
 />
 
-<code class="store">{store.showGrid}</code>
-
 <style>
     .snapshots {
         position: absolute;
         width: 512px;
         height: 512px;
         bottom: 0;
-    }
-    .store {
-        position: absolute;
-        bottom: 0;
-        right: 0;
     }
 </style>

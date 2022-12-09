@@ -1,15 +1,11 @@
 <script lang="ts">
     import { MatcapEditorStore, type IMatcapEditorStore } from 'src/store';
     import events from 'src/commons/Events';
-    import { Light } from 'three';
     import type LightModel from 'src/matcapEditor/LightModel';
     import MatcapProperties from './MatcapProperties.svelte';
 
-    let getCSSPosition;
-    let getMatcapLightsStyle;
-
     if (import.meta.hot) {
-        import.meta.hot.dispose((data) => {
+        import.meta.hot.dispose(() => {
             import.meta.hot.invalidate();
         });
     }
@@ -18,7 +14,7 @@
         store = newStore;
     });
 
-    let currentLight = null;
+    let currentLight: LightModel = null;
 
     const lightAdded = (lightModel: LightModel): void => {
         currentLight = lightModel;
@@ -34,19 +30,19 @@
     $: getCSSPosition = (lightModel: LightModel) => `
             left:${lightModel.screenPosition.x / store.ratio - 6}px;
             top:${lightModel.screenPosition.y / store.ratio - 6}px;
-            border-color:${
-                lightModel.light.uuid === currentLight.light.uuid
-                    ? '#00ffff'
-                    : '#ffffff'
-            };
+            border-color:${lightModel.light.uuid === currentLight.light.uuid ? '#00ffff' : '#ffffff'};
         `;
 
-    const onMouseDown = (event, lightModel): void => {
+    const onMouseDown = (lightModel: LightModel): void => {
         store.isUILightVisible = false;
         currentLight = lightModel;
         events.emit('matcap:light:update:current', lightModel);
         events.emit('matcap:light:startMoving', lightModel);
     };
+
+    events.on('matcap:ui:light:update:current', (lightModel: LightModel) => {
+        currentLight = lightModel;
+    });
 
     events.on('matcap:editor:light:added', lightAdded);
 </script>
@@ -54,12 +50,8 @@
 <div>
     {#if store.isUILightVisible}
         <div id="matcapLights" style={getMatcapLightsStyle()}>
-            {#each store.lights as light, index}
-                <div
-                    class="light"
-                    style={getCSSPosition(light)}
-                    on:mousedown={(event) => onMouseDown(event, light)}
-                />
+            {#each store.lights as light}
+                <div class="light" style={getCSSPosition(light)} on:mousedown={() => onMouseDown(light)} />
             {/each}
         </div>
     {/if}

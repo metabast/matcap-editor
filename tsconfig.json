@@ -15,12 +15,12 @@
         "checkJs": true,
         "paths": {
             "src/*": ["./src/*"]
-        }
+        },
+        "lib": ["DOM", "ES2015"],
+        "moduleResolution": "node",
+        "noImplicitAny": true,
+        "noUnusedLocals": true,
+        "noUnusedParameters": true
     },
-    "include": [
-        "src/**/*.d.ts",
-        "src/**/*.ts",
-        "src/**/*.js",
-        "src/**/*.svelte"
-    ]
+    "include": ["src/**/*.d.ts", "src/**/*.ts", "src/**/*.js", "src/**/*.svelte"]
 }

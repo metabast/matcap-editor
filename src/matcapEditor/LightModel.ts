@@ -1,13 +1,14 @@
+import type { LightModelPositions } from 'src/types/PanesTypes';
 import { PointLight, RectAreaLight, SpotLight, Vector2, Vector3 } from 'three';
 
 type LightType = PointLight | RectAreaLight | SpotLight;
 
 class LightModel {
-    private _light: LightType = undefined;
+    private _light: LightType;
 
     private _screenPosition: Vector2 = new Vector2();
 
-    private _distance = 0;
+    private _distance: number;
 
     private _sphereFaceNormal: Vector3 = undefined;
 
@@ -15,9 +16,18 @@ class LightModel {
 
     private _positionTarget: Vector3 = new Vector3(0, 0, 0);
 
-    private _lookAtTarget = true;
+    private _lookAtTarget: boolean;
 
-    get light() {
+    private _front: boolean;
+
+    private _oldPositions: LightModelPositions;
+
+    constructor() {
+        this._lookAtTarget = true;
+        this._front = true;
+    }
+
+    get light(): LightType {
         return this._light;
     }
 
@@ -26,7 +36,7 @@ class LightModel {
         this.update();
     }
 
-    get screenPosition() {
+    get screenPosition(): Vector2 {
         return this._screenPosition;
     }
 
@@ -34,7 +44,7 @@ class LightModel {
         this._screenPosition = value;
     }
 
-    get distance() {
+    get distance(): number {
         return this._distance;
     }
 
@@ -42,7 +52,7 @@ class LightModel {
         this._distance = value;
     }
 
-    get sphereFaceNormal() {
+    get sphereFaceNormal(): Vector3 {
         return this._sphereFaceNormal;
     }
 
@@ -50,7 +60,7 @@ class LightModel {
         this._sphereFaceNormal = value;
     }
 
-    get positionOnSphere() {
+    get positionOnSphere(): Vector3 {
         return this._positionOnSphere;
     }
 
@@ -58,7 +68,7 @@ class LightModel {
         this._positionOnSphere = value;
     }
 
-    get positionTarget() {
+    get positionTarget(): Vector3 {
         return this._positionTarget;
     }
 
@@ -90,7 +100,7 @@ class LightModel {
         }
     }
 
-    get lookAtTarget() {
+    get lookAtTarget(): boolean {
         return this._lookAtTarget;
     }
 
@@ -101,6 +111,27 @@ class LightModel {
         } else {
             this._light.rotation.set(0, 0, 0);
         }
+    }
+
+    get front(): boolean {
+        return this._front;
+    }
+
+    set front(value: boolean) {
+        this._front = value;
+        if (this.front) this.setPositionZ(this.light.position.z);
+        else this.setPositionZ(-this.light.position.z);
+    }
+
+    get oldPositions(): LightModelPositions {
+        return this._oldPositions;
+    }
+
+    get positions(): LightModelPositions {
+        return {
+            screenPosition: this.screenPosition.clone(),
+            position: this.light.position.clone(),
+        };
     }
 
     setPositionX(value: number) {
@@ -120,6 +151,29 @@ class LightModel {
             this._light.lookAt(this._positionTarget);
         }
     }
+
+    pickCurrentPositions() {
+        this._oldPositions = {
+            screenPosition: this.screenPosition.clone(),
+            position: this.light.position.clone(),
+        };
+    }
+
+    static updateLightDistance = (lightModel: LightModel): void => {
+        const lightPosition = lightModel.positionOnSphere.clone();
+        lightPosition.add(
+            lightModel.sphereFaceNormal
+                .clone()
+                .multiplyScalar(lightModel.distance),
+        );
+        lightModel.setPositionX(lightPosition.x);
+        lightModel.setPositionY(lightPosition.y);
+
+        if (lightModel.front) lightModel.setPositionZ(lightPosition.z);
+        else lightModel.setPositionZ(-lightPosition.z);
+        // lightModel.lookAtTarget = true;
+        // lightModel.light.lookAt(lightModel.positionTarget);
+    };
 }
 
 export default LightModel;

@@ -9,13 +9,15 @@ import {
     PlaneGeometry,
     Raycaster,
     SphereGeometry,
-    SpotLight,
     Vector2,
     Vector3,
     type Intersection,
 } from 'three';
 
 import { getScreenPosition } from 'src/commons/VectorHelpers';
+import { AddLightCommand } from 'src/commands';
+import { SetLightModelPositionCommand } from 'src/commands/SetLightPositionCommand';
+import type { ValuesCommand } from 'src/types/PanesTypes';
 import events, { emitSnapshot } from '../commons/Events';
 import { MatcapEditorStore, type IMatcapEditorStore } from '../store';
 import type MatcapEditorWorld from './MatcapEditorWorld';
@@ -50,14 +52,9 @@ class MatcapEditorContent {
 
     private meshesIntersectable: Array<Mesh> = [];
 
-    private ambiantLight: AmbientLight = new AmbientLight(0x000000);
+    private _ambiantLight: AmbientLight = new AmbientLight(0x000000);
 
-    private _arrowHelper: ArrowHelper = new ArrowHelper(
-        new Vector3(),
-        new Vector3(),
-        1,
-        '#ff0000',
-    );
+    private _arrowHelper: ArrowHelper = new ArrowHelper(new Vector3(), new Vector3(), 1, '#ff0000');
 
     private currentLightModel: LightModel;
 
@@ -74,14 +71,7 @@ class MatcapEditorContent {
 
         const halfSize = 0.3;
 
-        this._cameraSnapshot = new OrthographicCamera(
-            -halfSize,
-            halfSize,
-            halfSize,
-            -halfSize,
-            0.5,
-            200,
-        );
+        this._cameraSnapshot = new OrthographicCamera(-halfSize, halfSize, halfSize, -halfSize, 0.5, 200);
         this._cameraSnapshot.position.set(0, 0, 1);
 
         const planeGeometry = new PlaneGeometry(2, 2);
@@ -90,40 +80,23 @@ class MatcapEditorContent {
         planeMaterial.opacity = 0;
         this.plane = new Mesh(planeGeometry, planeMaterial);
 
-        const sphereRenderGeometry = new SphereGeometry(
-            0.3,
-            data.widthSegments,
-            data.heightSegments,
-        );
+        const sphereRenderGeometry = new SphereGeometry(0.3, data.widthSegments, data.heightSegments);
         this._sphereRenderMaterial = new MeshPhysicalMaterial({
             color: 0xffffff,
         });
         this._sphereRenderMaterial.roughness = store.material.roughness;
         this._sphereRenderMaterial.metalness = store.material.metalness;
-        this.sphereRender = new Mesh(
-            sphereRenderGeometry,
-            this._sphereRenderMaterial,
-        );
 
-        const sphereNormalGeometry = new SphereGeometry(
-            0.4,
-            data.widthSegments,
-            data.heightSegments,
-        );
+        this.sphereRender = new Mesh(sphereRenderGeometry, this._sphereRenderMaterial);
+
+        const sphereNormalGeometry = new SphereGeometry(0.4, data.widthSegments, data.heightSegments);
         const sphereNormalMaterial = new MeshNormalMaterial({
             opacity: 0,
             transparent: true,
         });
-        this.sphereNormal = new Mesh(
-            sphereNormalGeometry,
-            sphereNormalMaterial,
-        );
+        this.sphereNormal = new Mesh(sphereNormalGeometry, sphereNormalMaterial);
 
-        this.meshesIntersectable = [
-            this.plane,
-            this.sphereRender,
-            this.sphereNormal,
-        ];
+        this.meshesIntersectable = [this.plane, this.sphereRender, this.sphereNormal];
 
         this.sphereRender.geometry.computeBoundsTree();
         this.sphereNormal.geometry.computeBoundsTree();
@@ -132,9 +105,9 @@ class MatcapEditorContent {
         this._world.scene.add(this.sphereRender);
         this._world.scene.add(this.sphereNormal);
 
-        this.ambiantLight.intensity = store.ambiant.intensity;
-        this.ambiantLight.color = store.ambiant.color;
-        this._world.scene.add(this.ambiantLight);
+        this._ambiantLight.intensity = store.ambiant.intensity;
+        this._ambiantLight.color = store.ambiant.color;
+        this._world.scene.add(this._ambiantLight);
 
         this._world.scene.add(this._arrowHelper);
 
@@ -145,14 +118,10 @@ class MatcapEditorContent {
 
         events.on('matcap:ambiant:update', this.onAmbiantChanged);
 
-        events.on(
-            'matcap:light:update:distance',
-            MatcapEditorContent.updateLightDistance,
-        );
         events.on('matcap:light:delete', this.deleteLight);
         events.on('matcap:light:startMoving', this.onLightStartMoving);
         events.on('matcap:light:stopMoving', this.onLightStopMoving);
-
+        events.on('matcap:material:update', this.onMaterialUpdate);
         this._world.canvas.addEventListener('pointerup', this.onPointerUp);
 
         events.emit('matcap:content:ready', this);
@@ -174,9 +143,14 @@ class MatcapEditorContent {
         return this._cameraSnapshot;
     }
 
+    public get ambiantLight(): AmbientLight {
+        return this._ambiantLight;
+    }
+
     private onAmbiantChanged = () => {
-        this.ambiantLight.intensity = store.ambiant.intensity;
-        this.ambiantLight.color = store.ambiant.color;
+        this._ambiantLight.intensity = store.ambiant.intensity;
+        this._ambiantLight.color = store.ambiant.color;
+        RenderManager.snapshot();
         emitSnapshot();
     };
 
@@ -188,14 +162,8 @@ class MatcapEditorContent {
 
     private onMouseOut = () => {
         this._arrowHelper.visible = false;
-        this._world.canvas.removeEventListener(
-            'pointermove',
-            this.onPointerMove,
-        );
-        this._world.canvas.removeEventListener(
-            'pointerdown',
-            this.onPointerDown,
-        );
+        this._world.canvas.removeEventListener('pointermove', this.onPointerMove);
+        this._world.canvas.removeEventListener('pointerdown', this.onPointerDown);
     };
 
     private onPointerDown = () => {
@@ -204,29 +172,17 @@ class MatcapEditorContent {
         const positionOnSphere = this.hitSphere.point.clone();
 
         this.lightPosition = this.hitSphere.point.clone();
-        this.lightPosition.add(
-            this.hitSphere.face.normal
-                .clone()
-                .multiplyScalar(store.create.distance),
-        );
+        this.lightPosition.add(this.hitSphere.face.normal.clone().multiplyScalar(store.create.distance));
 
-        const instanceOfLight = LightFabric.getLightInstance(
-            store.create.lightType,
-        );
+        const instanceOfLight = LightFabric.getLightInstance(store.create.lightType);
+
         instanceOfLight.position.x = this.lightPosition.x;
         instanceOfLight.position.y = this.lightPosition.y;
-        if (store.create.front)
-            instanceOfLight.position.z = this.lightPosition.z;
+        if (store.create.front) instanceOfLight.position.z = this.lightPosition.z;
         else instanceOfLight.position.z = -this.lightPosition.z;
 
-        this._world.scene.add(instanceOfLight);
-        if (store.create.lightType === 'Spot')
-            this._world.scene.add((instanceOfLight as SpotLight).target);
-
         const screenPosition = getScreenPosition(
-            positionOnSphere
-                .clone()
-                .add(this.hitSphere.face.normal.clone().multiplyScalar(0.1)),
+            positionOnSphere.clone().add(this.hitSphere.face.normal.clone().multiplyScalar(0.1)),
             this._world.camera,
             store.sizes.exportDefault,
             store.sizes.exportDefault,
@@ -238,17 +194,15 @@ class MatcapEditorContent {
         lightModel.positionOnSphere = positionOnSphere;
         lightModel.sphereFaceNormal = this.hitSphere.face.normal.clone();
         lightModel.distance = Number(store.create.distance);
+        lightModel.front = Boolean(store.create.front);
 
-        events.emit('matcap:editor:light:added', lightModel);
-
-        RenderManager.snapshot();
+        this.world.editor.execute(new AddLightCommand(this.world.editor, lightModel));
     };
 
     private onPointerMove = (event: PointerEvent) => {
         this.pointer.set(
             ((event.offsetX * store.ratio) / store.sizes.exportDefault) * 2 - 1,
-            -((event.offsetY * store.ratio) / store.sizes.exportDefault) * 2 +
-                1,
+            -((event.offsetY * store.ratio) / store.sizes.exportDefault) * 2 + 1,
         );
         this.raycaster.setFromCamera(this.pointer, this._world.camera);
         const hits = this.raycaster.intersectObjects(this.meshesIntersectable);
@@ -258,16 +212,10 @@ class MatcapEditorContent {
 
         if (hit.object === this.sphereNormal) {
             this._arrowHelper.setColor('#e5ff00');
-            this.raycaster.set(
-                hit.point,
-                new Vector3().subVectors(new Vector3(), hit.point).normalize(),
-            );
+            this.raycaster.set(hit.point, new Vector3().subVectors(new Vector3(), hit.point).normalize());
         } else if (hit.object === this.plane) {
             this._arrowHelper.setColor('#00ffee');
-            this.raycaster.set(
-                hit.point,
-                new Vector3().subVectors(new Vector3(), hit.point).normalize(),
-            );
+            this.raycaster.set(hit.point, new Vector3().subVectors(new Vector3(), hit.point).normalize());
         }
         const hits2 = this.raycaster.intersectObject(this.sphereRender);
         const hit2 = hits2[0];
@@ -283,38 +231,39 @@ class MatcapEditorContent {
         if (this.currentLightModel) {
             const positionOnSphere = this.hitSphere.point.clone();
             this.lightPosition = positionOnSphere.clone();
-            this.lightPosition.add(
-                this.hitSphere.face.normal
-                    .clone()
-                    .multiplyScalar(this.currentLightModel.distance),
-            );
+            this.lightPosition.add(this.hitSphere.face.normal.clone().multiplyScalar(this.currentLightModel.distance));
             this.currentLightModel.light.position.x = this.lightPosition.x;
             this.currentLightModel.light.position.y = this.lightPosition.y;
-            if (store.create.front)
-                this.currentLightModel.light.position.z = this.lightPosition.z;
-            else
-                this.currentLightModel.light.position.z = -this.lightPosition.z;
+            if (this.currentLightModel.front) this.currentLightModel.light.position.z = this.lightPosition.z;
+            else this.currentLightModel.light.position.z = -this.lightPosition.z;
 
             this.currentLightModel.update();
 
             const screenPosition = getScreenPosition(
-                positionOnSphere
-                    .clone()
-                    .add(
-                        this.hitSphere.face.normal.clone().multiplyScalar(0.1),
-                    ),
+                positionOnSphere.clone().add(this.hitSphere.face.normal.clone().multiplyScalar(0.1)),
                 this._world.camera,
                 store.sizes.exportDefault,
                 store.sizes.exportDefault,
             );
             this.currentLightModel.screenPosition = screenPosition;
-            this.currentLightModel.positionOnSphere = positionOnSphere;
-            this.currentLightModel.sphereFaceNormal =
-                this.hitSphere.face.normal.clone();
+            // this.currentLightModel.positionOnSphere = positionOnSphere;
+            this.currentLightModel.sphereFaceNormal = this.hitSphere.face.normal.clone();
         }
     };
 
     private onPointerUp = () => {
+        if (this.currentLightModel) {
+            const parameters = {
+                name: 'position',
+                value: this.currentLightModel.positions,
+                oldValue: this.currentLightModel.oldPositions,
+            } as ValuesCommand;
+
+            this.world.editor.execute(
+                new SetLightModelPositionCommand(this.world.editor, parameters, this.currentLightModel),
+            );
+        }
+
         store.isUILightVisible = true;
         MatcapEditorStore.set(store);
         this.currentLightModel = null;
@@ -323,6 +272,7 @@ class MatcapEditorContent {
 
     private onLightStartMoving = (lightModel: LightModel) => {
         this.currentLightModel = lightModel;
+        lightModel.pickCurrentPositions();
     };
 
     private onLightStopMoving = () => {
@@ -330,26 +280,13 @@ class MatcapEditorContent {
         RenderManager.snapshot();
     };
 
-    private static updateLightDistance = (lightModel: LightModel): void => {
-        const lightPosition = lightModel.positionOnSphere.clone();
-        lightPosition.add(
-            lightModel.sphereFaceNormal
-                .clone()
-                .multiplyScalar(lightModel.distance),
-        );
-        lightModel.setPositionX(lightPosition.x);
-        lightModel.setPositionY(lightPosition.y);
-        if (store.create.front) lightModel.setPositionZ(lightPosition.z);
-        else lightModel.setPositionZ(-lightPosition.z);
+    private onMaterialUpdate = () => {};
 
-        emitSnapshot();
-    };
-
-    private deleteLight = (lightModel: LightModel) => {
+    public deleteLight = (lightModel: LightModel) => {
         this._world.scene.remove(lightModel.light);
         store.lights.splice(store.lights.indexOf(lightModel), 1);
         MatcapEditorStore.set(store);
-        emitSnapshot();
+        RenderManager.snapshot();
     };
 }
 export default MatcapEditorContent;

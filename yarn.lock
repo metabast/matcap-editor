@@ -338,6 +338,11 @@
   resolved "https://registry.npmjs.org/@tsconfig/svelte/-/svelte-3.0.0.tgz"
   integrity sha512-pYrtLtOwku/7r1i9AMONsJMVYAtk3hzOfiGNekhtq5tYBGA7unMve8RvUclKLMT3PrihvJqUmzsRGh0RP84hKg==
 
+"@tweakpane/core@^1.1.0":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@tweakpane/core/-/core-1.1.0.tgz#a8290a7fbc1e0b63ba6ba87f53f8f21ed0401b65"
+  integrity sha512-vbbiQb+aoFI13lIbE7DJvhHZVE1YlUpGoaAamSpU6wLp2jA3VowS1wfRJBBB8IBCYm7nF6ULl7zfJKxl1XdyfA==
+
 "@types/json-schema@^7.0.5", "@types/json-schema@^7.0.9":
   version "7.0.11"
   resolved "https://registry.npmjs.org/@types/json-schema/-/json-schema-7.0.11.tgz"
@@ -2870,6 +2875,11 @@ tsutils@^3.21.0:
   integrity sha512-mHKK3iUXL+3UF6xL5k0PEhKRUBKPBCv/+RkEOpjRWxxx27KKRBmmA60A9pgOUvMi8GKhRMPEmjBRPzs2W7O1OA==
   dependencies:
     tslib "^1.8.1"
+
+tweakpane@^3.1.0:
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/tweakpane/-/tweakpane-3.1.0.tgz#3ecaecf09c6234e27d0d8f101e16128b65fecc86"
+  integrity sha512-PGAp/LPQdHwzL7/iAW4lV1p9iPQTti7YMjMWO48CoYjvZRS59RmgQnhEGzKzqST1JnmOYmQUjTe8bdhlZRJs5A==
 
 type-check@^0.4.0, type-check@~0.4.0:
   version "0.4.0"
