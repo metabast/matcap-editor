@@ -1,0 +1,64 @@
+@import './base.css';
+
+#app {
+}
+
+.webgl {
+  outline: none;
+  background-color: white;
+}
+
+.webgl2 {
+  position: absolute;
+  top: 0;
+  right: 0;
+  outline: none;
+  background-color: black;
+  border: 1px solid white;
+}
+
+.snapshots {
+  position: absolute;
+  width: 512px;
+  height: 512px;
+  bottom: 0;
+}
+
+#matcapLights {
+  position: absolute;
+  top: 0;
+  right: 0;
+  pointer-events: none;
+}
+.light {
+  position: absolute;
+  background-color: black;
+  width: 10px;
+  height: 10px;
+  border-radius: 10px;
+  touch-action: none;
+  pointer-events: all;
+  border-width: 1px;
+  border-style: solid;
+  mix-blend-mode: difference;
+  cursor: pointer;
+}
+
+.light:hover {
+  background-color: rgba(255, 255, 255, 0.233);
+}
+
+.matcap-editor-pane {
+  position: fixed;
+  right: 0px;
+  z-index: 1;
+  user-select: none;
+}
+
+.matcap-preview-pane {
+  position: fixed;
+  left: 0px;
+  top: 50px;
+  z-index: 1;
+  user-select: none;
+}
