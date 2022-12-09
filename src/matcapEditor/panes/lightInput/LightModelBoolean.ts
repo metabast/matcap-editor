@@ -48,7 +48,6 @@ const LightModelBoolean = {
         events.on('light:change', (payload) => {
             console.log(propertyName);
             // paneCtrl.history = false;
-            // console.log
             if (payload.propertyName === propertyName) {
                 paneCtrl.value = payload.value;
                 data.pane.refresh();
