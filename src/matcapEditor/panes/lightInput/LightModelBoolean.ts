@@ -1,6 +1,6 @@
-import { SetLightModelPropertyCommand } from 'src/commands/SetLightModelPropertyCommand';
-import events from 'src/commons/Events';
-import LightModel from 'src/matcapEditor/LightModel';
+import { SetLightModelPropertyCommand } from '@/commands/SetLightModelPropertyCommand';
+import events from '@/commons/Events';
+import LightModel from '@/matcapEditor/LightModel';
 import type { ValuesPaneCtrl } from '@/ts/types/PanesTypes';
 import type { DataLightPaneFolder } from '../LightPaneFolder';
 

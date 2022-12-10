@@ -1,29 +1,25 @@
 import type { FolderApi } from '@tweakpane/core';
-import events from 'src/commons/Events';
-import { MatcapEditorStore, type IMatcapEditorStore } from 'src/store';
+import events from '@/commons/Events';
 import type { Pane } from 'tweakpane';
+import { computed } from 'vue';
+import { matcapEditorStore } from '@/stores/matcapEditorStore';
 
-let store: IMatcapEditorStore;
-MatcapEditorStore.subscribe((newStore) => {
-    store = newStore;
-});
+const store = computed(() => matcapEditorStore());
 
-const data: { pane: Pane; paneFolder: FolderApi } = {
-    pane: null,
-    paneFolder: null,
-};
+let _pane: Pane;
+let _paneFolder: FolderApi;
 
 const generate = () => {
-    const sizes = store.sizes.exportRatios.map(
-        (value) => value * store.sizes.exportDefault,
+    const sizes = store.value.sizes.exportRatios.map(
+        (value) => value * store.value.sizes.exportDefault,
     );
     const sizesCtrl: { value: number; oldValue: number; history: boolean } = {
-        value: store.sizes.exportDefault,
-        oldValue: store.sizes.exportDefault,
+        value: store.value.sizes.exportDefault,
+        oldValue: store.value.sizes.exportDefault,
         history: true,
     };
 
-    data.paneFolder
+    _paneFolder
         .addInput(sizesCtrl, 'value', {
             label: 'Size',
             options: {
@@ -34,18 +30,18 @@ const generate = () => {
             },
         })
         .on('change', (event) => {
-            store.sizes.exportRatio = event.value / store.sizes.exportDefault;
+            store.value.sizes.exportRatio = event.value / store.value.sizes.exportDefault;
         });
 
-    data.paneFolder.addButton({ title: 'Export' }).on('click', () => {
+    _paneFolder.addButton({ title: 'Export' }).on('click', () => {
         events.emit('matcap:export:png', { exported: true });
     });
 };
 
 const ExportMatcapPaneFolder = {
     initialize(pane: Pane) {
-        data.pane = pane;
-        data.paneFolder = data.pane.addFolder({
+        _pane = pane;
+        _paneFolder = _pane.addFolder({
             title: 'Export',
             expanded: false,
         });

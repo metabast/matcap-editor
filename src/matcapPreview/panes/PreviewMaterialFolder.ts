@@ -1,21 +1,23 @@
 import type { FolderApi } from '@tweakpane/core';
-import events from 'src/commons/Events';
-import { PreviewStore, type IPreviewStore } from 'src/store';
+import events from '@/commons/Events';
 import type { Pane } from 'tweakpane';
+import { computed } from 'vue';
+import { matcapPreviewStore } from '@/stores/matcapPreviewStore';
 
-let store: IPreviewStore;
-PreviewStore.subscribe((newStore) => {
-    store = newStore;
-});
+const store = computed(() => matcapPreviewStore());
 
-const data: { pane: Pane; paneFolder: FolderApi } = {
-    pane: null,
-    paneFolder: null,
-};
+if (import.meta.hot) {
+    import.meta.hot.dispose(() => {
+        import.meta.hot?.invalidate();
+    });
+}
+
+let _pane: Pane;
+let _paneFolder: FolderApi;
 
 const generate = () => {
-    data.paneFolder
-        .addInput(store, 'power', {
+    _paneFolder
+        .addInput(store.value, 'power', {
             min: 0,
             max: 10,
             step: 0.01,
@@ -24,35 +26,35 @@ const generate = () => {
             events.emit('object:power:update');
         });
 
-    data.paneFolder
-        .addInput(store, 'roughness', {
+    _paneFolder
+        .addInput(store.value, 'roughness', {
             min: 0,
             max: 1,
             step: 0.01,
         })
         .on('change', (event) => {
-            store.metalness = 1 - event.value;
+            store.value.metalness = 1 - event.value;
             events.emit('object:roughness:update');
-            data.pane.refresh();
+            _pane.refresh();
         });
 
-    data.paneFolder
-        .addInput(store, 'metalness', {
+    _paneFolder
+        .addInput(store.value, 'metalness', {
             min: 0,
             max: 1,
             step: 0.01,
         })
         .on('change', (event) => {
-            store.roughness = 1 - event.value;
+            store.value.roughness = 1 - event.value;
             events.emit('object:metalness:update');
-            data.pane.refresh();
+            _pane.refresh();
         });
 };
 
 const PreviewMaterialPaneFolder = {
     initialize(pane: Pane) {
-        data.pane = pane;
-        data.paneFolder = data.pane.addFolder({
+        _pane = pane;
+        _paneFolder = _pane.addFolder({
             title: 'Material',
             expanded: true,
         });

@@ -1,6 +1,6 @@
 import type { FolderApi } from '@tweakpane/core';
-import { DeleteLightCommand } from 'src/commands/DeleteLightCommand';
-import events from 'src/commons/Events';
+import { DeleteLightCommand } from '@/commands/DeleteLightCommand';
+import events from '@/commons/Events';
 import type { Pane } from 'tweakpane';
 import type LightModel from '../LightModel';
 import type MatcapEditorContent from '../MatcapEditorContent';
@@ -13,10 +13,10 @@ import RectAreaLightSize from './lightInput/RectAreaLightSize';
 import SpotLightInput from './lightInput/SpotLightInput';
 
 export type DataLightPaneFolder = {
-    pane: Pane;
-    paneContainer: FolderApi;
-    content: MatcapEditorContent;
-    currentLightModel: LightModel;
+    pane: Pane | null;
+    paneContainer: FolderApi | null;
+    content: MatcapEditorContent | null;
+    currentLightModel: LightModel | null;
 };
 const data: DataLightPaneFolder = {
     pane: null,
@@ -25,12 +25,13 @@ const data: DataLightPaneFolder = {
     content: null,
 };
 
+
 const generate = (content: MatcapEditorContent) => {
     data.content = content;
 };
 
 const clean = (): void => {
-    data.paneContainer.children.forEach((child) => {
+    data.paneContainer?.children.forEach((child) => {
         child.dispose();
     });
 };
@@ -58,9 +59,9 @@ const updateCurrentLight = (lightModel: LightModel): void => {
         SpotLightInput.addInput(data, 'penumbra');
         SpotLightInput.addInput(data, 'decay');
     }
-    data.paneContainer.addButton({ title: 'Delete' }).on('click', () => {
+    data.paneContainer?.addButton({ title: 'Delete' }).on('click', () => {
         clean();
-        data.content.world.editor.execute(new DeleteLightCommand(data.content.world.editor, data.currentLightModel));
+        data.content?.world.editor.execute(new DeleteLightCommand(data.content.world.editor, data.currentLightModel));
     });
 };
 

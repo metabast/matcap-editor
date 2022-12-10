@@ -44,5 +44,10 @@ module.exports = {
                 },
             },
         ],
+        'vue/html-closing-bracket-spacing': ['error', {
+            'startTag': 'always',
+            'endTag': 'always',
+            'selfClosingTag': 'always',
+        }],
     },
 };

@@ -1,4 +1,4 @@
-import { SetAreaLightPropertyCommand } from 'src/commands/SetAreaLightPropertyCommand';
+import { SetAreaLightPropertyCommand } from '@/commands/SetAreaLightPropertyCommand';
 import type { ValuesPaneCtrl } from '@/ts/types/PanesTypes';
 import type { RectAreaLight } from 'three';
 import type { DataLightPaneFolder } from '../LightPaneFolder';

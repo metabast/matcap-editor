@@ -1,8 +1,8 @@
-import events from 'src/commons/Events';
+import events from '@/commons/Events';
 import type { FolderApi, TabPageApi } from '@tweakpane/core';
 import { Color } from 'three';
 import type { Pane } from 'tweakpane';
-import { SetAmbiantLightCommand } from 'src/commands/SetAmbiantLightCommand';
+import { SetAmbiantLightCommand } from '@/commands/SetAmbiantLightCommand';
 import type { ValuesPaneCtrl } from '@/ts/types/PanesTypes';
 import type MatcapEditorContent from '../MatcapEditorContent';
 

@@ -1,16 +1,9 @@
-import type { FolderApi } from '@tweakpane/core';
-import { MatcapEditorStore, type IMatcapEditorStore } from 'src/store';
+import { computed } from 'vue';
 import type { Pane } from 'tweakpane';
+import type { FolderApi } from '@tweakpane/core';
+import { matcapEditorStore } from '@/stores/matcapEditorStore';
 
-const data: { pane: Pane; paneFolder: FolderApi } = {
-    pane: null,
-    paneFolder: null,
-};
-
-let store: IMatcapEditorStore;
-MatcapEditorStore.subscribe((newStore) => {
-    store = newStore;
-});
+const store = computed(() => matcapEditorStore());
 
 enum LightType {
     Area = 'Area',
@@ -18,39 +11,42 @@ enum LightType {
     Spot = 'Spot',
 }
 
+let _pane: Pane;
+let _paneFolder: FolderApi;
+
 const generate = () => {
-    data.paneFolder
-        .addInput(store.create, 'lightType', {
+    _paneFolder
+        .addInput(store.value.create, 'lightType', {
             label: 'Size',
             options: LightType,
         })
         .on('change', (event) => {
-            store.create.lightType = event.value;
+            store.value.create.lightType = event.value;
         });
 
-    data.paneFolder.addInput(store.create, 'distance', {
+    _paneFolder.addInput(store.value.create, 'distance', {
         min: 0,
         max: 10,
         step: 0.01,
     });
-    data.paneFolder.addInput(store.create, 'intensity', {
+    _paneFolder.addInput(store.value.create, 'intensity', {
         min: 0,
         max: 10,
         step: 0.01,
     });
 
-    data.paneFolder.addButton({ title: 'reset' }).on('click', () => {
-        store.create.lightType = LightType.Area;
-        store.create.distance = 1;
-        store.create.intensity = 1;
-        data.pane.refresh();
+    _paneFolder.addButton({ title: 'reset' }).on('click', () => {
+        store.value.create.lightType = LightType.Area;
+        store.value.create.distance = 1;
+        store.value.create.intensity = 1;
+        _pane.refresh();
     });
 };
 
 const CreatePaneFolder = {
     initialize(pane: Pane) {
-        data.pane = pane;
-        data.paneFolder = data.pane.addFolder({
+        _pane = pane;
+        _paneFolder = _pane.addFolder({
             title: 'Create',
             expanded: true,
         });

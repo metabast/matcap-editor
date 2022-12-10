@@ -1,4 +1,4 @@
-import { SetSpotLightPropertyCommand } from 'src/commands/SetSpotLightPropertyCommand';
+import { SetSpotLightPropertyCommand } from '@/commands/SetSpotLightPropertyCommand';
 import type { ValuesPaneCtrl } from '@/ts/types/PanesTypes';
 import type { SpotLight } from 'three';
 import type { DataLightPaneFolder } from '../LightPaneFolder';

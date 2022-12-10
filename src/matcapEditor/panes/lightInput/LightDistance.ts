@@ -1,5 +1,5 @@
-import { SetLightModelPropertyCommand } from 'src/commands/SetLightModelPropertyCommand';
-import LightModel from 'src/matcapEditor/LightModel';
+import { SetLightModelPropertyCommand } from '@/commands/SetLightModelPropertyCommand';
+import LightModel from '@/matcapEditor/LightModel';
 import type { ValuesPaneCtrl } from '@/ts/types/PanesTypes';
 import type { DataLightPaneFolder } from '../LightPaneFolder';
 

@@ -1,5 +1,5 @@
-import { SetSphereMaterialParamsCommand } from 'src/commands/SetSphereMaterialParamsCommand';
-import events from 'src/commons/Events';
+import { SetSphereMaterialParamsCommand } from '@/commands/SetSphereMaterialParamsCommand';
+import events from '@/commons/Events';
 import type { FolderApi, TabPageApi } from '@tweakpane/core';
 import { Color } from 'three';
 import type { Pane } from 'tweakpane';

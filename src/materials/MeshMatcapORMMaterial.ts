@@ -1,4 +1,3 @@
-/* eslint-disable import/prefer-default-export */
 /* eslint-disable no-param-reassign */
 import {
     MeshMatcapMaterial,
@@ -12,7 +11,7 @@ import matcapORM from '../shaders/shaderChunk/matcapORM';
 export class MeshMatcapORMMaterial extends MeshMatcapMaterial {
     private customUniforms: {
         uRoughness: { value: number };
-        uRoughnessMap: { value: Texture };
+        uRoughnessMap: { value: Texture | null };
         uMetalness: { value: number };
     };
 
@@ -20,12 +19,12 @@ export class MeshMatcapORMMaterial extends MeshMatcapMaterial {
         super(parameters);
 
         this.customUniforms = {
-            uRoughness: { value: null },
+            uRoughness: { value: 0 },
             uRoughnessMap: { value: null },
-            uMetalness: { value: null },
+            uMetalness: { value: 0 },
         };
 
-        this.setValues(parameters);
+        this.setValues(parameters as MeshMatcapMaterialParameters);
         this.onBeforeCompile = (shader) => {
             shader.uniforms = Object.assign(
                 shader.uniforms,

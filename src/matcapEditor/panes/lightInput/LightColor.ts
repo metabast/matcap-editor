@@ -1,4 +1,4 @@
-import { SetLightPropertyCommand } from 'src/commands/SetLightPropertyCommand';
+import { SetLightPropertyCommand } from '@/commands/SetLightPropertyCommand';
 import type { ValuesPaneCtrl } from '@/ts/types/PanesTypes';
 import { Color } from 'three';
 import type { DataLightPaneFolder } from '../LightPaneFolder';

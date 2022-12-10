@@ -1,21 +1,36 @@
-<template>
+<template >
+    <CanvasSnapshots />
     <canvas class="webgl" />
-    <canvas class="webgl2" :width="String(store.sizes.view)" height={String(store.sizes.view)} :style="getStyles()" />
+    <canvas class="webgl2"
+        :width="String(store.sizes.view)"
+        :height="String(store.sizes.view)"
+        :style="getStyles()"
+    />
     <MatcapLights />
-</template>
 
-<script lang="ts" setup>
+    <PreviewProperties />
+
+</template >
+
+<script lang="ts" setup >
 
 import Editor from '@/Editor';
 import { matcapEditorStore } from '@/stores/matcapEditorStore';
 import { onMounted, computed } from 'vue';
 import MatcapLights from './MatcapLights.vue';
+import CanvasSnapshots from './CanvasSnapshots.vue';
+import PreviewProperties from './PreviewProperties.vue';
+
+if (import.meta.hot) {
+    import.meta.hot.dispose(() => {
+        import.meta.hot?.invalidate();
+    });
+}
 
 const store = computed(() => matcapEditorStore());
 
 onMounted(() => {
     new Editor();
-
 });
 
 function getStyles() {
@@ -25,4 +40,4 @@ function getStyles() {
     `;
 }
 
-</script>
+</script >
