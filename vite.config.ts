@@ -1,14 +1,15 @@
+import { fileURLToPath, URL } from 'node:url';
+
 import { defineConfig } from 'vite';
-import { svelte } from '@sveltejs/vite-plugin-svelte';
-import glsl from 'vite-plugin-glsl';
+import vue from '@vitejs/plugin-vue';
+import vueJsx from '@vitejs/plugin-vue-jsx';
 
 // https://vitejs.dev/config/
 export default defineConfig({
-    plugins: [svelte(), glsl()],
-    build: {
-        outDir: 'build',
-    },
-    server: {
-        port: 3005,
+    plugins: [vue(), vueJsx()],
+    resolve: {
+        alias: {
+            '@': fileURLToPath(new URL('./src', import.meta.url)),
+        },
     },
 });

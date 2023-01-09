@@ -1,46 +1,53 @@
+/* eslint-env node */
+require('@rushstack/eslint-patch/modern-module-resolution');
+
 module.exports = {
-    env: {
-        browser: true,
-        es2021: true,
-        node: true,
-    },
-    extends: [
-        'airbnb-base',
-        'airbnb-typescript/base',
-        'plugin:@typescript-eslint/recommended',
-        'plugin:@typescript-eslint/recommended-requiring-type-checking',
-        'prettier',
+    root: true,
+    'extends': [
+        'plugin:vue/vue3-essential',
+        'eslint:recommended',
+        '@vue/eslint-config-typescript',
     ],
-    parser: '@typescript-eslint/parser',
     parserOptions: {
-        ecmaVersion: 13,
-        sourceType: 'module',
-        tsconfigRootDir: __dirname,
-        project: ['./tsconfig.json'],
-        extraFileExtensions: ['.svelte'],
+        ecmaVersion: 'latest',
     },
-    plugins: ['svelte3', '@typescript-eslint'],
-    ignorePatterns: ['.eslintrc.*', 'vite.config.*', 'svelte.config.*'],
     rules: {
-        'import/no-extraneous-dependencies': [
+        quotes: [2, 'single', {
+            avoidEscape: true,
+        }],
+        'max-classes-per-file': ['error', 4],
+        'no-param-reassign': 'off',
+        'no-plusplus': 'off',
+        'import/prefer-default-export': 'off',
+        'class-methods-use-this': 'off',
+        'indent': ['error', 4, {
+            'SwitchCase': 1,
+        }],
+        'comma-dangle': [
             'error',
             {
-                devDependencies: true, // devDependenciesのimportを許可
+                'arrays': 'always-multiline',
+                'objects': 'always-multiline',
+                'imports': 'always-multiline',
+                'exports': 'always-multiline',
+                'functions': 'ignore',
             },
         ],
-    },
-    overrides: [{
-        files: ['*.svelte'],
-        processor: 'svelte3/svelte3',
-        rules: {
-            'import/no-mutable-exports': 'off',
-            'import/prefer-default-export': 'off',
-        },
-    }, ],
-    settings: {
-        'svelte3/ignore-styles': () => true,
-        'svelte3/typescript': () => require('typescript'), // pass the TypeScript package to the Svelte plugin
-        // OR
-        // 'svelte3/typescript': true, // load TypeScript as peer dependency
+        'semi': ['error', 'always'],
+        'vue/max-attributes-per-line': ['error',
+            {
+                'singleline': {
+                    'max': 1,
+                },
+                'multiline': {
+                    'max': 1,
+                },
+            },
+        ],
+        'vue/html-closing-bracket-spacing': ['error', {
+            'startTag': 'always',
+            'endTag': 'always',
+            'selfClosingTag': 'always',
+        }],
     },
 };

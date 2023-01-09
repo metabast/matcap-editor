@@ -1,8 +1,12 @@
-import './app.css';
-import App from './App.svelte';
+import { createApp } from 'vue';
+import { createPinia } from 'pinia';
+import App from './App.vue';
 
-const app = new App({
-    target: document.getElementById('app'),
-});
+import './assets/main.css';
 
-export default app;
+const app = createApp(App);
+
+app.use(createPinia());
+
+
+app.mount('#app');

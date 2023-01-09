@@ -1,14 +1,33 @@
-import { createNanoEvents, Emitter } from 'nanoevents';
+import { createNanoEvents } from 'nanoevents';
+import type { Emitter } from 'nanoevents';
+import { debounce } from './Utils';
+import { debounceDelay } from './Constants';
 
-const emitter = createNanoEvents();
-export default {
-    on(event: string, callback: () => void): void {
-        emitter.on(event, callback);
-    },
+class Events {
+    emitter: Emitter;
+
+    constructor() {
+        this.emitter = createNanoEvents();
+    }
+
+    on(event: string, callback: (...args: any) => void): void {
+        this.emitter.on(event, callback);
+    }
+
     emit(event: string, data?: object): void {
-        emitter.emit(event, data);
-    },
+        this.emitter.emit(event, data);
+    }
+
+    // eslint-disable-next-line class-methods-use-this
     getNewEmitter(): Emitter {
         return createNanoEvents();
-    },
-};
+    }
+}
+const events = new Events();
+export default events;
+
+const emitSnapshot = debounce(() => {
+    events.emit('matcap:snapshot');
+}, debounceDelay);
+
+export { emitSnapshot };
