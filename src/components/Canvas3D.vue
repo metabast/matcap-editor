@@ -1,6 +1,9 @@
 <template >
     <CanvasSnapshots />
-    <canvas class="webgl" />
+    <canvas class="webgl" 
+        @dragover.prevent=""
+        @drop.prevent="DroppedFileManager.onDrop" 
+    />
     <canvas class="webgl2"
         :width="String(store.sizes.view)"
         :height="String(store.sizes.view)"
@@ -20,6 +23,8 @@ import { onMounted, computed } from 'vue';
 import MatcapLights from './MatcapLights.vue';
 import CanvasSnapshots from './CanvasSnapshots.vue';
 import PreviewProperties from './PreviewProperties.vue';
+import { ref } from 'vue';
+import DroppedFileManager from '@/commons/DroppedFileManager';
 
 if (import.meta.hot) {
     import.meta.hot.dispose(() => {
@@ -28,8 +33,9 @@ if (import.meta.hot) {
 }
 
 const store = computed(() => matcapEditorStore());
+const canvas_preview = ref(null);
 
-onMounted(() => {
+onMounted(async () => {
     new Editor();
 });
 
@@ -39,5 +45,23 @@ function getStyles() {
         height: ${store.value.sizes.view}px!important;
     `;
 }
+
+async function onDrop(event: DragEvent) {
+    const file = event.dataTransfer?.files[0];
+    console.log(file);
+    
+    const fileContent = await promiseReader(file);
+    console.log(fileContent);
+    // const blob = new Blob([fileContent], { type: 'image/png' });
+    // const url = URL.createObjectURL(blob);
+    // const image = new Image();
+    // image.src = url;
+    // image.onload = () => {
+    //     matcapEditorStore().setMatcap(image);
+    // };
+    
+}
+
+
 
 </script >
