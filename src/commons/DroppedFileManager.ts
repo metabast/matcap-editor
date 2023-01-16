@@ -1,10 +1,10 @@
 const acceptedFileTypes = ['glb'];
 
-function promiseReader( file: File ){
+function promiseReader( file: File ): Promise<string>{
     return new Promise((resolve, reject ) => {
         const reader = new FileReader();
         reader.addEventListener('load', () => {
-            resolve(reader.result);
+            resolve(reader.result as string);
         }, { once: true });
         reader.readAsBinaryString(file);
     });
@@ -14,7 +14,7 @@ const DroppedFileManager = {
     onDrop: (event: DragEvent) =>{
         event.preventDefault();
         const files = event.dataTransfer?.files;
-        const promises = [];
+        const promises : Promise<string>[] = [];
         if (files) {
             for (let i = 0; i < files.length; i++) {
                 const file = files[i];
