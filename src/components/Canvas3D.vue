@@ -34,9 +34,10 @@ if (import.meta.hot) {
 
 const store = computed(() => matcapEditorStore());
 const canvas_preview = ref(null);
+let editor: Editor;
 
 onMounted(async () => {
-    new Editor();
+    editor = new Editor();
 });
 
 function getStyles() {
@@ -50,8 +51,8 @@ async function onDrop(event: DragEvent) {
     const file = event.dataTransfer?.files[0];
     console.log(file);
     
-    const fileContent = await promiseReader(file);
-    console.log(fileContent);
+    // const fileContent = await promiseReader(file);
+    // console.log(fileContent);
     // const blob = new Blob([fileContent], { type: 'image/png' });
     // const url = URL.createObjectURL(blob);
     // const image = new Image();
