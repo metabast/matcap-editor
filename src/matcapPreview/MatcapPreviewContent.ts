@@ -4,8 +4,6 @@ import events from '@/commons/Events';
 import { MeshMatcapORMMaterial } from '@/materials/MeshMatcapORMMaterial';
 import { Clock, Mesh, MeshMatcapMaterial, Object3D, sRGBEncoding, Texture, TextureLoader, TorusKnotGeometry } from 'three';
 import type MatcapEditorWorld from './MatcapPreviewWorld';
-import { EVENT_FILES_DROPPED } from '@/commons/Constants';
-
 
 class MatcapPreviewContent {
     private _store: any;
