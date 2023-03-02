@@ -70,6 +70,7 @@ class MatcapPreviewContent {
         const intersects = this.raycaster.intersectObjects(this._meshes);
         if (intersects.length > 0) {
             this._selectedMesh = intersects[0].object as Mesh;
+            this.world.outlinePass.selectedObjects = [this._selectedMesh];
             // this._store.metalness = (this._selectedMesh.material as MeshMatcapORMMaterial).metalness;
             // this._store.roughness = (this._selectedMesh.material as MeshMatcapORMMaterial).roughness;
 

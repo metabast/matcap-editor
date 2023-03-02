@@ -1,9 +1,15 @@
 import type Editor from 'src/Editor';
-import { Clock, PerspectiveCamera, Scene, sRGBEncoding, WebGLRenderer } from 'three';
+import { Clock, PerspectiveCamera, Scene, sRGBEncoding, Vector2, WebGLRenderer } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import Resize from '../commons/Resize';
 import StatsSingle from '../commons/Stats';
 import MatcapEditorContent from './MatcapPreviewContent';
+
+import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
+import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass.js';
+import {OutlinePass} from 'three/examples/jsm/postprocessing/OutlinePass.js';
+import { FXAAShader } from 'three/examples/jsm/shaders/FXAAShader.js';
 
 class MatcapPreviewWorld {
     private _editor: Editor;
@@ -25,6 +31,11 @@ class MatcapPreviewWorld {
     resize: Resize;
 
     content: MatcapEditorContent;
+
+    composer: EffectComposer;
+
+    outlinePass: OutlinePass;
+    
 
     constructor(editor: Editor) {
         this._editor = editor;
@@ -62,6 +73,14 @@ class MatcapPreviewWorld {
             renderer: this.renderer,
         });
 
+        this.composer = new EffectComposer( this.renderer );
+
+        const renderPass = new RenderPass( this.scene, this.camera );
+        this.composer.addPass( renderPass );
+
+        this.outlinePass = new OutlinePass( new Vector2( window.innerWidth, window.innerHeight ), this.scene, this.camera );
+        this.composer.addPass( this.outlinePass );
+
         this.tick();
     }
 
@@ -70,6 +89,7 @@ class MatcapPreviewWorld {
         this.control.update();
         this.content.update(this.clock);
         this.renderer.render(this.scene, this.camera);
+        this.composer.render();
         requestAnimationFrame(this.tick);
     };
 }
