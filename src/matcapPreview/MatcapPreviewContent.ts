@@ -88,11 +88,29 @@ class MatcapPreviewContent {
 
         object.traverse((child) => {
             if (child instanceof Mesh) {
+                const originMaterial = child.material;
                 child.material = new MeshMatcapORMMaterial();
-                child.material.color.setScalar(this._store.power);
+
                 child.material.matcap = this._matcap;
                 child.material.roughness = this._store.roughness;
                 child.material.metalness = this._store.metalness;
+
+                if (originMaterial.color)
+                    child.material.color2 = originMaterial.color;
+
+                if (originMaterial.map) {
+                    child.material.map2 = originMaterial.map;
+                }
+
+                if (originMaterial.roughness)
+                    child.material.roughness = originMaterial.roughness;
+
+                if (originMaterial.roughnessMap)
+                    child.material.roughnessMap = originMaterial.roughnessMap;
+
+                if (originMaterial.normalMap)
+                    child.material.normalMap = originMaterial.normalMap;
+
                 child.geometry.computeBoundsTree();
                 this._meshes.push(child);
             }
