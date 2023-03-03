@@ -4,6 +4,9 @@ export default /* glsl */ `
 uniform float uPower;
 uniform float uRoughness;
 uniform float uMetalness;
+uniform vec3 uColor;
+
+uniform sampler2D uMap2;
 uniform sampler2D uRoughnessMap;
 uniform sampler2D uMetalnessMap;
 
