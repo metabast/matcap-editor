@@ -21,7 +21,7 @@ const store = computed(() => matcapPreviewStore());
 let canvas: HTMLCanvasElement;
 let context: CanvasRenderingContext2D;
 let refreshNb: number = 0;
-
+let currentBlobURL: string = '';
 onMounted(() => {
     canvas = document.querySelector('canvas.snapshots') as HTMLCanvasElement;
     context = canvas.getContext('2d') as CanvasRenderingContext2D;
@@ -29,8 +29,9 @@ onMounted(() => {
 
 const onBlobReady = (blob: Blob | null) => {
     if (!blob) return;
-
     const url = URL.createObjectURL(blob);
+    currentBlobURL = url;
+
     events.emit('matcap:editor:snapshots:ready', {
         matcap: url,
         refreshNb,
@@ -64,6 +65,14 @@ events.on('matcap:snapshots:blobs:ready', (urls: [string]) => {
     Promise.all(promises).then(() => {
         canvas.toBlob(onBlobReady, 'image/png', 1.0);
     });
+});
+
+events.on('matcap:export:grid:png', () => {
+    if(!currentBlobURL) return;
+    const a = document.createElement('a');
+    a.href = currentBlobURL;
+    a.download = 'matcap.png';
+    a.click();
 });
 
 </script >

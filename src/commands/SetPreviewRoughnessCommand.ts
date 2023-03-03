@@ -56,7 +56,6 @@ class SetPreviewRoughnessCommand extends Command {
 
         this.paneMetalnessCtrl.history = true;
         this.paneCtrl.history = true;
-        console.log('apply roughness');
 
         events.emit('object:roughness:update');
         events.emit('object:metalness:update');

@@ -31,10 +31,6 @@ export class MeshMatcapORMMaterial extends MeshMatcapMaterial {
         };
 
         this.setValues(parameters as MeshMatcapMaterialParameters);
-        console.log('this.customUniforms.uMap2.value', this.customUniforms.uMap2.value);
-
-        if (this.customUniforms.uMap2.value)
-            console.log(this.customUniforms.uMap2.value);
 
         this.onBeforeCompile = (shader: Shader) => {
             shader.uniforms = Object.assign(
@@ -52,8 +48,6 @@ export class MeshMatcapORMMaterial extends MeshMatcapMaterial {
         };
     }
     set color2(value: Color) {
-        console.log(value);
-
         this.customUniforms.uColor.value = value;
     }
 

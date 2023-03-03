@@ -29,10 +29,6 @@ class Loader {
 
     onFilesDropped = (files: string[]) => {
 
-        console.log('onFilesDropped', files);
-
-        // const files = LoaderUtils.createFilesFromResults(results);
-
         this.loadFiles(files);
 
     };
@@ -51,8 +47,6 @@ class Loader {
                 const file = filesMap[url];
 
                 if (file) {
-
-                    console.log('Loading', url);
 
                     return URL.createObjectURL(file);
 
@@ -84,8 +78,6 @@ class Loader {
 
             const size = '(' + Math.floor(event.total / 1000) + ' KB)';
             const progress = Math.floor((event.loaded / event.total) * 100) + '%';
-
-            console.log('Loading', filename, size, progress);
 
         });
 

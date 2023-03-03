@@ -24,7 +24,6 @@ const LightModelBoolean = {
             })
             .on('change', (event) => {
                 if (!data.currentLightModel || !data.content || !data.pane) return;
-                console.log('change', propertyName, event.value);
 
                 data.currentLightModel[propertyName] = Boolean(event.value);
                 LightModel.updateLightDistance(data.currentLightModel);
@@ -50,7 +49,6 @@ const LightModelBoolean = {
             });
 
         events.on('light:change', (payload) => {
-            console.log(propertyName);
             if (!data.pane) return;
             // paneCtrl.history = false;
             if (payload.propertyName === propertyName) {

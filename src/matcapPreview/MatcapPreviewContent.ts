@@ -150,7 +150,6 @@ class MatcapPreviewContent {
     };
 
     private onObjectRoughnessUpdate = (): void => {
-        console.log('this._store.roughness', this._store.roughness);
 
         if (this._selectedMesh) {
             (this._selectedMesh.material as MeshMatcapORMMaterial).roughness = this._store.roughness;
@@ -162,7 +161,6 @@ class MatcapPreviewContent {
     };
 
     private onObjectMetalnessUpdate = (): void => {
-        console.log('this._store.metalness', this._store.metalness);
         if (this._selectedMesh) {
             (this._selectedMesh.material as MeshMatcapORMMaterial).metalness = this._store.metalness;
         } else {
