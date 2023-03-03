@@ -1,6 +1,7 @@
-import type { SpotLight } from 'three';
+import type { Object3D, SpotLight } from 'three';
 import type { Command } from './commons/Command';
 import events, { emitSnapshot } from './commons/Events';
+import { Loader } from './commons/Loader';
 import { debounce } from './commons/Utils';
 import { History } from './history';
 import type LightModel from './matcapEditor/LightModel';
@@ -15,13 +16,23 @@ class Editor {
 
     private _matcapPreviewWorld: MatcapPreviewWorld;
 
+    private _loader: Loader;
+
+    public get loader() {
+        return this._loader;
+    }
+
     constructor() {
+
+        this._loader = new Loader(this);
         this._history = new History(this);
 
         this._matcapPreviewWorld = new MatcapPreviewWorld(this);
         this._matcapPreviewWorld.init();
         this._matcapEditorWorld = new MatcapEditorWorld(this);
         this._matcapEditorWorld.init();
+        window.matcapPreviewWorld = this._matcapPreviewWorld;
+        window.matcapEditorWorld = this._matcapEditorWorld;
 
         document.addEventListener(
             'keydown',
@@ -79,6 +90,14 @@ class Editor {
         lightModel.setPositionZ(value.position.z);
         lightModel.update();
         emitSnapshot();
+    }
+
+    addObject(object3d: Object3D) {
+        this._matcapPreviewWorld.content.addObject(object3d);
+    }
+
+    removeObject(object3d: Object3D) {
+        this._matcapPreviewWorld.scene.remove(object3d);
     }
 
     execute(cmd: Command, optionalName?: string) {
