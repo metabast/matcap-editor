@@ -169,7 +169,7 @@ class MatcapEditorContent {
     };
 
     private onPointerDown = () => {
-        if (!this.hitSphere) return;
+        if (!this.hitSphere?.face) return;
 
         const positionOnSphere = this.hitSphere.point.clone();
 
@@ -232,15 +232,15 @@ class MatcapEditorContent {
 
         if (this.currentLightModel) {
 
-            if (!this.hitSphere) return;
+            if (!this.hitSphere?.face) return;
             const positionOnSphere = this.hitSphere.point.clone();
             this.lightPosition = positionOnSphere.clone();
             this.lightPosition.add(this.hitSphere.face.normal.clone().multiplyScalar(this.currentLightModel.distance));
             this.currentLightModel.light.position.x = this.lightPosition.x;
             this.currentLightModel.light.position.y = this.lightPosition.y;
+
             if (this.currentLightModel.front) this.currentLightModel.light.position.z = this.lightPosition.z;
             else this.currentLightModel.light.position.z = -this.lightPosition.z;
-            this.currentLightModel.light.position.z = this.lightPosition.z;
 
             this.currentLightModel.update();
 

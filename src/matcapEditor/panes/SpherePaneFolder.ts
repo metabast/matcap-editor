@@ -3,7 +3,7 @@ import type { Pane } from 'tweakpane';
 import SphereAmbiantPaneFolder from './SphereAmbiantPaneFolder';
 import SphereMaterialPaneFolder from './SphereMaterialPaneFolder';
 
-const data: { pane: Pane; paneFolder: FolderApi; tab: TabApi } = {
+const data: { pane: Pane | null; paneFolder: FolderApi | null; tab: TabApi | null } = {
     pane: null,
     paneFolder: null,
     tab: null,
