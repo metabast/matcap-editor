@@ -7,9 +7,7 @@ import MatcapEditorContent from './MatcapPreviewContent';
 
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
-import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass.js';
-import {OutlinePass} from 'three/examples/jsm/postprocessing/OutlinePass.js';
-import { FXAAShader } from 'three/examples/jsm/shaders/FXAAShader.js';
+import { OutlinePass } from 'three/examples/jsm/postprocessing/OutlinePass.js';
 
 class MatcapPreviewWorld {
     private _editor: Editor;
@@ -35,7 +33,7 @@ class MatcapPreviewWorld {
     composer: EffectComposer;
 
     outlinePass: OutlinePass;
-    
+
 
     constructor(editor: Editor) {
         this._editor = editor;
@@ -73,13 +71,13 @@ class MatcapPreviewWorld {
             renderer: this.renderer,
         });
 
-        this.composer = new EffectComposer( this.renderer );
+        this.composer = new EffectComposer(this.renderer);
 
-        const renderPass = new RenderPass( this.scene, this.camera );
-        this.composer.addPass( renderPass );
+        const renderPass = new RenderPass(this.scene, this.camera);
+        this.composer.addPass(renderPass);
 
-        this.outlinePass = new OutlinePass( new Vector2( window.innerWidth, window.innerHeight ), this.scene, this.camera );
-        this.composer.addPass( this.outlinePass );
+        this.outlinePass = new OutlinePass(new Vector2(window.innerWidth, window.innerHeight), this.scene, this.camera);
+        this.composer.addPass(this.outlinePass);
 
         this.tick();
     }

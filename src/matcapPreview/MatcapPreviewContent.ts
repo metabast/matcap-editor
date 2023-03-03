@@ -23,7 +23,7 @@ class MatcapPreviewContent {
     private _matcap: Texture;
     private _meshes: Mesh[] = [];
     private _currentObject: Object3D;
-    private _selectedMesh: Mesh | null = null;
+    private _selectedMesh: Mesh | undefined = undefined;
 
     private raycaster: Raycaster = new Raycaster();
 
@@ -75,7 +75,8 @@ class MatcapPreviewContent {
             // this._store.roughness = (this._selectedMesh.material as MeshMatcapORMMaterial).roughness;
 
         } else {
-            this._selectedMesh = null;
+            this._selectedMesh = undefined;
+            this.world.outlinePass.selectedObjects = [];
         }
         events.emit('matcap:preview:mesh:selected', this._selectedMesh);
     };
