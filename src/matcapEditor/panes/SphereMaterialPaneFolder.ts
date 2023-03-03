@@ -6,13 +6,12 @@ import type { Pane } from 'tweakpane';
 import type { ValuesPaneCtrl } from '@/ts/types/PanesTypes';
 import type MatcapEditorContent from '../MatcapEditorContent';
 
-const data: { pane: Pane; paneContainer: FolderApi | TabPageApi | null } = {
+const data: { pane: Pane; paneContainer: FolderApi | TabPageApi } = {
     pane: null,
     paneContainer: null,
 };
 
 const generate = (content: MatcapEditorContent) => {
-    if (!data.paneContainer) return;
     const roughnessCtrl: ValuesPaneCtrl = {
         value: Number(content.sphereRenderMaterial.roughness),
         oldValue: Number(content.sphereRenderMaterial.roughness),
