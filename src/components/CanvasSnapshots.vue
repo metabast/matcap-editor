@@ -16,6 +16,7 @@ if (import.meta.hot) {
     });
 }
 
+const debugCellsWithNumbers = false;
 const store = computed(() => matcapPreviewStore());
 
 let canvas: HTMLCanvasElement;
@@ -56,6 +57,12 @@ events.on('matcap:snapshots:blobs:ready', (urls: [string]) => {
                         256,
                         256,
                     );
+                    if(debugCellsWithNumbers) {
+                        context.font = '30px Arial';
+                        context.fillStyle = 'red';
+                        context.textAlign = 'center';
+                        context.fillText(String(i), 256*.5 + posX * 256, 256*.5 + posY * 256);
+                    }
                     resolve(true);
                 };
                 img.src = url;
