@@ -8,6 +8,7 @@ import type LightModel from './matcapEditor/LightModel';
 import MatcapEditorWorld from './matcapEditor/MatcapEditorWorld';
 import MatcapPreviewWorld from './matcapPreview/MatcapPreviewWorld';
 import type { LightModelPositions } from './ts/types/PanesTypes';
+import Project from '@/commons/Project';
 
 class Editor {
     private _history: History;
@@ -33,6 +34,7 @@ class Editor {
         this._matcapEditorWorld.init();
         window.matcapPreviewWorld = this._matcapPreviewWorld;
         window.matcapEditorWorld = this._matcapEditorWorld;
+        Project.initialize(this);
 
         document.addEventListener(
             'keydown',
@@ -79,6 +81,7 @@ class Editor {
     }
 
     deleteLight(lightModel: LightModel) {
+        events.emit('matcap:editor:light:remove', lightModel);
         this._matcapEditorWorld.content.deleteLight(lightModel);
     }
 
@@ -110,6 +113,10 @@ class Editor {
 
     redo() {
         this._history.redo();
+    }
+
+    clearHistory() {
+        this._history.clear();
     }
 }
 

@@ -288,7 +288,7 @@ class MatcapEditorContent {
 
     public deleteLight = (lightModel: LightModel) => {
         this._world.scene.remove(lightModel.light);
-        this._store.lights.splice(this._store.lights.indexOf(lightModel), 1);
+        if (this._store.lights.length === 0) lightModel.dispose();
         RenderManager.snapshot();
     };
 }

@@ -204,59 +204,60 @@ class Loader {
             //     }
 
             // case 'js':
-            // case 'json':
+            case 'json':
 
-            //     {
+                {
 
-            //         reader.addEventListener('load', function (event) {
+                    reader.addEventListener('load', (event) => {
 
-            //             const contents = event.target.result;
+                        const contents = event.target.result;
 
-            //             // 2.0
 
-            //             if (contents.indexOf('postMessage') !== - 1) {
+                        //             // 2.0
 
-            //                 const blob = new Blob([contents], { type: 'text/javascript' });
-            //                 const url = URL.createObjectURL(blob);
+                        //             if (contents.indexOf('postMessage') !== - 1) {
 
-            //                 const worker = new Worker(url);
+                        //                 const blob = new Blob([contents], { type: 'text/javascript' });
+                        //                 const url = URL.createObjectURL(blob);
 
-            //                 worker.onmessage = function (event) {
+                        //                 const worker = new Worker(url);
 
-            //                     event.data.metadata = { version: 2 };
-            //                     handleJSON(event.data);
+                        //                 worker.onmessage = function (event) {
 
-            //                 };
+                        //                     event.data.metadata = { version: 2 };
+                        //                     handleJSON(event.data);
 
-            //                 worker.postMessage(Date.now());
+                        //                 };
 
-            //                 return;
+                        //                 worker.postMessage(Date.now());
 
-            //             }
+                        //                 return;
 
-            //             // >= 3.0
+                        //             }
 
-            //             let data;
+                        //             // >= 3.0
 
-            //             try {
+                        let data;
 
-            //                 data = JSON.parse(contents);
+                        try {
 
-            //             } catch (error) {
+                            data = JSON.parse(contents);
 
-            //                 alert(error);
-            //                 return;
+                        } catch (error) {
 
-            //             }
+                            alert(error);
+                            return;
 
-            //             handleJSON(data);
+                        }
 
-            //         }, false);
-            //         reader.readAsText(file);
+                        this.handleJSON(data);
 
-            //         break;
+                    }, false);
+                    reader.readAsText(file);
 
-            //     }
+                    break;
+
+                }
 
             // case 'obj':
 
@@ -326,6 +327,11 @@ class Loader {
         }
 
         switch (data.metadata.type.toLowerCase()) {
+
+            case 'matcap':
+                console.log('matcap');
+                events.emit('matcap:project:read', data);
+                break;
 
             case 'buffergeometry':
 

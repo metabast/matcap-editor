@@ -41,5 +41,8 @@ export const matcapEditorStore = defineStore('matcapEditor', {
         addLight(light: LightModel) {
             this.lights.push(light);
         },
+        removeLight(light: LightModel) {
+            this.lights.splice(this.lights.indexOf(light), 1);
+        },
     },
 });
