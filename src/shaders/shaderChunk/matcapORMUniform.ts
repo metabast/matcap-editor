@@ -15,6 +15,6 @@ float map(float value, float min1, float max1, float min2, float max2) {
 }
 
 vec4 getCellMatcap( sampler2D matcap, vec2 uv, float row, float col ) {
-    return texture2D(matcap, vec2(uv.x/3., uv.y/3.) + vec2(1./3.*row, 1./3.*col) );
+    return texture2D(matcap, vec2(uv.x/3., uv.y/3.) + vec2(1./3.*col, 1./3.*row) );
 }
 `;
