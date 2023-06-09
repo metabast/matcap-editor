@@ -1,4 +1,5 @@
 import type LightModel from '@/matcapEditor/LightModel';
+import type { TSphereRenderMaterial } from '@/ts/types/TSphereRenderMaterial';
 import { defineStore } from 'pinia';
 import { Color } from 'three';
 
@@ -43,6 +44,10 @@ export const matcapEditorStore = defineStore('matcapEditor', {
         },
         removeLight(light: LightModel) {
             this.lights.splice(this.lights.indexOf(light), 1);
+        },
+        setSphereRenderMaterial(material: TSphereRenderMaterial) {
+            this.material.roughness = material.roughness;
+            this.material.metalness = material.metalness;
         },
     },
 });

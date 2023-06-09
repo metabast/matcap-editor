@@ -1,7 +1,7 @@
 import { BufferGeometry, Clock, Mesh, OrthographicCamera, Scene, sRGBEncoding, WebGLRenderer } from 'three';
 import { RectAreaLightUniformsLib } from 'three/examples/jsm/lights/RectAreaLightUniformsLib.js';
 import { computeBoundsTree, disposeBoundsTree, acceleratedRaycast } from 'three-mesh-bvh';
-import type Editor from 'src/Editor';
+import Editor from '@/Editor';
 import StatsSingle from '../commons/Stats';
 import MatcapEditorContent from './MatcapEditorContent';
 import { matcapEditorStore } from '@/stores/matcapEditorStore';
@@ -30,9 +30,9 @@ class MatcapEditorWorld {
 
     halfSize: number;
 
-    constructor(editor: Editor) {
+    constructor() {
         this._store = matcapEditorStore();
-        this._editor = editor;
+        this._editor = Editor.instance;
     }
 
     public get editor() {

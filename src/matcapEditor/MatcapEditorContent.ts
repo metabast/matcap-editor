@@ -127,6 +127,7 @@ class MatcapEditorContent {
         this._world.canvas.addEventListener('pointerup', this.onPointerUp);
 
         events.emit('matcap:content:ready', this);
+
     }
 
     public get world(): MatcapEditorWorld {
@@ -139,6 +140,11 @@ class MatcapEditorContent {
 
     public get sphereRenderMaterial(): MeshPhysicalMaterial {
         return this._sphereRenderMaterial;
+    }
+
+    public set sphereRenderMaterial(material: MeshPhysicalMaterial) {
+        this._sphereRenderMaterial = material;
+        this.sphereRender.material = material;
     }
 
     public get cameraSnapshot(): OrthographicCamera {

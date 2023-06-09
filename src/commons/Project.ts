@@ -1,8 +1,9 @@
 import type Editor from '@/Editor';
 import events from './Events';
 import { matcapEditorStore } from '@/stores/matcapEditorStore';
-import LightModel from '@/matcapEditor/LightModel';
-import { AddLightCommand } from '@/commands';
+import { ImportProjectCommand } from '@/commands/ImportProjectCommand';
+import SphereMaterialPaneFolderCtrl from '@/matcapEditor/panes/SphereMaterialPaneFolderCtrl';
+import SphereAmbiantPaneFolder from '@/matcapEditor/panes/SphereAmbiantPaneFolder';
 
 let _store: ReturnType<typeof matcapEditorStore>;
 
@@ -20,6 +21,8 @@ const serializeCurrentProject = (): string => {
             type: 'matcap',
         },
         lights: _store.lights,
+        sphereRenderMaterial: SphereMaterialPaneFolderCtrl.instance.serializedParams,
+        sphereRenderAmbiant: SphereAmbiantPaneFolder.instance.serializedParams,
     });
 };
 
@@ -44,10 +47,7 @@ const clearCurrentProject = () => {
 
 const importCurrentProject = (data) => {
     clearCurrentProject();
-    data.lights.forEach((light: any) => {
-        const lightModel = LightModel.createFromSerialized(light);
-        _editor.execute(new AddLightCommand(_editor, lightModel));
-    });
+    _editor.execute(new ImportProjectCommand(_editor, data));
 };
 
 const Project = {

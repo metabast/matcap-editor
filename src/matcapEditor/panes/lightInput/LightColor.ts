@@ -2,6 +2,7 @@ import { SetLightPropertyCommand } from '@/commands/SetLightPropertyCommand';
 import type { ValuesPaneCtrl } from '@/ts/types/PanesTypes';
 import { Color } from 'three';
 import type { DataLightPaneFolder } from '../LightPaneFolder';
+import Editor from '@/Editor';
 
 const LightColor = {
     addInput(data: DataLightPaneFolder) {
@@ -20,9 +21,9 @@ const LightColor = {
             .on('change', (event) => {
                 data.currentLightModel.light.color.set(paneCtrl.value as Color);
                 if (event.last && paneCtrl.history) {
-                    data.content.world.editor.execute(
+                    Editor.instance.execute(
                         new SetLightPropertyCommand(
-                            data.content.world.editor,
+                            Editor.instance,
                             {
                                 name: 'color',
                                 value: data.currentLightModel.light.color.getHex(),

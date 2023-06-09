@@ -3,11 +3,11 @@ import { Clock, PerspectiveCamera, Scene, sRGBEncoding, Vector2, WebGLRenderer }
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import Resize from '../commons/Resize';
 import StatsSingle from '../commons/Stats';
-import MatcapEditorContent from './MatcapPreviewContent';
 
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
 import { OutlinePass } from 'three/examples/jsm/postprocessing/OutlinePass.js';
+import MatcapPreviewContent from './MatcapPreviewContent';
 
 class MatcapPreviewWorld {
     private _editor: Editor;
@@ -28,7 +28,7 @@ class MatcapPreviewWorld {
 
     resize: Resize;
 
-    content: MatcapEditorContent;
+    content: MatcapPreviewContent;
 
     composer: EffectComposer;
 
@@ -63,7 +63,7 @@ class MatcapPreviewWorld {
 
         this.clock = new Clock();
 
-        this.content = new MatcapEditorContent(this);
+        this.content = new MatcapPreviewContent(this);
 
         this.resize = new Resize({
             canvas: this.canvas,

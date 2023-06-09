@@ -37,7 +37,7 @@ const canvas_preview = ref(null);
 let editor: Editor;
 
 onMounted(async () => {
-    editor = new Editor();
+    editor = Editor.instance;
 });
 
 function getStyles() {
