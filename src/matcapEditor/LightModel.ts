@@ -160,10 +160,8 @@ class LightModel {
     }
 
     dispose() {
-        this._light.parent.remove(this._light);
-
+        if (this._light.parent) this._light.parent.remove(this._light);
         this._light.dispose();
-        this._light = null;
     }
 
     static updateLightDistance = (lightModel: LightModel): void => {

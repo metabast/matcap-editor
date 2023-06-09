@@ -287,8 +287,7 @@ class MatcapEditorContent {
     private onMaterialUpdate = () => { };
 
     public deleteLight = (lightModel: LightModel) => {
-        this._world.scene.remove(lightModel.light);
-        if (this._store.lights.length === 0) lightModel.dispose();
+        lightModel.dispose();
         RenderManager.snapshot();
     };
 }
