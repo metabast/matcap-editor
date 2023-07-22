@@ -1,4 +1,4 @@
-import type { FolderApi } from '@tweakpane/core';
+import type { FolderApi, TabApi } from '@tweakpane/core';
 import events from '@/commons/Events';
 import type { Pane } from 'tweakpane';
 import { computed } from 'vue';
@@ -8,18 +8,30 @@ const store = computed(() => matcapEditorStore());
 
 let _pane: Pane;
 let _paneFolder: FolderApi;
+let _tab: TabApi;
 
 const generate = () => {
-    const sizes = store.value.sizes.exportRatios.map(
-        (value) => value * store.value.sizes.exportDefault,
-    );
     const sizesCtrl: { value: number; oldValue: number; history: boolean } = {
         value: store.value.sizes.exportDefault,
         oldValue: store.value.sizes.exportDefault,
         history: true,
     };
 
-    _paneFolder
+    _tab = _paneFolder.addTab({
+        pages: [
+            {
+                title: 'Matcap Grid',
+            },
+            {
+                title: 'Project',
+            },
+            {
+                title: 'Object',
+            },
+        ],
+    });
+
+    _tab.pages[0]
         .addInput(sizesCtrl, 'value', {
             label: 'Size',
             options: {
@@ -33,28 +45,39 @@ const generate = () => {
             store.value.sizes.exportRatio = event.value / store.value.sizes.exportDefault;
         });
 
-    _paneFolder.addButton({ title: 'Export' }).on('click', () => {
+    _tab.pages[0].addButton({ title: 'Export' }).on('click', () => {
         events.emit('matcap:export:png', { exported: true });
     });
 
-    _paneFolder.addButton({ title: 'Export grid' }).on('click', () => {
+    _tab.pages[0].addButton({ title: 'Export grid' }).on('click', () => {
         events.emit('matcap:export:grid:png', { exported: true });
     });
 
-    _paneFolder.addButton({ title: 'Export project' }).on('click', () => {
+
+
+    _tab.pages[1].addButton({ title: 'Import project' }).on('click', () => {
+        events.emit('show:dragNdrop', { msg: 'project file: *.json' });
+    });
+
+    _tab.pages[1].addButton({ title: 'Export project' }).on('click', () => {
         events.emit('matcap:export:project');
     });
+
+    _tab.pages[2].addButton({ title: 'Import GLB file' }).on('click', () => {
+        events.emit('show:dragNdrop', { msg: 'object file: *.glb' });
+    });
+
 };
 
-const ExportMatcapPaneFolder = {
+const ImportExportMatcapPaneFolder = {
     initialize(pane: Pane) {
         _pane = pane;
         _paneFolder = _pane.addFolder({
-            title: 'Export',
+            title: 'Import/Export',
             expanded: false,
         });
         generate();
     },
 };
 
-export default ExportMatcapPaneFolder;
+export default ImportExportMatcapPaneFolder;

@@ -15,13 +15,7 @@ import events from '@/commons/Events';
 import SpherePaneFolder from '@/matcapEditor/panes/SpherePaneFolder';
 import CreatePaneFolder from '@/matcapEditor/panes/CreatePaneFolder';
 import LightPaneFolder from '@/matcapEditor/panes/LightPaneFolder';
-import ExportMatcapPaneFolder from '@/matcapEditor/panes/ExportMatcapPaneFolder';
-
-if (import.meta.hot) {
-    import.meta.hot.dispose(() => {
-        import.meta.hot?.invalidate();
-    });
-}
+import ImportExportMatcapPaneFolder from '@/matcapEditor/panes/ImportExportMatcapPaneFolder';
 
 const store = computed(() => matcapEditorStore());
 let pane: Pane;
@@ -45,7 +39,7 @@ events.on('matcap:editor:ready', () => {
         events.emit('matcap:generate', { exported: true });
     });
 
-    ExportMatcapPaneFolder.initialize(pane);
+    ImportExportMatcapPaneFolder.initialize(pane);
 
     SpherePaneFolder.initialize(pane);
 

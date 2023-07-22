@@ -32,6 +32,8 @@ class Editor implements IEditor {
         return this._loader;
     }
 
+    private _contextIsReady = false;
+
     constructor() {
 
         //Singleton control
@@ -49,8 +51,8 @@ class Editor implements IEditor {
         this._matcapPreviewWorld.init();
         this._matcapEditorWorld = new MatcapEditorWorld();
         this._matcapEditorWorld.init();
-        globalThis.matcapPreviewWorld = this._matcapPreviewWorld;
-        globalThis.matcapEditorWorld = this._matcapEditorWorld;
+        (globalThis as any).matcapPreviewWorld = this._matcapPreviewWorld;
+        (globalThis as any).matcapEditorWorld = this._matcapEditorWorld;
         Project.initialize(this);
 
         document.addEventListener(
@@ -60,6 +62,11 @@ class Editor implements IEditor {
 
         events.emit('matcap:editor:ready', this);
     }
+
+    contextIsReady() {
+        this._contextIsReady = true;
+    }
+
 
     private onKeydown(event: KeyboardEvent) {
         switch (event.key.toLowerCase()) {

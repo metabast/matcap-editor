@@ -1,9 +1,11 @@
 <template >
     <CanvasSnapshots />
     <canvas class="webgl" 
-        @dragover.prevent=""
-        @drop.prevent="DroppedFileManager.onDrop" 
+        @dragover.prevent="dragNdropIsVisible = true"
+        @dragleave.prevent="dragNdropIsVisible = false"
+        @drop.prevent="onDrop" 
     />
+    <DragAndDropHelperVue :is-visible-over="dragNdropIsVisible" />
     <canvas class="webgl2"
         :width="String(store.sizes.view)"
         :height="String(store.sizes.view)"
@@ -19,26 +21,25 @@
 
 import Editor from '@/Editor';
 import { matcapEditorStore } from '@/stores/matcapEditorStore';
-import { onMounted, computed } from 'vue';
+import { onMounted, computed, ref } from 'vue';
+import DragAndDropHelperVue from '@/components/DragAndDropHelper.vue';
 import MatcapLights from './MatcapLights.vue';
 import CanvasSnapshots from './CanvasSnapshots.vue';
 import PreviewProperties from './PreviewProperties.vue';
-import { ref } from 'vue';
 import DroppedFileManager from '@/commons/DroppedFileManager';
 
-if (import.meta.hot) {
-    import.meta.hot.dispose(() => {
-        import.meta.hot?.invalidate();
-    });
-}
-
 const store = computed(() => matcapEditorStore());
-const canvas_preview = ref(null);
-let editor: Editor;
-
+const dragNdropIsVisible = ref(false);
 onMounted(async () => {
-    editor = Editor.instance;
+    Editor.instance.contextIsReady();
 });
+
+function onDrop(e: DragEvent) {
+    e.preventDefault();
+    e.stopPropagation();
+    DroppedFileManager.onDrop(e);
+    dragNdropIsVisible.value = false;
+}
 
 function getStyles() {
     return `
@@ -46,23 +47,5 @@ function getStyles() {
         height: ${store.value.sizes.view}px!important;
     `;
 }
-
-async function onDrop(event: DragEvent) {
-    const file = event.dataTransfer?.files[0];
-    console.log(file);
-    
-    // const fileContent = await promiseReader(file);
-    // console.log(fileContent);
-    // const blob = new Blob([fileContent], { type: 'image/png' });
-    // const url = URL.createObjectURL(blob);
-    // const image = new Image();
-    // image.src = url;
-    // image.onload = () => {
-    //     matcapEditorStore().setMatcap(image);
-    // };
-    
-}
-
-
 
 </script >
