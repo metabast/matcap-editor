@@ -33,7 +33,6 @@ export class MeshMatcapORMMaterial extends MeshMatcapMaterial {
         this.setValues(parameters as MeshMatcapMaterialParameters);
 
         this.onBeforeCompile = (shader: Shader) => {
-            console.log('shader', shader);
 
             (shader as any).defines = Object.assign(
                 (shader as any).defines,

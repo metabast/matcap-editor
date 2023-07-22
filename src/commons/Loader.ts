@@ -30,8 +30,6 @@ class Loader {
     };
 
     loadFiles = (files: File[], filesMap: IHashFiles) => {
-        console.log(files);
-
         if (files.length > 0) {
 
             filesMap = filesMap || LoaderUtils.createFilesMap(files);
