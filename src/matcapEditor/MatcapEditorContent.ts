@@ -127,6 +127,7 @@ class MatcapEditorContent {
         this._world.canvas.addEventListener('pointerup', this.onPointerUp);
 
         events.emit('matcap:content:ready', this);
+
     }
 
     public get world(): MatcapEditorWorld {
@@ -139,6 +140,11 @@ class MatcapEditorContent {
 
     public get sphereRenderMaterial(): MeshPhysicalMaterial {
         return this._sphereRenderMaterial;
+    }
+
+    public set sphereRenderMaterial(material: MeshPhysicalMaterial) {
+        this._sphereRenderMaterial = material;
+        this.sphereRender.material = material;
     }
 
     public get cameraSnapshot(): OrthographicCamera {
@@ -287,8 +293,7 @@ class MatcapEditorContent {
     private onMaterialUpdate = () => { };
 
     public deleteLight = (lightModel: LightModel) => {
-        this._world.scene.remove(lightModel.light);
-        this._store.lights.splice(this._store.lights.indexOf(lightModel), 1);
+        lightModel.dispose();
         RenderManager.snapshot();
     };
 }

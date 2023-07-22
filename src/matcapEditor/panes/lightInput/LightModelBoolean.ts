@@ -3,6 +3,7 @@ import events from '@/commons/Events';
 import LightModel from '@/matcapEditor/LightModel';
 import type { ValuesPaneCtrl } from '@/ts/types/PanesTypes';
 import type { DataLightPaneFolder } from '../LightPaneFolder';
+import Editor from '@/Editor';
 
 const LightModelBoolean = {
     addInput(
@@ -28,9 +29,9 @@ const LightModelBoolean = {
                 data.currentLightModel[propertyName] = Boolean(event.value);
                 LightModel.updateLightDistance(data.currentLightModel);
                 if (event.last && paneCtrl.history) {
-                    data.content.world.editor.execute(
+                    Editor.instance.execute(
                         new SetLightModelPropertyCommand(
-                            data.content.world.editor,
+                            Editor.instance,
                             {
                                 name: propertyName,
                                 value: data.currentLightModel[propertyName],

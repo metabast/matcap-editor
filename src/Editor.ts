@@ -8,8 +8,16 @@ import type LightModel from './matcapEditor/LightModel';
 import MatcapEditorWorld from './matcapEditor/MatcapEditorWorld';
 import MatcapPreviewWorld from './matcapPreview/MatcapPreviewWorld';
 import type { LightModelPositions } from './ts/types/PanesTypes';
+import Project from '@/commons/Project';
+import { matcapEditorStore } from '@/stores/matcapEditorStore';
 
-class Editor {
+interface IEditor {
+    matcapEditorWorld: MatcapEditorWorld;
+    matcapPreviewWorld: MatcapPreviewWorld;
+    loader: Loader;
+    matcapEditorStore: any;
+}
+class Editor implements IEditor {
     private _history: History;
 
     private _matcapEditorWorld: MatcapEditorWorld;
@@ -18,26 +26,39 @@ class Editor {
 
     private _loader: Loader;
 
+    private _matcapEditorStore: any;
+
     public get loader() {
         return this._loader;
     }
 
     constructor() {
 
+        //Singleton control
+        if (Editor._instance) {
+            throw new Error('Cannot initialize singleton class using new');
+        }
+        Editor._instance = this;
+
+
         this._loader = new Loader(this);
         this._history = new History(this);
+        this._matcapEditorStore = matcapEditorStore();
 
         this._matcapPreviewWorld = new MatcapPreviewWorld(this);
         this._matcapPreviewWorld.init();
-        this._matcapEditorWorld = new MatcapEditorWorld(this);
+        this._matcapEditorWorld = new MatcapEditorWorld();
         this._matcapEditorWorld.init();
-        window.matcapPreviewWorld = this._matcapPreviewWorld;
-        window.matcapEditorWorld = this._matcapEditorWorld;
+        globalThis.matcapPreviewWorld = this._matcapPreviewWorld;
+        globalThis.matcapEditorWorld = this._matcapEditorWorld;
+        Project.initialize(this);
 
         document.addEventListener(
             'keydown',
             debounce(this.onKeydown.bind(this), 100),
         );
+
+        events.emit('matcap:editor:ready', this);
     }
 
     private onKeydown(event: KeyboardEvent) {
@@ -68,6 +89,10 @@ class Editor {
         return this._matcapPreviewWorld;
     }
 
+    public get matcapEditorStore() {
+        return this._matcapEditorStore;
+    }
+
     addLight(lightModel: LightModel) {
         this._matcapEditorWorld.scene.add(lightModel.light);
 
@@ -79,6 +104,7 @@ class Editor {
     }
 
     deleteLight(lightModel: LightModel) {
+        events.emit('matcap:editor:light:remove', lightModel);
         this._matcapEditorWorld.content.deleteLight(lightModel);
     }
 
@@ -110,6 +136,20 @@ class Editor {
 
     redo() {
         this._history.redo();
+    }
+
+    clearHistory() {
+        this._history.clear();
+    }
+
+    // SINGLETON
+    private static _instance: IEditor;
+    public static get instance(): Editor {
+        if (!Editor._instance) {
+            new Editor();
+        }
+
+        return Editor._instance as Editor;
     }
 }
 

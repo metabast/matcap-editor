@@ -62,4 +62,7 @@ events.on('matcap:ui:light:update:current', (lightModel: LightModel) => {
 });
 
 events.on('matcap:editor:light:added', lightAdded);
+events.on('matcap:editor:light:remove', (lightModel: LightModel) => {
+    store.value.removeLight(lightModel);
+});
 </script >

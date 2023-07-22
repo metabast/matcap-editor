@@ -40,6 +40,10 @@ const generate = () => {
     _paneFolder.addButton({ title: 'Export grid' }).on('click', () => {
         events.emit('matcap:export:grid:png', { exported: true });
     });
+
+    _paneFolder.addButton({ title: 'Export project' }).on('click', () => {
+        events.emit('matcap:export:project');
+    });
 };
 
 const ExportMatcapPaneFolder = {
