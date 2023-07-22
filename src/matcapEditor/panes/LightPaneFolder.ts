@@ -11,6 +11,7 @@ import LightModelBoolean from './lightInput/LightModelBoolean';
 import LightTarget from './lightInput/LightTarget';
 import RectAreaLightSize from './lightInput/RectAreaLightSize';
 import SpotLightInput from './lightInput/SpotLightInput';
+import Editor from '@/Editor';
 
 export type DataLightPaneFolder = {
     pane: Pane | null;
@@ -61,7 +62,7 @@ const updateCurrentLight = (lightModel: LightModel): void => {
     }
     data.paneContainer?.addButton({ title: 'Delete' }).on('click', () => {
         clean();
-        data.content?.world.editor.execute(new DeleteLightCommand(data.content.world.editor, data.currentLightModel));
+        Editor.instance.execute(new DeleteLightCommand(Editor.instance, data.currentLightModel));
     });
 };
 
@@ -72,7 +73,7 @@ const LightPaneFolder = {
             title: 'Current Light',
             expanded: true,
         });
-        events.on('matcap:content:ready', generate);
+        data.content = Editor.instance.matcapEditorWorld.content;
         events.on('matcap:light:update:current', updateCurrentLight);
     },
 };

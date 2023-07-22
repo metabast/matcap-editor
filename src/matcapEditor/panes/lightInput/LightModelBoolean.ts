@@ -3,12 +3,14 @@ import events from '@/commons/Events';
 import LightModel from '@/matcapEditor/LightModel';
 import type { ValuesPaneCtrl } from '@/ts/types/PanesTypes';
 import type { DataLightPaneFolder } from '../LightPaneFolder';
+import Editor from '@/Editor';
 
 const LightModelBoolean = {
     addInput(
         data: DataLightPaneFolder,
         propertyName: 'front' | 'lookAtTarget',
     ) {
+        if (!data.currentLightModel || !data.paneContainer) return;
         const paneCtrl: ValuesPaneCtrl = {
             value: Boolean(data.currentLightModel[propertyName]),
             oldValue: Boolean(data.currentLightModel[propertyName]),
@@ -22,12 +24,14 @@ const LightModelBoolean = {
                 step: 0.001,
             })
             .on('change', (event) => {
+                if (!data.currentLightModel || !data.content || !data.pane) return;
+
                 data.currentLightModel[propertyName] = Boolean(event.value);
                 LightModel.updateLightDistance(data.currentLightModel);
                 if (event.last && paneCtrl.history) {
-                    data.content.world.editor.execute(
+                    Editor.instance.execute(
                         new SetLightModelPropertyCommand(
-                            data.content.world.editor,
+                            Editor.instance,
                             {
                                 name: propertyName,
                                 value: data.currentLightModel[propertyName],
@@ -46,7 +50,7 @@ const LightModelBoolean = {
             });
 
         events.on('light:change', (payload) => {
-            console.log(propertyName);
+            if (!data.pane) return;
             // paneCtrl.history = false;
             if (payload.propertyName === propertyName) {
                 paneCtrl.value = payload.value;

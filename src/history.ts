@@ -21,18 +21,9 @@ class History {
     }
 
     execute(cmd: Command, optionalName: string) {
-        const lastCmd = this.undos[this.undos.length - 1];
-        const timeDifference = Date.now() - this.lastCmdTime;
+        this.undos.push(cmd);
+        cmd.id = ++this.idCounter;
 
-        const isUpdatableCmd = lastCmd && lastCmd.updatable && cmd.updatable && lastCmd.type === cmd.type;
-
-        if (isUpdatableCmd && timeDifference < 500) {
-            lastCmd.update(cmd);
-            cmd = lastCmd;
-        } else {
-            this.undos.push(cmd);
-            cmd.id = ++this.idCounter;
-        }
 
         cmd.name = optionalName !== undefined ? optionalName : cmd.name;
         cmd.execute();
@@ -42,11 +33,11 @@ class History {
         this.redos = [];
     }
 
-    undo(): Command {
-        let cmd: Command;
+    undo(): Command | undefined {
+        let cmd: Command | undefined;
 
         if (this.undos.length > 0) {
-            cmd = this.undos.pop();
+            cmd = this.undos.pop() as Command;
         }
 
         if (cmd !== undefined) {
@@ -57,11 +48,11 @@ class History {
         return cmd;
     }
 
-    redo(): Command {
-        let cmd: Command;
+    redo(): Command | undefined {
+        let cmd: Command | undefined;
 
         if (this.redos.length > 0) {
-            cmd = this.redos.pop();
+            cmd = this.redos.pop() as Command;
         }
 
         if (cmd !== undefined) {

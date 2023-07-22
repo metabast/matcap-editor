@@ -23,7 +23,7 @@ view at http://localhost:3005
 TODO : docker node ?
 
 ## Requirement
-node 16
+node 18
 
 ## Contributing
 

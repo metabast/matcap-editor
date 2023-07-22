@@ -1,9 +1,9 @@
 import type { FolderApi, TabApi } from '@tweakpane/core';
 import type { Pane } from 'tweakpane';
 import SphereAmbiantPaneFolder from './SphereAmbiantPaneFolder';
-import SphereMaterialPaneFolder from './SphereMaterialPaneFolder';
+import SphereMaterialPaneFolderCtrl from './SphereMaterialPaneFolderCtrl';
 
-const data: { pane: Pane; paneFolder: FolderApi; tab: TabApi } = {
+const data: { pane: Pane | null; paneFolder: FolderApi | null; tab: TabApi | null } = {
     pane: null,
     paneFolder: null,
     tab: null,
@@ -27,8 +27,10 @@ const SpherePaneFolder = {
             ],
         });
 
-        SphereMaterialPaneFolder.initialize(data.pane, data.tab.pages[0]);
-        SphereAmbiantPaneFolder.initialize(data.pane, data.tab.pages[1]);
+
+
+        SphereMaterialPaneFolderCtrl.instance.initialize(data.pane, data.tab.pages[0]);
+        SphereAmbiantPaneFolder.instance.initialize(data.pane, data.tab.pages[1]);
     },
 };
 export default SpherePaneFolder;

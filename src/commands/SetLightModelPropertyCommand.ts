@@ -61,8 +61,6 @@ class SetLightModelPropertyCommand extends Command {
             case 'front':
                 this.lightModel[name] = value as boolean;
                 LightModel.updateLightDistance(this.lightModel);
-                // this.lightModel.lookAtTarget = true;
-                // console.log(this.paneCtrl);
                 events.emit('light:change', {
                     value: true,
                     propertyName: 'lookAtTarget',

@@ -33,11 +33,7 @@ function getStyles() {
     `;
 }
 
-onMounted(() => {
-    pane = new Pane({
-        container: document.querySelector('.matcap-editor-pane') as HTMLElement,
-    });
-
+events.on('matcap:editor:ready', () => {
     CreatePaneFolder.initialize(pane);
 
     pane.addInput(store.value.create, 'front', {
@@ -54,6 +50,14 @@ onMounted(() => {
     SpherePaneFolder.initialize(pane);
 
     LightPaneFolder.initialize(pane);
+    
+});
+
+onMounted(() => {
+    pane = new Pane({
+        container: document.querySelector('.matcap-editor-pane') as HTMLElement,
+    });
+    
 });
 
 </script >

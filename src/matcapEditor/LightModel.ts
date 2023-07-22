@@ -1,5 +1,5 @@
 import type { LightModelPositions } from '@/ts/types/PanesTypes';
-import { PointLight, RectAreaLight, SpotLight, Vector2, Vector3 } from 'three';
+import { Matrix4, PointLight, RectAreaLight, SpotLight, Vector2, Vector3 } from 'three';
 
 type LightType = PointLight | RectAreaLight | SpotLight;
 
@@ -159,6 +159,11 @@ class LightModel {
         };
     }
 
+    dispose() {
+        if (this._light.parent) this._light.parent.remove(this._light);
+        this._light.dispose();
+    }
+
     static updateLightDistance = (lightModel: LightModel): void => {
         const lightPosition = lightModel.positionOnSphere.clone();
         lightPosition.add(
@@ -171,6 +176,37 @@ class LightModel {
 
         if (lightModel.front) lightModel.setPositionZ(lightPosition.z);
         else lightModel.setPositionZ(-lightPosition.z);
+    };
+
+    static createFromSerialized = (serializedModel: any): LightModel => {
+        const lightModel = new LightModel();
+
+        switch (serializedModel._light.object.type) {
+
+            case 'RectAreaLight':
+
+                lightModel.light = new RectAreaLight(
+                    serializedModel._light.object.color,
+                    serializedModel._light.object.intensity,
+                    serializedModel._light.object.width,
+                    serializedModel._light.object.height,
+                );
+                lightModel.light.applyMatrix4(new Matrix4().fromArray(serializedModel._light.object.matrix));
+                lightModel.light.uuid = serializedModel._light.object.uuid;
+                break;
+        }
+
+        lightModel.screenPosition.set(serializedModel._screenPosition.x, serializedModel._screenPosition.y);
+        lightModel.positionOnSphere = new Vector3(serializedModel._positionOnSphere.x, serializedModel._positionOnSphere.y, serializedModel._positionOnSphere.z);
+        lightModel.sphereFaceNormal = new Vector3(serializedModel._sphereFaceNormal.x, serializedModel._sphereFaceNormal.y, serializedModel._sphereFaceNormal.z);
+        lightModel.distance = serializedModel._distance;
+        lightModel.front = serializedModel._front;
+        LightModel.updateLightDistance(lightModel);
+        lightModel.positionTarget = new Vector3(serializedModel._positionTarget.x, serializedModel._positionTarget.y, serializedModel._positionTarget.z);
+        lightModel.lookAtTarget = serializedModel._lookAtTarget;
+        lightModel.update();
+
+        return lightModel;
     };
 }
 

@@ -127,6 +127,7 @@ class MatcapEditorContent {
         this._world.canvas.addEventListener('pointerup', this.onPointerUp);
 
         events.emit('matcap:content:ready', this);
+
     }
 
     public get world(): MatcapEditorWorld {
@@ -139,6 +140,11 @@ class MatcapEditorContent {
 
     public get sphereRenderMaterial(): MeshPhysicalMaterial {
         return this._sphereRenderMaterial;
+    }
+
+    public set sphereRenderMaterial(material: MeshPhysicalMaterial) {
+        this._sphereRenderMaterial = material;
+        this.sphereRender.material = material;
     }
 
     public get cameraSnapshot(): OrthographicCamera {
@@ -169,7 +175,7 @@ class MatcapEditorContent {
     };
 
     private onPointerDown = () => {
-        if (!this.hitSphere) return;
+        if (!this.hitSphere?.face) return;
 
         const positionOnSphere = this.hitSphere.point.clone();
 
@@ -232,15 +238,15 @@ class MatcapEditorContent {
 
         if (this.currentLightModel) {
 
-            if (!this.hitSphere) return;
+            if (!this.hitSphere?.face) return;
             const positionOnSphere = this.hitSphere.point.clone();
             this.lightPosition = positionOnSphere.clone();
             this.lightPosition.add(this.hitSphere.face.normal.clone().multiplyScalar(this.currentLightModel.distance));
             this.currentLightModel.light.position.x = this.lightPosition.x;
             this.currentLightModel.light.position.y = this.lightPosition.y;
+
             if (this.currentLightModel.front) this.currentLightModel.light.position.z = this.lightPosition.z;
             else this.currentLightModel.light.position.z = -this.lightPosition.z;
-            this.currentLightModel.light.position.z = this.lightPosition.z;
 
             this.currentLightModel.update();
 
@@ -287,8 +293,7 @@ class MatcapEditorContent {
     private onMaterialUpdate = () => { };
 
     public deleteLight = (lightModel: LightModel) => {
-        this._world.scene.remove(lightModel.light);
-        this._store.lights.splice(this._store.lights.indexOf(lightModel), 1);
+        lightModel.dispose();
         RenderManager.snapshot();
     };
 }
