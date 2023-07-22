@@ -5,13 +5,6 @@ import { MeshMatcapORMMaterial } from '@/materials/MeshMatcapORMMaterial';
 import { Clock, Material, Mesh, Object3D, Raycaster, sRGBEncoding, Texture, TextureLoader, TorusKnotGeometry, Vector2 } from 'three';
 import type MatcapEditorWorld from './MatcapPreviewWorld';
 
-if (import.meta.hot) {
-    import.meta.hot.dispose(() => {
-        import.meta.hot?.invalidate();
-    });
-}
-
-
 class MatcapPreviewContent {
     private _store: any;
 
@@ -20,9 +13,9 @@ class MatcapPreviewContent {
     private matcapLoader: TextureLoader;
 
     private _materials: MeshMatcapORMMaterial[] = [];
-    private _matcap: Texture;
+    private _matcap?: Texture;
     private _meshes: Mesh[] = [];
-    private _currentObject: Object3D;
+    private _currentObject?: Object3D;
     private _selectedMesh: Mesh | undefined = undefined;
 
     private raycaster: Raycaster = new Raycaster();

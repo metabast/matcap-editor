@@ -8,7 +8,7 @@ import FullReload from 'vite-plugin-full-reload';
 export default defineConfig({
     plugins: [
         vue(),
-        FullReload(['config/routes.rb', 'app/views/**/*']),
+        FullReload(['./src/**/*.{vue,ts}']),
     ],
     resolve: {
         alias: {

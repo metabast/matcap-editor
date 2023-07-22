@@ -20,12 +20,6 @@ import { computed } from 'vue';
 import { matcapEditorStore } from '@/stores/matcapEditorStore';
 import MatcapProperties from './MatcapProperties.vue';
 
-if (import.meta.hot) {
-    import.meta.hot.dispose(() => {
-        import.meta?.hot?.invalidate();
-    });
-}
-
 const store = computed(() => matcapEditorStore());
 let currentLight: LightModel;
 

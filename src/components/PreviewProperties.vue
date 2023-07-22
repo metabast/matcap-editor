@@ -9,12 +9,6 @@ import { Pane } from 'tweakpane';
 import PreviewMaterialPaneFolder from '@/matcapPreview/panes/PreviewMaterialFolder';
 import { matcapPreviewStore } from '@/stores/matcapPreviewStore';
 
-if (import.meta.hot) {
-    import.meta.hot.dispose(() => {
-        import.meta.hot?.invalidate();
-    });
-}
-
 const store = computed(() => matcapPreviewStore());
 
 let pane: Pane;

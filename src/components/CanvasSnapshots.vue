@@ -10,12 +10,6 @@ import events from '@/commons/Events';
 import { matcapPreviewStore } from '@/stores/matcapPreviewStore';
 import { computed, onMounted } from 'vue';
 
-if (import.meta.hot) {
-    import.meta.hot.dispose(() => {
-        import.meta.hot?.invalidate();
-    });
-}
-
 const debugCellsWithNumbers = false;
 const store = computed(() => matcapPreviewStore());
 

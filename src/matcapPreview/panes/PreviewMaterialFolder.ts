@@ -10,12 +10,6 @@ import { SetPreviewMetalnessCommand } from '@/commands/SetPreviewMetalnessComman
 
 const store = computed(() => matcapPreviewStore());
 
-if (import.meta.hot) {
-    import.meta.hot.dispose(() => {
-        import.meta.hot?.invalidate();
-    });
-}
-
 let _content: MatcapPreviewContent;
 let _pane: Pane;
 let _paneFolder: FolderApi;
@@ -72,6 +66,7 @@ const generate = (content: MatcapPreviewContent) => {
             min: 0,
             max: 1,
             step: 0.01,
+            label: 'roughness',
         })
         .on('change', (event) => {
             if (event.last && roughnessCtrl.history) {
