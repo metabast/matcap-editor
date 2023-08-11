@@ -1,5 +1,5 @@
 /* eslint-disable no-param-reassign */
-import { Color, MeshMatcapMaterial } from 'three';
+import { Color, MeshMatcapMaterial, } from 'three';
 const matcapORM = /* glsl */ `
 vec3 outgoingLight = vec3( 0.0 );
 
