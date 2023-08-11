@@ -13,7 +13,6 @@
 		"lib": "tsc ./lib/MeshMatcapORMMaterial.ts --outDir ./dist_lib --module esnext --target esnext --allowJs true --jsx preserve --sourceMap true"
 	},
 	"dependencies": {
-		"@babel/types": "^7.22.10",
 		"fflate": "^0.8.0",
 		"nanoevents": "^7.0.1",
 		"pinia": "^2.1.3",
