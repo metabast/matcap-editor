@@ -1,141 +1,67 @@
-import * as THREE from 'three';
-
-import { TGALoader } from 'three/examples/jsm/loaders/TGALoader.js';
-
-import { LoaderUtils, type IHashFiles } from './LoaderUtils';
-
 import type Editor from '@/Editor.js';
-import type { LoadingManager } from 'three';
 import events from './Events';
 import { EVENT_FILES_DROPPED } from './Constants';
 import { AddObjectCommand } from '@/commands/AddObjectCommand';
+
+type JSON_Matcap = {
+    metadata: {
+        type: string;
+    };
+};
+
 
 class Loader {
 
     private _editor: Editor;
 
-    private _texturePath: string = '';
-
-
-
     constructor(editor: Editor) {
         this._editor = editor;
-        events.on(EVENT_FILES_DROPPED, this.onFilesDropped);
+        events.on(EVENT_FILES_DROPPED, this.onFilesDropped.bind(this));
     }
 
-    onFilesDropped = (files: string[]) => {
+    public onFilesDropped(files: File[]): void {
 
-        this.loadFiles(files);
-
-    };
-
-    loadFiles = (files: File[], filesMap: IHashFiles) => {
         if (files.length > 0) {
-
-            filesMap = filesMap || LoaderUtils.createFilesMap(files);
-
-            const manager = new THREE.LoadingManager();
-            manager.setURLModifier(function (url) {
-
-                url = url.replace(/^(\.?\/)/, ''); // remove './'
-
-                const file = filesMap[url];
-
-                if (file) {
-
-                    return URL.createObjectURL(file);
-
-                }
-
-                return url;
-
-            });
-
-            manager.addHandler(/\.tga$/i, new TGALoader());
-
             for (let i = 0; i < files.length; i++) {
-
-                this.loadFile(files[i], manager);
-
+                this.loadFile(files[i]);
             }
-
         }
+    }
 
-    };
+    private onReaderProgress(event: ProgressEvent): void {
+        const size = '(' + Math.floor(event.total / 1000) + ' KB)';
+        const progress = Math.floor((event.loaded / event.total) * 100) + '%';
+        console.log('Loading', size, progress);
+    }
 
-    loadFile = (file: File, manager: LoadingManager) => {
+    private loadFile(file: File): void {
 
         const filename = file.name;
-        const extension = filename.split('.').pop().toLowerCase();
+        if (!file.name || file.name.indexOf('.') === -1) return;
+        const extension = filename.split('.')?.pop()?.toLowerCase();
 
         const reader = new FileReader();
-        reader.addEventListener('progress', function (event) {
-
-            const size = '(' + Math.floor(event.total / 1000) + ' KB)';
-            const progress = Math.floor((event.loaded / event.total) * 100) + '%';
-
-        });
+        reader.addEventListener('progress', this.onReaderProgress.bind(this), false);
 
         switch (extension) {
 
             case 'glb':
 
-                reader.addEventListener('load', async (event) => {
-
-                    const contents = event.target.result;
-
-                    const { DRACOLoader } = await import('three/examples/jsm/loaders/DRACOLoader.js');
-                    const { GLTFLoader } = await import('three/examples/jsm/loaders/GLTFLoader.js');
-
-                    const dracoLoader = new DRACOLoader();
-                    dracoLoader.setDecoderPath('../examples/js/libs/draco/gltf/');
-
-                    const loader = new GLTFLoader();
-                    loader.setDRACOLoader(dracoLoader);
-                    loader.parse(contents, '', (result) => {
-
-                        const scene = result.scene;
-                        scene.name = filename;
-
-                        // scene.animations.push(...result.animations);
-                        this._editor.execute(new AddObjectCommand(this._editor, scene));
-
-                    });
-
-                }, false);
+                reader.addEventListener('load', this.onGLBLoaded.bind(this), false);
                 reader.readAsArrayBuffer(file);
 
                 break;
 
             case 'json':
 
-                {
+                reader.addEventListener('load', () => {
 
-                    reader.addEventListener('load', (event) => {
 
-                        const contents = event.target.result;
 
-                        let data;
+                }, false);
+                reader.readAsText(file);
 
-                        try {
-
-                            data = JSON.parse(contents);
-
-                        } catch (error) {
-
-                            alert(error);
-                            return;
-
-                        }
-
-                        this.handleJSON(data);
-
-                    }, false);
-                    reader.readAsText(file);
-
-                    break;
-
-                }
+                break;
 
             default:
 
@@ -145,67 +71,45 @@ class Loader {
 
         }
 
-    };
+    }
 
-    handleJSON = (data) => {
+    private async onGLBLoaded(event: ProgressEvent<FileReader>) {
+        const contents: ArrayBuffer = (event.target as FileReader).result as ArrayBuffer;
 
-        if (data.metadata === undefined) { // 2.0
+        const { DRACOLoader } = await import('three/examples/jsm/loaders/DRACOLoader.js');
+        const { GLTFLoader } = await import('three/examples/jsm/loaders/GLTFLoader.js');
 
-            data.metadata = { type: 'Geometry' };
+        const dracoLoader = new DRACOLoader();
+        dracoLoader.setDecoderPath('../examples/js/libs/draco/gltf/');
 
+        const loader = new GLTFLoader();
+        loader.setDRACOLoader(dracoLoader);
+        loader.parse(contents, '', (result) => {
+            this._editor.execute(new AddObjectCommand(this._editor, result.scene));
+        });
+    }
+
+    private onJSONLoaded(event: ProgressEvent<FileReader>) {
+
+        const contents = (event.target as FileReader).result as string;
+        let data;
+        try {
+            data = JSON.parse(contents);
+        } catch (error) {
+            alert(error);
+            return;
         }
 
-        if (data.metadata.type === undefined) { // 3.0
+        this.handleJSON(data);
+    }
 
-            data.metadata.type = 'Geometry';
-
-        }
-
-        if (data.metadata.formatVersion !== undefined) {
-
-            data.metadata.version = data.metadata.formatVersion;
-
-        }
-
+    private handleJSON = (data: JSON_Matcap) => {
+        // TODO: add JSON Matcap validation
         switch (data.metadata.type.toLowerCase()) {
-
             case 'matcap':
                 events.emit('matcap:project:read', data);
                 break;
-
-            case 'object':
-
-                {
-
-                    const loader = new THREE.ObjectLoader();
-                    loader.setResourcePath(this.texturePath);
-
-                    loader.parse(data, function (result) {
-
-                        if (result.isScene) {
-
-                            // this._editor.execute(new SetSceneCommand(this._editor, result));
-
-                        } else {
-
-                            // this._editor.execute(new AddObjectCommand(this._editor, result));
-
-                        }
-
-                    });
-
-                    break;
-
-                }
-
-            case 'app':
-
-                this._editor.fromJSON(data);
-
-                break;
-
         }
-
     };
 }
 
