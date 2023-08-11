@@ -54,11 +54,7 @@ class Loader {
 
             case 'json':
 
-                reader.addEventListener('load', () => {
-
-
-
-                }, false);
+                reader.addEventListener('load', this.onJSONLoaded.bind(this), false);
                 reader.readAsText(file);
 
                 break;
