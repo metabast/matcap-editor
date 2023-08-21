@@ -1,0 +1,16 @@
+{
+	"name": "three-matcap-orm-material",
+	"version": "0.0.0",
+	"private": true,
+	"type": "module",
+	"scripts": {
+		"tsc": "tsc --init",
+		"build": "tsc ./src/index.ts --outDir ./dist --module esnext --target esnext --allowJs true"
+	},
+	"dependencies": {
+		"three": "^0.153.0"
+	},
+	"devDependencies": {
+		"typescript": "~5.0.4"
+	}
+}

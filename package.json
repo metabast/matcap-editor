@@ -9,8 +9,7 @@
 		"build-watch": "vite build --watch",
 		"build-only": "vite build",
 		"type-check": "vue-tsc --noEmit",
-		"lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore",
-		"lib": "tsc ./lib/MeshMatcapORMMaterial.ts --outDir ./dist_lib --module esnext --target esnext --allowJs true --jsx preserve --sourceMap true"
+		"lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore"
 	},
 	"dependencies": {
 		"fflate": "^0.8.0",

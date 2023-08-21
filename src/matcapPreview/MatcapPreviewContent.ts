@@ -1,7 +1,7 @@
 /* eslint-disable no-param-reassign */
 import { matcapPreviewStore } from '@/stores/matcapPreviewStore';
 import events from '@/commons/Events';
-import { MeshMatcapORMMaterial } from '@/materials/MeshMatcapORMMaterial';
+import { MeshMatcapORMMaterial } from '../../three-matcap-orm-material/src/materials/MeshMatcapORMMaterial';
 import { Clock, Material, Mesh, Object3D, Raycaster, sRGBEncoding, Texture, TextureLoader, TorusKnotGeometry, Vector2 } from 'three';
 import type MatcapEditorWorld from './MatcapPreviewWorld';
 
