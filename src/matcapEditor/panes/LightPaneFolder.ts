@@ -14,17 +14,13 @@ import SpotLightInput from './lightInput/SpotLightInput';
 import Editor from '@/Editor';
 
 export type DataLightPaneFolder = {
-    pane: Pane | null;
-    paneContainer: FolderApi | null;
-    content: MatcapEditorContent | null;
-    currentLightModel: LightModel | null;
+    pane: Pane;
+    paneContainer: FolderApi;
+    content: MatcapEditorContent;
+    currentLightModel: LightModel;
 };
-const data: DataLightPaneFolder = {
-    pane: null,
-    paneContainer: null,
-    currentLightModel: null,
-    content: null,
-};
+
+let data: DataLightPaneFolder;
 
 const generate = (content: MatcapEditorContent) => {
     data.content = content;

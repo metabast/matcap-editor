@@ -1,6 +1,6 @@
-import { BufferGeometry, Clock, Mesh, OrthographicCamera, Scene, sRGBEncoding, WebGLRenderer } from 'three';
+import { BufferGeometry, Clock, Mesh, OrthographicCamera, Scene, WebGLRenderer } from 'three';
 import { RectAreaLightUniformsLib } from 'three/examples/jsm/lights/RectAreaLightUniformsLib.js';
-import { computeBoundsTree, disposeBoundsTree, acceleratedRaycast } from 'three-mesh-bvh';
+import { computeBoundsTree, disposeBoundsTree, acceleratedRaycast, MeshBVH } from 'three-mesh-bvh';
 import Editor from '@/Editor';
 import StatsSingle from '../commons/Stats';
 import MatcapEditorContent from './MatcapEditorContent';
@@ -33,13 +33,6 @@ class MatcapEditorWorld {
     constructor() {
         this._store = matcapEditorStore();
         this._editor = Editor.instance;
-    }
-
-    public get editor() {
-        return this._editor;
-    }
-
-    init() {
         this.stats = new StatsSingle();
 
         this.canvas = document.querySelector('canvas.webgl2') as HTMLCanvasElement;
@@ -51,8 +44,6 @@ class MatcapEditorWorld {
             canvas: this.canvas,
             antialias: true,
         });
-        this.renderer.outputEncoding = sRGBEncoding;
-        this.renderer.physicallyCorrectLights = true;
 
         this.renderer.setSize(this._store.sizes.exportDefault, this._store.sizes.exportDefault);
         this.renderer.setPixelRatio(1);
@@ -64,6 +55,10 @@ class MatcapEditorWorld {
         this.content = new MatcapEditorContent(this);
 
         this.tick();
+    }
+
+    public get editor() {
+        return this._editor;
     }
 
     tick = () => {
