@@ -6,8 +6,8 @@ import StatsSingle from '../commons/Stats';
 import MatcapEditorContent from './MatcapEditorContent';
 import { matcapEditorStore } from '@/stores/matcapEditorStore';
 
-BufferGeometry.prototype.computeBoundsTree = computeBoundsTree;
-BufferGeometry.prototype.disposeBoundsTree = disposeBoundsTree;
+(BufferGeometry.prototype as any).computeBoundsTree = computeBoundsTree;
+(BufferGeometry.prototype as any).disposeBoundsTree = disposeBoundsTree;
 Mesh.prototype.raycast = acceleratedRaycast;
 
 class MatcapEditorWorld {
