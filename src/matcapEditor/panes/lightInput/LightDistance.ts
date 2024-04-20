@@ -5,14 +5,14 @@ import type { DataLightPaneFolder } from '../LightPaneFolder';
 import Editor from '@/Editor';
 
 const LightDistance = {
-    addInput(data: DataLightPaneFolder) {
+    addBinding(data: DataLightPaneFolder) {
         const distancetCtrl: ValuesPaneCtrl = {
             value: Number(data.currentLightModel.distance),
             oldValue: Number(data.currentLightModel.distance),
             history: true,
         };
         data.paneContainer
-            .addInput(distancetCtrl, 'value', {
+            .addBinding(distancetCtrl, 'value', {
                 label: 'distance',
                 min: 0,
                 max: 10,

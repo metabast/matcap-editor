@@ -27,7 +27,7 @@ const inputParams = {
 };
 
 const SpotLightInput = {
-    addInput(data: DataLightPaneFolder, propertyName: 'distance' | 'angle' | 'penumbra' | 'decay') {
+    addBinding(data: DataLightPaneFolder, propertyName: 'distance' | 'angle' | 'penumbra' | 'decay') {
         const spotlight = data.currentLightModel.light as SpotLight;
         const paneCtrl: ValuesPaneCtrl = {
             value: Number(spotlight[propertyName]),
@@ -37,7 +37,7 @@ const SpotLightInput = {
 
         const params = { ...{ label: propertyName }, ...inputParams[propertyName] };
 
-        data.paneContainer.addInput(paneCtrl, 'value', params).on('change', (event) => {
+        data.paneContainer.addBinding(paneCtrl, 'value', params).on('change', (event) => {
             spotlight[propertyName] = Number(event.value);
             if (event.last && paneCtrl.history) {
                 data.content.world.editor.execute(

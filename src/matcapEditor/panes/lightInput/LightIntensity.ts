@@ -4,14 +4,14 @@ import type { DataLightPaneFolder } from '../LightPaneFolder';
 import Editor from '@/Editor';
 
 const LightIntensity = {
-    addInput(data: DataLightPaneFolder) {
+    addBinding(data: DataLightPaneFolder) {
         const paneCtrl: ValuesPaneCtrl = {
             value: Number(data.currentLightModel.light.intensity),
             oldValue: Number(data.currentLightModel.light.intensity),
             history: true,
         };
         data.paneContainer
-            .addInput(paneCtrl, 'value', {
+            .addBinding(paneCtrl, 'value', {
                 label: 'intensity',
                 min: 0,
                 max: 10,

@@ -32,7 +32,7 @@ const generate = () => {
     });
 
     _tab.pages[0]
-        .addInput(sizesCtrl, 'value', {
+        .addBinding(sizesCtrl, 'value', {
             label: 'Size',
             options: {
                 '128': 128,

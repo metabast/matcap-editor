@@ -59,7 +59,7 @@ class SphereMaterialPaneFolderCtrl extends PaneFolderControler {
             history: true,
         };
         this._paneFolder
-            .addInput(this._mapcapEditorContent.sphereRenderMaterial, 'roughness', {
+            .addBinding(this._mapcapEditorContent.sphereRenderMaterial, 'roughness', {
                 min: 0,
                 max: 1,
                 step: 0.01,
@@ -82,7 +82,7 @@ class SphereMaterialPaneFolderCtrl extends PaneFolderControler {
             history: true,
         };
         this._paneFolder
-            .addInput(this._mapcapEditorContent.sphereRenderMaterial, 'metalness', {
+            .addBinding(this._mapcapEditorContent.sphereRenderMaterial, 'metalness', {
                 min: 0,
                 max: 1,
                 step: 0.01,
@@ -104,7 +104,7 @@ class SphereMaterialPaneFolderCtrl extends PaneFolderControler {
             oldValue: this._mapcapEditorContent.sphereRenderMaterial.color.getHex(),
             history: true,
         };
-        this._paneFolder.addInput(this._colorCtrl, 'value', { label: 'color' }).on('change', (event) => {
+        this._paneFolder.addBinding(this._colorCtrl, 'value', { label: 'color' }).on('change', (event) => {
             this._mapcapEditorContent.sphereRenderMaterial.color.set(this._colorCtrl.value as Color);
             if (event.last && this._colorCtrl.history) {
                 this._editor.execute(

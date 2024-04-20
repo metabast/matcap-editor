@@ -5,14 +5,14 @@ import type { DataLightPaneFolder } from '../LightPaneFolder';
 import Editor from '@/Editor';
 
 const LightColor = {
-    addInput(data: DataLightPaneFolder) {
+    addBinding(data: DataLightPaneFolder) {
         const paneCtrl: ValuesPaneCtrl = {
             value: `#${data.currentLightModel.light.color.getHexString()}`,
             oldValue: data.currentLightModel.light.color.getHex(),
             history: true,
         };
         data.paneContainer
-            .addInput(paneCtrl, 'value', {
+            .addBinding(paneCtrl, 'value', {
                 label: 'color',
                 min: 0,
                 max: 10,

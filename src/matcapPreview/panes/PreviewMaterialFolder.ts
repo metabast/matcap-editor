@@ -50,7 +50,7 @@ const generate = (content: MatcapPreviewContent) => {
     };
 
     _paneFolder
-        .addInput(store.value, 'power', {
+        .addBinding(store.value, 'power', {
             min: 0,
             max: 10,
             step: 0.01,
@@ -62,7 +62,7 @@ const generate = (content: MatcapPreviewContent) => {
 
 
     _paneFolder
-        .addInput(roughnessCtrl, 'value', {
+        .addBinding(roughnessCtrl, 'value', {
             min: 0,
             max: 1,
             step: 0.01,
@@ -88,7 +88,7 @@ const generate = (content: MatcapPreviewContent) => {
         });
 
     _paneFolder
-        .addInput(store.value, 'metalness', {
+        .addBinding(store.value, 'metalness', {
             min: 0,
             max: 1,
             step: 0.01,

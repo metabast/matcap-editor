@@ -26,7 +26,6 @@ const data: DataLightPaneFolder = {
     content: null,
 };
 
-
 const generate = (content: MatcapEditorContent) => {
     data.content = content;
 };
@@ -44,23 +43,24 @@ const updateCurrentLight = (lightModel: LightModel): void => {
 
     clean();
 
-    LightModelBoolean.addInput(data, 'front');
-    LightIntensity.addInput(data);
-    LightColor.addInput(data);
-    LightDistance.addInput(data);
+    LightModelBoolean.addBinding(data, 'front');
+    LightIntensity.addBinding(data);
+    LightColor.addBinding(data);
+    LightDistance.addBinding(data);
     if (lightModel.light.type === 'RectAreaLight') {
-        RectAreaLightSize.addInput(data, 'width');
-        RectAreaLightSize.addInput(data, 'height');
-        LightModelBoolean.addInput(data, 'lookAtTarget');
-        LightTarget.addInput(data);
+        RectAreaLightSize.addBinding(data, 'width');
+        RectAreaLightSize.addBinding(data, 'height');
+        LightModelBoolean.addBinding(data, 'lookAtTarget');
+        LightTarget.addBinding(data);
     }
     if (lightModel.light.type === 'SpotLight') {
-        SpotLightInput.addInput(data, 'distance');
-        SpotLightInput.addInput(data, 'angle');
-        SpotLightInput.addInput(data, 'penumbra');
-        SpotLightInput.addInput(data, 'decay');
+        SpotLightInput.addBinding(data, 'distance');
+        SpotLightInput.addBinding(data, 'angle');
+        SpotLightInput.addBinding(data, 'penumbra');
+        SpotLightInput.addBinding(data, 'decay');
     }
     data.paneContainer?.addButton({ title: 'Delete' }).on('click', () => {
+        if (!data.currentLightModel) return;
         clean();
         Editor.instance.execute(new DeleteLightCommand(Editor.instance, data.currentLightModel));
     });

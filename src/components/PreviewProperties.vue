@@ -20,7 +20,7 @@ onMounted(() => {
 
     PreviewMaterialPaneFolder.initialize(pane);
 
-    pane.addInput(store.value, 'showGrid').on('change', () => {
+    pane.addBinding(store.value, 'showGrid').on('change', () => {
     });
 });
 

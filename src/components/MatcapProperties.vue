@@ -30,7 +30,7 @@ function getStyles() {
 events.on('matcap:editor:ready', () => {
     CreatePaneFolder.initialize(pane);
 
-    pane.addInput(store.value.create, 'front', {
+    pane.addBinding(store.value.create, 'front', {
         label: 'front/back',
     });
     pane.addButton({

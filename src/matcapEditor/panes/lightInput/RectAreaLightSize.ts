@@ -5,7 +5,7 @@ import type { DataLightPaneFolder } from '../LightPaneFolder';
 import Editor from '@/Editor';
 
 const RectAreaLightSize = {
-    addInput(data: DataLightPaneFolder, propertyName: 'width' | 'height') {
+    addBinding(data: DataLightPaneFolder, propertyName: 'width' | 'height') {
         const rectAreaLight = data.currentLightModel.light as RectAreaLight;
         const paneCtrl: ValuesPaneCtrl = {
             value: Number(rectAreaLight[propertyName]),
@@ -13,7 +13,7 @@ const RectAreaLightSize = {
             history: true,
         };
         data.paneContainer
-            .addInput(paneCtrl, 'value', {
+            .addBinding(paneCtrl, 'value', {
                 label: propertyName,
                 min: 0,
                 max: 10,

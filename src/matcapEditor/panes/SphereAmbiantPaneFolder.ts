@@ -36,7 +36,7 @@ class SphereAmbiantPaneFolder extends PaneFolderControler {
             history: true,
         };
         this._paneFolder
-            .addInput(this._intensityCtrl, 'value', {
+            .addBinding(this._intensityCtrl, 'value', {
                 min: 0,
                 max: 2,
                 step: 0.01,
@@ -59,7 +59,7 @@ class SphereAmbiantPaneFolder extends PaneFolderControler {
             oldValue: this._ambiantLight.color.getHex(),
             history: true,
         };
-        this._paneFolder.addInput(this._colorCtrl, 'value', { label: 'color' }).on('change', (event) => {
+        this._paneFolder.addBinding(this._colorCtrl, 'value', { label: 'color' }).on('change', (event) => {
             this._ambiantLight.color.set(this._colorCtrl.value as Color);
             if (event.last && this._colorCtrl.history) {
                 this._editor.execute(

@@ -4,14 +4,14 @@ import type { Vector3 } from 'three';
 import type { DataLightPaneFolder } from '../LightPaneFolder';
 
 const LightTarget = {
-    addInput(data: DataLightPaneFolder) {
+    addBinding(data: DataLightPaneFolder) {
         const paneCtrl: ValuesPaneCtrl = {
             value: data.currentLightModel.positionTarget.clone(),
             oldValue: data.currentLightModel.positionTarget.clone(),
             history: true,
         };
         data.paneContainer
-            .addInput(paneCtrl, 'value', {
+            .addBinding(paneCtrl, 'value', {
                 label: 'positionTarget',
                 min: 0,
                 max: 10,

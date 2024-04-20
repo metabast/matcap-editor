@@ -6,7 +6,7 @@ import type { DataLightPaneFolder } from '../LightPaneFolder';
 import Editor from '@/Editor';
 
 const LightModelBoolean = {
-    addInput(
+    addBinding(
         data: DataLightPaneFolder,
         propertyName: 'front' | 'lookAtTarget',
     ) {
@@ -17,7 +17,7 @@ const LightModelBoolean = {
             history: true,
         };
         data.paneContainer
-            .addInput(paneCtrl, 'value', {
+            .addBinding(paneCtrl, 'value', {
                 label: propertyName,
                 min: 0,
                 max: 10,

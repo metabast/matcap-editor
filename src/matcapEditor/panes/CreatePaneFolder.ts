@@ -16,7 +16,7 @@ let _paneFolder: FolderApi;
 
 const generate = () => {
     _paneFolder
-        .addInput(store.value.create, 'lightType', {
+        .addBinding(store.value.create, 'lightType', {
             label: 'Size',
             options: LightType,
         })
@@ -24,12 +24,12 @@ const generate = () => {
             store.value.create.lightType = event.value;
         });
 
-    _paneFolder.addInput(store.value.create, 'distance', {
+    _paneFolder.addBinding(store.value.create, 'distance', {
         min: 0,
         max: 10,
         step: 0.01,
     });
-    _paneFolder.addInput(store.value.create, 'intensity', {
+    _paneFolder.addBinding(store.value.create, 'intensity', {
         min: 0,
         max: 10,
         step: 0.01,
