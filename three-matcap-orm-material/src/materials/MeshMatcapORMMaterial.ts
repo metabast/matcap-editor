@@ -1,25 +1,19 @@
+import * as THREE from 'three';
 /* eslint-disable no-param-reassign */
-import {
-    Color,
-    MeshMatcapMaterial,
-    Texture,
-    type MeshMatcapMaterialParameters,
-    type Shader,
-} from 'three';
 
 import matcapORMUniform from '../shaders/shaderChunk/matcapORMUniform';
 import matcapORM from '../shaders/shaderChunk/matcapORM';
 
-export class MeshMatcapORMMaterial extends MeshMatcapMaterial {
+export class MeshMatcapORMMaterial extends THREE.MeshMatcapMaterial {
     private customUniforms: {
-        uMap2: { value: Texture | null };
+        uMap2: { value: THREE.Texture | null };
         uRoughness: { value: number };
-        uRoughnessMap: { value: Texture | null };
+        uRoughnessMap: { value: THREE.Texture | null };
         uMetalness: { value: number };
-        uColor: { value: Color };
+        uColor: { value: THREE.Color };
     };
 
-    constructor(parameters?: MeshMatcapMaterialParameters) {
+    constructor(parameters?: THREE.MeshMatcapMaterialParameters) {
         super(parameters);
 
         this.customUniforms = {
@@ -27,12 +21,12 @@ export class MeshMatcapORMMaterial extends MeshMatcapMaterial {
             uRoughness: { value: 0 },
             uRoughnessMap: { value: null },
             uMetalness: { value: 0 },
-            uColor: { value: new Color(0xFFFFFF) },
+            uColor: { value: new THREE.Color(0xFFFFFF) },
         };
 
-        this.setValues(parameters as MeshMatcapMaterialParameters);
+        this.setValues(parameters as THREE.MeshMatcapMaterialParameters);
 
-        this.onBeforeCompile = (shader: Shader) => {
+        this.onBeforeCompile = (shader: THREE.Shader) => {
 
             (shader as any).defines = Object.assign(
                 (shader as any).defines,
@@ -55,7 +49,7 @@ export class MeshMatcapORMMaterial extends MeshMatcapMaterial {
             );
         };
     }
-    set color2(value: Color) {
+    set color2(value: THREE.Color) {
         this.customUniforms.uColor.value = value;
     }
 
@@ -63,7 +57,7 @@ export class MeshMatcapORMMaterial extends MeshMatcapMaterial {
         return this.customUniforms.uColor.value;
     }
 
-    set map2(value: Texture | null) {
+    set map2(value: THREE.Texture | null) {
         if (value)
             this.defines.USE_MAP2 = '';
         else
@@ -83,7 +77,7 @@ export class MeshMatcapORMMaterial extends MeshMatcapMaterial {
         return this.customUniforms.uRoughness.value;
     }
 
-    set roughnessMap(value: Texture | null) {
+    set roughnessMap(value: THREE.Texture | null) {
         this.customUniforms.uRoughnessMap.value = value;
     }
 
@@ -97,5 +91,23 @@ export class MeshMatcapORMMaterial extends MeshMatcapMaterial {
 
     get metalness() {
         return this.customUniforms.uMetalness.value;
+    }
+
+    applyMapsFromOtherMaterial(material: MeshMatcapORMMaterial) {
+        if (material.color)
+            this.color2 = material.color;
+
+        if (material.map) {
+            this.map2 = material.map;
+        }
+
+        if (material.roughness)
+            this.roughness = material.roughness;
+
+        if (material.roughnessMap)
+            this.roughnessMap = material.roughnessMap;
+
+        if (material.normalMap)
+            this.normalMap = material.normalMap;
     }
 }
