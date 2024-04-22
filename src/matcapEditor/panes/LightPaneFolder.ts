@@ -17,7 +17,7 @@ export type DataLightPaneFolder = {
     pane: Pane;
     paneContainer: FolderApi;
     content: MatcapEditorContent;
-    currentLightModel: LightModel;
+    currentLightModel?: LightModel;
 };
 
 let data: DataLightPaneFolder;
@@ -64,12 +64,16 @@ const updateCurrentLight = (lightModel: LightModel): void => {
 
 const LightPaneFolder = {
     initialize(pane: Pane) {
-        data.pane = pane;
-        data.paneContainer = data.pane.addFolder({
+        const paneContainer = pane.addFolder({
             title: 'Current Light',
             expanded: true,
         });
-        data.content = Editor.instance.matcapEditorWorld.content;
+        const content = Editor.instance.matcapEditorWorld.content;
+        data = {
+            pane,
+            paneContainer,
+            content,
+        };
         events.on('matcap:light:update:current', updateCurrentLight);
     },
 };
