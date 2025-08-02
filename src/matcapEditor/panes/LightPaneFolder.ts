@@ -2,15 +2,15 @@ import type { FolderApi } from '@tweakpane/core';
 import { DeleteLightCommand } from '@/commands/DeleteLightCommand';
 import events from '@/commons/Events';
 import type { Pane } from 'tweakpane';
-import type LightModel from '../LightModel';
-import type MatcapEditorContent from '../MatcapEditorContent';
-import LightColor from './lightInput/LightColor';
-import LightDistance from './lightInput/LightDistance';
-import LightIntensity from './lightInput/LightIntensity';
-import LightModelBoolean from './lightInput/LightModelBoolean';
-import LightTarget from './lightInput/LightTarget';
-import RectAreaLightSize from './lightInput/RectAreaLightSize';
-import SpotLightInput from './lightInput/SpotLightInput';
+import type LightModel from '@/matcapEditor/LightModel';
+import type MatcapEditorContent from '@/matcapEditor/MatcapEditorContent';
+import LightColor from '@/matcapEditor/panes/lightInput/LightColor';
+import LightDistance from '@/matcapEditor/panes/lightInput/LightDistance';
+import LightIntensity from '@/matcapEditor/panes/lightInput/LightIntensity';
+import LightModelBoolean from '@/matcapEditor/panes/lightInput/LightModelBoolean';
+import LightTarget from '@/matcapEditor/panes/lightInput/LightTarget';
+import RectAreaLightSize from '@/matcapEditor/panes/lightInput/RectAreaLightSize';
+import SpotLightInput from '@/matcapEditor/panes/lightInput/SpotLightInput';
 import Editor from '@/Editor';
 
 export type DataLightPaneFolder = {

@@ -1,7 +1,7 @@
 import { SetLightModelPropertyCommand } from '@/commands/SetLightModelPropertyCommand';
 import type { ValuesPaneCtrl } from '@/ts/types/PanesTypes';
 import type { Vector3 } from 'three';
-import type { DataLightPaneFolder } from '../LightPaneFolder';
+import type { DataLightPaneFolder } from '@/matcapEditor/panes/LightPaneFolder';
 
 const LightTarget = {
     addBinding(data: DataLightPaneFolder) {

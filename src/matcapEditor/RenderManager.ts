@@ -1,6 +1,6 @@
 import events from '@/commons/Events';
 import { matcapEditorStore } from '@/stores/matcapEditorStore';
-import type MatcapEditorContent from './MatcapEditorContent';
+import type MatcapEditorContent from '@/matcapEditor/MatcapEditorContent';
 
 let _store: any;
 

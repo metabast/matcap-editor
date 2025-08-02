@@ -1,5 +1,6 @@
 import type Editor from '@/Editor';
-import events from './Events';
+import type { TProject } from '@/ts/types/TProject';
+import events from '@/commons/Events';
 import { matcapEditorStore } from '@/stores/matcapEditorStore';
 import { ImportProjectCommand } from '@/commands/ImportProjectCommand';
 import SphereMaterialPaneFolderCtrl from '@/matcapEditor/panes/SphereMaterialPaneFolderCtrl';

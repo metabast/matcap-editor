@@ -1,7 +1,7 @@
 import type { FolderApi, TabApi } from '@tweakpane/core';
 import type { Pane } from 'tweakpane';
-import SphereAmbiantPaneFolder from './SphereAmbiantPaneFolder';
-import SphereMaterialPaneFolderCtrl from './SphereMaterialPaneFolderCtrl';
+import SphereAmbiantPaneFolder from '@/matcapEditor/panes/SphereAmbiantPaneFolder';
+import SphereMaterialPaneFolderCtrl from '@/matcapEditor/panes/SphereMaterialPaneFolderCtrl';
 
 const data: { pane: Pane | null; paneFolder: FolderApi | null; tab: TabApi | null } = {
     pane: null,

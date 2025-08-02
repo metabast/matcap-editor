@@ -1,6 +1,6 @@
-export { AddLightCommand } from './AddLightCommand';
-export { SetAmbiantLightCommand } from './SetAmbiantLightCommand';
-export { SetAreaLightPropertyCommand } from './SetAreaLightPropertyCommand';
-export { SetLightModelPropertyCommand } from './SetLightModelPropertyCommand';
-export { SetLightPropertyCommand } from './SetLightPropertyCommand';
-export { SetSphereMaterialParamsCommand } from './SetSphereMaterialParamsCommand';
+export { AddLightCommand } from '@/commands/AddLightCommand';
+export { SetAmbiantLightCommand } from '@/commands/SetAmbiantLightCommand';
+export { SetAreaLightPropertyCommand } from '@/commands/SetAreaLightPropertyCommand';
+export { SetLightModelPropertyCommand } from '@/commands/SetLightModelPropertyCommand';
+export { SetLightPropertyCommand } from '@/commands/SetLightPropertyCommand';
+export { SetSphereMaterialParamsCommand } from '@/commands/SetSphereMaterialParamsCommand';

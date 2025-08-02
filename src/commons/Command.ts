@@ -4,7 +4,7 @@
  * @constructor
  */
 
-import type Editor from '../Editor';
+import type Editor from '@/Editor';
 
 export interface ICommandOutput {
     type: string;

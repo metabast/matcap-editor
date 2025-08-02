@@ -1,6 +1,6 @@
 import type Editor from '@/Editor.js';
-import events from './Events';
-import { EVENT_FILES_DROPPED } from './Constants';
+import events from '@/commons/Events';
+import { EVENT_FILES_DROPPED } from '@/commons/Constants';
 import { AddObjectCommand } from '@/commands/AddObjectCommand';
 
 type JSON_Matcap = {

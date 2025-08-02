@@ -2,7 +2,7 @@ import { SetLightModelPropertyCommand } from '@/commands/SetLightModelPropertyCo
 import events from '@/commons/Events';
 import LightModel from '@/matcapEditor/LightModel';
 import type { ValuesPaneCtrl } from '@/ts/types/PanesTypes';
-import type { DataLightPaneFolder } from '../LightPaneFolder';
+import type { DataLightPaneFolder } from '@/matcapEditor/panes/LightPaneFolder';
 import Editor from '@/Editor';
 
 const LightModelBoolean = {

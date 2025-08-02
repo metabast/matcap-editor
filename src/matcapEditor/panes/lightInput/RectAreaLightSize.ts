@@ -1,7 +1,7 @@
 import { SetAreaLightPropertyCommand } from '@/commands/SetAreaLightPropertyCommand';
 import type { ValuesPaneCtrl } from '@/ts/types/PanesTypes';
 import type { RectAreaLight } from 'three';
-import type { DataLightPaneFolder } from '../LightPaneFolder';
+import type { DataLightPaneFolder } from '@/matcapEditor/panes/LightPaneFolder';
 import Editor from '@/Editor';
 
 const RectAreaLightSize = {

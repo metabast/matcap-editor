@@ -4,7 +4,7 @@ import type { Pane } from 'tweakpane';
 import { computed } from 'vue';
 import { matcapPreviewStore } from '@/stores/matcapPreviewStore';
 import type { ValuesPaneCtrl } from '@/ts/types/PanesTypes';
-import type MatcapPreviewContent from '../MatcapPreviewContent';
+import type MatcapPreviewContent from '@/matcapPreview/MatcapPreviewContent';
 import { SetPreviewRoughnessCommand } from '@/commands/SetPreviewRoughnessCommand';
 import { SetPreviewMetalnessCommand } from '@/commands/SetPreviewMetalnessCommand';
 

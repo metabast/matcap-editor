@@ -1,5 +1,5 @@
-import type { Command } from './commons/Command';
-import type Editor from './Editor';
+import type { Command } from '@/commons/Command';
+import type Editor from '@/Editor';
 
 class History {
     public editor: Editor;

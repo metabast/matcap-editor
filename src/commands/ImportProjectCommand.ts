@@ -1,7 +1,7 @@
 import { Command } from '@/commons/Command';
 import type Editor from '@/Editor';
 import LightModel from '@/matcapEditor/LightModel';
-import { AddLightCommand } from './AddLightCommand';
+import { AddLightCommand } from '@/commands/AddLightCommand';
 import type { TProject } from '@/ts/types/TProject';
 import SphereMaterialPaneFolderCtrl from '@/matcapEditor/panes/SphereMaterialPaneFolderCtrl';
 import { Color } from 'three';

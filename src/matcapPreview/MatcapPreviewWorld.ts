@@ -1,13 +1,13 @@
 import type Editor from 'src/Editor';
 import { Clock, PerspectiveCamera, Scene, Vector2, WebGLRenderer } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
-import Resize from '../commons/Resize';
-import StatsSingle from '../commons/Stats';
+import Resize from '@/commons/Resize';
+import StatsSingle from '@/commons/Stats';
 
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
 import { OutlinePass } from 'three/examples/jsm/postprocessing/OutlinePass.js';
-import MatcapPreviewContent from './MatcapPreviewContent';
+import MatcapPreviewContent from '@/matcapPreview/MatcapPreviewContent';
 
 class MatcapPreviewWorld {
 	private _editor: Editor;

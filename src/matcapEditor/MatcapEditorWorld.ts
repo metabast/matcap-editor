@@ -2,8 +2,8 @@ import { BufferGeometry, Clock, Mesh, OrthographicCamera, Scene, WebGLRenderer }
 import { RectAreaLightUniformsLib } from 'three/examples/jsm/lights/RectAreaLightUniformsLib.js';
 import { computeBoundsTree, disposeBoundsTree, acceleratedRaycast, MeshBVH } from 'three-mesh-bvh';
 import Editor from '@/Editor';
-import StatsSingle from '../commons/Stats';
-import MatcapEditorContent from './MatcapEditorContent';
+import StatsSingle from '@/commons/Stats';
+import MatcapEditorContent from '@/matcapEditor/MatcapEditorContent';
 import { matcapEditorStore } from '@/stores/matcapEditorStore';
 
 (BufferGeometry.prototype as any).computeBoundsTree = computeBoundsTree;

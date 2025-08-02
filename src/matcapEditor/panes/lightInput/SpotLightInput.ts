@@ -1,7 +1,7 @@
 import { SetSpotLightPropertyCommand } from '@/commands/SetSpotLightPropertyCommand';
 import type { ValuesPaneCtrl } from '@/ts/types/PanesTypes';
 import type { SpotLight } from 'three';
-import type { DataLightPaneFolder } from '../LightPaneFolder';
+import type { DataLightPaneFolder } from '@/matcapEditor/panes/LightPaneFolder';
 
 const inputParams = {
     distance: {

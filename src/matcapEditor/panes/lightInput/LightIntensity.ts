@@ -1,6 +1,6 @@
 import { SetLightPropertyCommand } from '@/commands/SetLightPropertyCommand';
 import type { ValuesPaneCtrl } from '@/ts/types/PanesTypes';
-import type { DataLightPaneFolder } from '../LightPaneFolder';
+import type { DataLightPaneFolder } from '@/matcapEditor/panes/LightPaneFolder';
 import Editor from '@/Editor';
 
 const LightIntensity = {

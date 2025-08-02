@@ -1,5 +1,5 @@
-import type { TSphereRenderAmbiant } from './TSphereRenderAmbiant';
-import type { TSphereRenderMaterial } from './TSphereRenderMaterial';
+import type { TSphereRenderAmbiant } from '@/ts/types/TSphereRenderAmbiant';
+import type { TSphereRenderMaterial } from '@/ts/types/TSphereRenderMaterial';
 
 export type TProject = {
     metadata: {

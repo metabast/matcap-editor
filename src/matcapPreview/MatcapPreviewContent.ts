@@ -13,7 +13,7 @@ import {
 	TorusKnotGeometry,
 	Vector2,
 } from 'three';
-import type MatcapEditorWorld from './MatcapPreviewWorld';
+import type MatcapEditorWorld from '@/matcapPreview/MatcapPreviewWorld';
 
 class MatcapPreviewContent {
 	private _store: any;

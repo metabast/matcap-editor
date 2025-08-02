@@ -19,11 +19,11 @@ import { AddLightCommand } from '@/commands';
 import { SetLightModelPositionCommand } from '@/commands/SetLightPositionCommand';
 import type { ValuesCommand } from '@/ts/types/PanesTypes';
 import events, { emitSnapshot } from '@/commons/Events';
-import type MatcapEditorWorld from './MatcapEditorWorld';
-import LightModel from './LightModel';
-import RenderManager from './RenderManager';
+import type MatcapEditorWorld from '@/matcapEditor/MatcapEditorWorld';
+import LightModel from '@/matcapEditor/LightModel';
+import RenderManager from '@/matcapEditor/RenderManager';
 import { matcapEditorStore } from '@/stores/matcapEditorStore';
-import { LightFabric } from './LightFabric';
+import { LightFabric } from '@/matcapEditor/LightFabric';
 
 const data = {
     halfSize: 0.3,
