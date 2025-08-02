@@ -9,6 +9,7 @@ export default defineConfig({
     resolve: {
         alias: {
             '@': fileURLToPath(new URL('./src', import.meta.url)),
+            'lib': fileURLToPath(new URL('./three-matcap-orm-material/src', import.meta.url)),
             'vue-i18n': 'vue-i18n/dist/vue-i18n.cjs.js',
         },
     },

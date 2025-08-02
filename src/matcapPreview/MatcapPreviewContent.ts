@@ -1,7 +1,7 @@
 /* eslint-disable no-param-reassign */
 import { matcapPreviewStore } from '@/stores/matcapPreviewStore';
 import events from '@/commons/Events';
-import { MeshMatcapORMMaterial } from '../../three-matcap-orm-material/src/materials/MeshMatcapORMMaterial';
+import { MeshMatcapORMMaterial } from 'lib/materials/MeshMatcapORMMaterial';
 import {
 	Clock,
 	Material,
