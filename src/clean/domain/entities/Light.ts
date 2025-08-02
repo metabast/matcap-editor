@@ -1,5 +1,6 @@
 /**
- * Entité Light du domaine
+ * PHASE 3 - ENTITÉ LIGHT CLEAN ARCHITECTURE
+ * Entité de domaine pure pour les lumières
  */
 
 import { LightId } from '@/clean/domain/value-objects/EntityId';
