@@ -26,7 +26,7 @@ export class MeshMatcapORMMaterial extends THREE.MeshMatcapMaterial {
 
         this.setValues(parameters as THREE.MeshMatcapMaterialParameters);
 
-        this.onBeforeCompile = (shader: THREE.Shader) => {
+        this.onBeforeCompile = (shader: any) => {
 
             (shader as any).defines = Object.assign(
                 (shader as any).defines,
