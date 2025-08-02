@@ -1,11 +1,18 @@
-<script lang="ts" setup >
+<script lang="ts" setup>
+import { computed } from 'vue';
 import Canvas3D from '@/components/Canvas3D.vue';
-</script >
+import MigrationDebugPanel from '@/components/MigrationDebugPanel.vue';
 
-<template >
+const isDevelopment = computed(() => import.meta.env.DEV);
+</script>
+
+<template>
   <Canvas3D />
-</template >
 
-<style scoped >
+  <!-- Panneau de debug de la migration (développement uniquement) -->
+  <MigrationDebugPanel v-if="isDevelopment" />
+</template>
 
-</style >
+<style scoped></style>
+
+<style scoped></style>
