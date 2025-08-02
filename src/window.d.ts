@@ -1,4 +1,4 @@
-import type MatcapPreviewWorld from '@/matcapPreview/MatcapPreviewWorld';
+import type MatcapPreviewWorld from '@/legacy/matcapPreview/MatcapPreviewWorld';
 
 interface Window {
     matcapPreviewWorld: MatcapPreviewWorld;

@@ -1,0 +1,64 @@
+import { SetLightModelPropertyCommand } from '@/legacy/commands/SetLightModelPropertyCommand';
+import events from '@/legacy/commons/Events';
+import LightModel from '@/legacy/matcapEditor/LightModel';
+import type { ValuesPaneCtrl } from '@/ts/types/PanesTypes';
+import type { DataLightPaneFolder } from '@/legacy/matcapEditor/panes/LightPaneFolder';
+import Editor from '@/legacy/Editor';
+
+const LightModelBoolean = {
+    addBinding(
+        data: DataLightPaneFolder,
+        propertyName: 'front' | 'lookAtTarget',
+    ) {
+        if (!data.currentLightModel || !data.paneContainer) return;
+        const paneCtrl: ValuesPaneCtrl = {
+            value: Boolean(data.currentLightModel[propertyName]),
+            oldValue: Boolean(data.currentLightModel[propertyName]),
+            history: true,
+        };
+        data.paneContainer
+            .addBinding(paneCtrl, 'value', {
+                label: propertyName,
+                min: 0,
+                max: 10,
+                step: 0.001,
+            })
+            .on('change', (event) => {
+                if (!data.currentLightModel || !data.content || !data.pane) return;
+
+                data.currentLightModel[propertyName] = Boolean(event.value);
+                LightModel.updateLightDistance(data.currentLightModel);
+                if (event.last && paneCtrl.history) {
+                    Editor.instance.execute(
+                        new SetLightModelPropertyCommand(
+                            Editor.instance,
+                            {
+                                name: propertyName,
+                                value: data.currentLightModel[propertyName],
+                                oldValue: Boolean(paneCtrl.oldValue),
+                            },
+                            data.currentLightModel,
+                            data.pane,
+                            paneCtrl,
+                        ),
+                        `update light model ${propertyName}`,
+                    );
+                    paneCtrl.oldValue = Boolean(
+                        data.currentLightModel[propertyName],
+                    );
+                }
+            });
+
+        events.on('light:change', (payload) => {
+            if (!data.pane) return;
+            // paneCtrl.history = false;
+            if (payload.propertyName === propertyName) {
+                paneCtrl.value = payload.value;
+                data.pane.refresh();
+            }
+            // paneCtrl.history = true;
+        });
+    },
+};
+
+export default LightModelBoolean;

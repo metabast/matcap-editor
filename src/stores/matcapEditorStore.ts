@@ -1,4 +1,4 @@
-import type LightModel from '@/matcapEditor/LightModel';
+import type LightModel from '@/legacy/matcapEditor/LightModel';
 import type { TSphereRenderMaterial } from '@/ts/types/TSphereRenderMaterial';
 import { defineStore } from 'pinia';
 import { Color } from 'three';

@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { computed } from 'vue';
-import Canvas3D from '@/components/Canvas3D.vue';
-import MigrationDebugPanel from '@/components/MigrationDebugPanel.vue';
+import Canvas3D from '@/legacy/components/Canvas3D.vue';
+import MigrationDebugPanel from '@/legacy/components/MigrationDebugPanel.vue';
 
 const isDevelopment = computed(() => import.meta.env.DEV);
 </script>
