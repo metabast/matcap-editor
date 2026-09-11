@@ -10,6 +10,8 @@
         "build-watch": "vite build --watch",
         "build-only": "vite build",
         "type-check": "vue-tsc --noEmit",
+        "format": "prettier --write .",
+        "format:check": "prettier --check .",
         "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore"
     },
     "dependencies": {

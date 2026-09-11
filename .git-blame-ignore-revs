@@ -1,0 +1,6 @@
+# Revisions listed here are excluded from git blame.
+# Enable locally with:
+#   git config blame.ignoreRevsFile .git-blame-ignore-revs
+
+# style: format codebase with prettier
+e2b1841fc7e2111b245eb066784e2eb3494eaa2e
