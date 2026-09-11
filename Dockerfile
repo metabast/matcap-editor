@@ -1,4 +1,4 @@
-FROM node:20-alpine
+FROM node:22-alpine
 
 # The `node` user is uid/gid 1000, matching the host user, so files written
 # to the bind-mounted workdir (dist/, package-lock.json, vite cache) stay
@@ -8,8 +8,8 @@ RUN chown node:node /app
 USER node
 
 COPY --chown=node:node package.json package-lock.json ./
-# --legacy-peer-deps: the committed lockfile predates the eslint 9 upgrade and
-# @vue/eslint-config-typescript@13 still declares a peer on eslint ^8.56.
+# --legacy-peer-deps: prettier-eslint and @vue/eslint-config-typescript declare
+# conflicting eslint peer ranges; npm's strict resolver cannot satisfy both.
 RUN npm ci --legacy-peer-deps
 
 COPY --chown=node:node . .
