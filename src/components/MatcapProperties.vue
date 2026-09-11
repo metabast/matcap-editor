@@ -1,4 +1,11 @@
+<template>
+    <div class="matcap-editor-pane" :style="getStyles()" />
+</template>
+
 <script lang="ts" setup>
+import { computed, onMounted } from 'vue';
+import { Pane } from 'tweakpane';
+
 import { matcapEditorStore } from '@/stores/matcapEditorStore';
 import events from '@/commons/Events';
 
@@ -6,8 +13,6 @@ import SpherePaneFolder from '@/matcapEditor/panes/SpherePaneFolder';
 import CreatePaneFolder from '@/matcapEditor/panes/CreatePaneFolder';
 import LightPaneFolder from '@/matcapEditor/panes/LightPaneFolder';
 import ImportExportMatcapPaneFolder from '@/matcapEditor/panes/ImportExportMatcapPaneFolder';
-import { Pane } from 'tweakpane';
-import { computed, onMounted } from 'vue';
 
 const store = computed(() => matcapEditorStore());
 let pane: Pane;
@@ -44,7 +49,3 @@ onMounted(() => {
     });
 });
 </script>
-
-<template>
-    <div class="matcap-editor-pane" :style="getStyles()" />
-</template>

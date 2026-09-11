@@ -71,7 +71,11 @@ export default defineConfigWithVueTs(
             'vue/no-unused-refs': 'error',
             'vue/component-api-style': ['warn', ['script-setup', 'options']],
             'vue/block-lang': ['error', { script: { lang: 'ts' } }],
-            'vue/block-order': ['error', { order: ['script', 'template', 'style'] }],
+            // Kept as template-first, the order this codebase actually uses.
+            // Swapping to script-first changes module evaluation order in the dev
+            // server and surfaces the Editor -> Project -> SphereMaterialPaneFolderCtrl
+            // -> PaneFolderCtrl -> Editor import cycle as a TDZ error at runtime.
+            'vue/block-order': ['error', { order: ['template', 'script', 'style'] }],
         },
     },
 

@@ -1,12 +1,27 @@
+<template>
+    <CanvasSnapshots />
+    <canvas
+        class="webgl"
+        @dragover.prevent="dragNdropIsVisible = true"
+        @dragleave.prevent="dragNdropIsVisible = false"
+        @drop.prevent="onDrop"
+    />
+    <DragAndDropHelperVue :is-visible-over="dragNdropIsVisible" />
+    <canvas class="webgl2" :width="String(store.sizes.view)" :height="String(store.sizes.view)" :style="getStyles()" />
+    <MatcapLights />
+
+    <PreviewProperties />
+</template>
+
 <script lang="ts" setup>
+import Editor from '@/Editor';
+import { matcapEditorStore } from '@/stores/matcapEditorStore';
+import { onMounted, computed, ref } from 'vue';
+import DragAndDropHelperVue from '@/components/DragAndDropHelper.vue';
 import MatcapLights from './MatcapLights.vue';
 import CanvasSnapshots from './CanvasSnapshots.vue';
 import PreviewProperties from './PreviewProperties.vue';
-import DragAndDropHelperVue from '@/components/DragAndDropHelper.vue';
-import { matcapEditorStore } from '@/stores/matcapEditorStore';
-import Editor from '@/Editor';
 import DroppedFileManager from '@/commons/DroppedFileManager';
-import { onMounted, computed, ref } from 'vue';
 
 const store = computed(() => matcapEditorStore());
 const dragNdropIsVisible = ref(false);
@@ -28,18 +43,3 @@ function getStyles() {
     `;
 }
 </script>
-
-<template>
-    <CanvasSnapshots />
-    <canvas
-        class="webgl"
-        @dragover.prevent="dragNdropIsVisible = true"
-        @dragleave.prevent="dragNdropIsVisible = false"
-        @drop.prevent="onDrop"
-    />
-    <DragAndDropHelperVue :is-visible-over="dragNdropIsVisible" />
-    <canvas class="webgl2" :width="String(store.sizes.view)" :height="String(store.sizes.view)" :style="getStyles()" />
-    <MatcapLights />
-
-    <PreviewProperties />
-</template>

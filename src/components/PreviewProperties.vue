@@ -1,8 +1,12 @@
+<template>
+    <div class="matcap-preview-pane" />
+</template>
+
 <script lang="ts" setup>
-import PreviewMaterialPaneFolder from '@/matcapPreview/panes/PreviewMaterialFolder';
-import { matcapPreviewStore } from '@/stores/matcapPreviewStore';
 import { computed, onMounted } from 'vue';
 import { Pane } from 'tweakpane';
+import PreviewMaterialPaneFolder from '@/matcapPreview/panes/PreviewMaterialFolder';
+import { matcapPreviewStore } from '@/stores/matcapPreviewStore';
 
 const store = computed(() => matcapPreviewStore());
 
@@ -18,7 +22,3 @@ onMounted(() => {
     pane.addBinding(store.value, 'showGrid').on('change', () => {});
 });
 </script>
-
-<template>
-    <div class="matcap-preview-pane" />
-</template>

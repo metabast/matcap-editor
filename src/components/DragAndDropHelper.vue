@@ -1,7 +1,17 @@
+<template>
+    <div id="dragNdropContainer" v-if="isVisible || isVisibleOver">
+        <div id="dragNdropHelper">
+            <div class="bg">
+                <div>Drag and drop your file here</div>
+                <div>{{ msg }}</div>
+            </div>
+        </div>
+    </div>
+</template>
+
 <script setup lang="ts">
 import events from '@/commons/Events';
 import { ref } from 'vue';
-
 const isVisible = ref(false);
 const defaultMsg = '*.json for project, *.glb for object';
 const msg = ref(defaultMsg);
@@ -19,17 +29,6 @@ events.on('show:dragNdrop', (payload) => {
     }, 2000);
 });
 </script>
-
-<template>
-    <div v-if="isVisible || isVisibleOver" id="dragNdropContainer">
-        <div id="dragNdropHelper">
-            <div class="bg">
-                <div>Drag and drop your file here</div>
-                <div>{{ msg }}</div>
-            </div>
-        </div>
-    </div>
-</template>
 
 <style>
 #dragNdropContainer {
