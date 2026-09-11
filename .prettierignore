@@ -3,3 +3,7 @@ build
 coverage/
 dist/
 
+# Hand-written tickets and machine-generated local config: not code.
+.board/
+.claude/
+package-lock.json
