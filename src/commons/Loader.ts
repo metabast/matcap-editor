@@ -1,7 +1,7 @@
-import type Editor from '@/Editor.js';
 import events from './Events';
 import { EVENT_FILES_DROPPED } from './Constants';
 import { AddObjectCommand } from '@/commands/AddObjectCommand';
+import type Editor from '@/Editor.js';
 
 type JSON_Matcap = {
     metadata: {
@@ -26,8 +26,8 @@ class Loader {
     }
 
     private onReaderProgress(event: ProgressEvent): void {
-        const size = '(' + Math.floor(event.total / 1000) + ' KB)';
-        const progress = Math.floor((event.loaded / event.total) * 100) + '%';
+        const size = `(${Math.floor(event.total / 1000)} KB)`;
+        const progress = `${Math.floor((event.loaded / event.total) * 100)}%`;
         console.log('Loading', size, progress);
     }
 
@@ -53,7 +53,7 @@ class Loader {
                 break;
 
             default:
-                console.error('Unsupported file format (' + extension + ').');
+                console.error(`Unsupported file format (${extension}).`);
 
                 break;
         }

@@ -1,11 +1,11 @@
+import App from './App.vue';
 import { createApp } from 'vue';
 import { createPinia } from 'pinia';
-import App from './App.vue';
-import * as THREE from 'three';
-
-window.THREE = THREE; // Expose THREE to APP Scripts and Console
+import * as THREE from 'three'; // Expose THREE to APP Scripts and Console
 
 import './assets/main.css';
+
+window.THREE = THREE;
 
 const app = createApp(App);
 

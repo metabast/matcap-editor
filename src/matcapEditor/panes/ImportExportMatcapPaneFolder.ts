@@ -1,8 +1,8 @@
-import type { FolderApi, TabApi } from '@tweakpane/core';
 import events from '@/commons/Events';
-import type { Pane } from 'tweakpane';
-import { computed } from 'vue';
 import { matcapEditorStore } from '@/stores/matcapEditorStore';
+import { computed } from 'vue';
+import type { FolderApi, TabApi } from '@tweakpane/core';
+import type { Pane } from 'tweakpane';
 
 const store = computed(() => matcapEditorStore());
 

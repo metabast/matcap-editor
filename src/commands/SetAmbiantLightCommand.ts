@@ -1,8 +1,8 @@
 import { Command } from '@/commons/Command';
 import { emitSnapshot } from '@/commons/Events';
+import { Color, type AmbientLight } from 'three';
 import type Editor from '@/Editor';
 import type { ValuesCommand, ValuesPaneCtrl } from '@/ts/types/PanesTypes';
-import { Color, type AmbientLight } from 'three';
 import type { Pane } from 'tweakpane';
 
 type PropertiesAllowed = 'intensity' | 'color';

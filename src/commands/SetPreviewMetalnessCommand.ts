@@ -1,11 +1,11 @@
 import { Command } from '@/commons/Command';
 import events, { emitSnapshot } from '@/commons/Events';
+import { matcapPreviewStore } from '@/stores/matcapPreviewStore';
+import { computed } from 'vue';
 import type Editor from '@/Editor';
 import type { Pane } from 'tweakpane';
 import type { ValuesCommand, ValuesPaneCtrl } from '@/ts/types/PanesTypes';
 import type MatcapPreviewWorld from '@/matcapPreview/MatcapPreviewWorld';
-import { matcapPreviewStore } from '@/stores/matcapPreviewStore';
-import { computed } from 'vue';
 
 const store = computed(() => matcapPreviewStore());
 

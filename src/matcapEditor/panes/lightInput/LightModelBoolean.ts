@@ -1,9 +1,9 @@
 import { SetLightModelPropertyCommand } from '@/commands/SetLightModelPropertyCommand';
 import events from '@/commons/Events';
 import LightModel from '@/matcapEditor/LightModel';
+import Editor from '@/Editor';
 import type { ValuesPaneCtrl } from '@/ts/types/PanesTypes';
 import type { DataLightPaneFolder } from '../LightPaneFolder';
-import Editor from '@/Editor';
 
 const LightModelBoolean = {
     addBinding(data: DataLightPaneFolder, propertyName: 'front' | 'lookAtTarget') {

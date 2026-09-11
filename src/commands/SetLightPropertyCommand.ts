@@ -1,8 +1,8 @@
 import { Command } from '@/commons/Command';
 import { emitSnapshot } from '@/commons/Events';
+import { Color, PointLight, RectAreaLight, SpotLight } from 'three';
 import type Editor from '@/Editor';
 import type { ValuesCommand, ValuesPaneCtrl } from '@/ts/types/PanesTypes';
-import { Color, PointLight, RectAreaLight, SpotLight } from 'three';
 import type { Pane } from 'tweakpane';
 
 type PropertiesAllowed = 'intensity' | 'color';

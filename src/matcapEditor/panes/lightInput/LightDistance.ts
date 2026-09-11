@@ -1,8 +1,8 @@
 import { SetLightModelPropertyCommand } from '@/commands/SetLightModelPropertyCommand';
 import LightModel from '@/matcapEditor/LightModel';
+import Editor from '@/Editor';
 import type { ValuesPaneCtrl } from '@/ts/types/PanesTypes';
 import type { DataLightPaneFolder } from '../LightPaneFolder';
-import Editor from '@/Editor';
 
 const LightDistance = {
     addBinding(data: DataLightPaneFolder) {

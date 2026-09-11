@@ -1,7 +1,7 @@
-import { AmbientLight, Color } from 'three';
 import { SetAmbiantLightCommand } from '@/commands/SetAmbiantLightCommand';
-import type { ValuesPaneCtrl } from '@/ts/types/PanesTypes';
 import PaneFolderControler from '@/commons/PaneFolderCtrl';
+import { AmbientLight, Color } from 'three';
+import type { ValuesPaneCtrl } from '@/ts/types/PanesTypes';
 
 class SphereAmbiantPaneFolder extends PaneFolderControler {
     _intensityCtrl: ValuesPaneCtrl;
@@ -79,7 +79,7 @@ class SphereAmbiantPaneFolder extends PaneFolderControler {
             this._editor,
             {
                 name: 'intensity',
-                value: value,
+                value,
                 oldValue: oldValue || value,
             },
             this._ambiantLight,
@@ -93,7 +93,7 @@ class SphereAmbiantPaneFolder extends PaneFolderControler {
             this._editor,
             {
                 name: 'color',
-                value: value,
+                value,
                 oldValue: oldValue || value,
             },
             this._ambiantLight,

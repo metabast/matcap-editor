@@ -1,8 +1,8 @@
 import { Command } from '@/commons/Command';
 import { emitSnapshot } from '@/commons/Events';
+import { Color, type MeshPhysicalMaterial } from 'three';
 import type Editor from '@/Editor';
 import type MatcapEditorWorld from '@/matcapEditor/MatcapEditorWorld';
-import { Color, type MeshPhysicalMaterial } from 'three';
 import type { Pane } from 'tweakpane';
 import type { ValuesCommand, ValuesPaneCtrl } from '@/ts/types/PanesTypes';
 

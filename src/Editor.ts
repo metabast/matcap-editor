@@ -1,15 +1,15 @@
-import type { Object3D, SpotLight } from 'three';
-import type { Command } from './commons/Command';
 import events, { emitSnapshot } from './commons/Events';
 import { Loader } from './commons/Loader';
 import { debounce } from './commons/Utils';
 import { History } from './history';
-import type LightModel from './matcapEditor/LightModel';
 import MatcapEditorWorld from './matcapEditor/MatcapEditorWorld';
 import MatcapPreviewWorld from './matcapPreview/MatcapPreviewWorld';
-import type { LightModelPositions } from './ts/types/PanesTypes';
 import Project from '@/commons/Project';
 import { matcapEditorStore } from '@/stores/matcapEditorStore';
+import type { LightModelPositions } from './ts/types/PanesTypes';
+import type LightModel from './matcapEditor/LightModel';
+import type { Command } from './commons/Command';
+import type { Object3D, SpotLight } from 'three';
 
 interface IEditor {
     matcapEditorWorld: MatcapEditorWorld;
@@ -35,7 +35,7 @@ class Editor implements IEditor {
     private _contextIsReady = false;
 
     constructor() {
-        //Singleton control
+        // Singleton control
         if (Editor._instance) {
             throw new Error('Cannot initialize singleton class using new');
         }

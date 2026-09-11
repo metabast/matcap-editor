@@ -1,7 +1,7 @@
+import { matcapEditorStore } from '@/stores/matcapEditorStore';
 import { computed } from 'vue';
 import type { Pane } from 'tweakpane';
 import type { FolderApi } from '@tweakpane/core';
-import { matcapEditorStore } from '@/stores/matcapEditorStore';
 
 const store = computed(() => matcapEditorStore());
 

@@ -1,7 +1,7 @@
-import { createNanoEvents } from 'nanoevents';
-import type { Emitter } from 'nanoevents';
 import { debounce } from './Utils';
 import { debounceDelay } from './Constants';
+import { createNanoEvents } from 'nanoevents';
+import type { Emitter } from 'nanoevents';
 
 class Events {
     emitter: Emitter;

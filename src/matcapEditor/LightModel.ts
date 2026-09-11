@@ -1,5 +1,5 @@
-import type { LightModelPositions } from '@/ts/types/PanesTypes';
 import { Matrix4, PointLight, RectAreaLight, SpotLight, Vector2, Vector3 } from 'three';
+import type { LightModelPositions } from '@/ts/types/PanesTypes';
 
 type LightType = PointLight | RectAreaLight | SpotLight;
 

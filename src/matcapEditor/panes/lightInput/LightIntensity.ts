@@ -1,7 +1,7 @@
 import { SetLightPropertyCommand } from '@/commands/SetLightPropertyCommand';
+import Editor from '@/Editor';
 import type { ValuesPaneCtrl } from '@/ts/types/PanesTypes';
 import type { DataLightPaneFolder } from '../LightPaneFolder';
-import Editor from '@/Editor';
 
 const LightIntensity = {
     addBinding(data: DataLightPaneFolder) {

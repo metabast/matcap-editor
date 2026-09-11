@@ -1,8 +1,8 @@
 import { SetAreaLightPropertyCommand } from '@/commands/SetAreaLightPropertyCommand';
+import Editor from '@/Editor';
 import type { ValuesPaneCtrl } from '@/ts/types/PanesTypes';
 import type { RectAreaLight } from 'three';
 import type { DataLightPaneFolder } from '../LightPaneFolder';
-import Editor from '@/Editor';
 
 const RectAreaLightSize = {
     addBinding(data: DataLightPaneFolder, propertyName: 'width' | 'height') {

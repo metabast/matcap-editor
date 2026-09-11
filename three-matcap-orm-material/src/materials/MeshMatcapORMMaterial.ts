@@ -1,8 +1,6 @@
-import * as THREE from 'three';
-/* eslint-disable no-param-reassign */
-
 import matcapORMUniform from '../shaders/shaderChunk/matcapORMUniform';
 import matcapORM from '../shaders/shaderChunk/matcapORM';
+import * as THREE from 'three';
 
 export class MeshMatcapORMMaterial extends THREE.MeshMatcapMaterial {
     private customUniforms: {
@@ -39,6 +37,7 @@ export class MeshMatcapORMMaterial extends THREE.MeshMatcapMaterial {
             );
         };
     }
+
     set color2(value: THREE.Color) {
         this.customUniforms.uColor.value = value;
     }

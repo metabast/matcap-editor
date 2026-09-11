@@ -1,8 +1,8 @@
 import { SetLightPropertyCommand } from '@/commands/SetLightPropertyCommand';
-import type { ValuesPaneCtrl } from '@/ts/types/PanesTypes';
-import { Color } from 'three';
-import type { DataLightPaneFolder } from '../LightPaneFolder';
 import Editor from '@/Editor';
+import { Color } from 'three';
+import type { ValuesPaneCtrl } from '@/ts/types/PanesTypes';
+import type { DataLightPaneFolder } from '../LightPaneFolder';
 
 const LightColor = {
     addBinding(data: DataLightPaneFolder) {

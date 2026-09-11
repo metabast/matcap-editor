@@ -1,9 +1,9 @@
-import type Editor from '@/Editor';
 import events from './Events';
 import { matcapEditorStore } from '@/stores/matcapEditorStore';
 import { ImportProjectCommand } from '@/commands/ImportProjectCommand';
 import SphereMaterialPaneFolderCtrl from '@/matcapEditor/panes/SphereMaterialPaneFolderCtrl';
 import SphereAmbiantPaneFolder from '@/matcapEditor/panes/SphereAmbiantPaneFolder';
+import type Editor from '@/Editor';
 
 let _store: ReturnType<typeof matcapEditorStore>;
 
@@ -14,8 +14,8 @@ const createBlobURL = async (data: string, type: string) => {
     return URL.createObjectURL(blob);
 };
 
-const serializeCurrentProject = (): string => {
-    return JSON.stringify({
+const serializeCurrentProject = (): string =>
+    JSON.stringify({
         metadata: {
             version: 1,
             type: 'matcap',
@@ -24,7 +24,6 @@ const serializeCurrentProject = (): string => {
         sphereRenderMaterial: SphereMaterialPaneFolderCtrl.instance.serializedParams,
         sphereRenderAmbiant: SphereAmbiantPaneFolder.instance.serializedParams,
     });
-};
 
 const exportCurrentProject = () => {
     const blobURL = createBlobURL(serializeCurrentProject(), 'application/json');

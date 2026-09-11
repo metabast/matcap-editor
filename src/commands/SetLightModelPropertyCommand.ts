@@ -1,7 +1,7 @@
 import { Command } from '@/commons/Command';
 import events, { emitSnapshot } from '@/commons/Events';
-import type Editor from '@/Editor';
 import LightModel from '@/matcapEditor/LightModel';
+import type Editor from '@/Editor';
 import type { ValuesCommand, ValuesPaneCtrl } from '@/ts/types/PanesTypes';
 import type { Vector3 } from 'three';
 import type { Pane } from 'tweakpane';

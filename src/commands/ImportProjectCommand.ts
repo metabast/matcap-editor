@@ -1,11 +1,11 @@
-import { Command } from '@/commons/Command';
-import type Editor from '@/Editor';
-import LightModel from '@/matcapEditor/LightModel';
 import { AddLightCommand } from './AddLightCommand';
-import type { TProject } from '@/ts/types/TProject';
+import { Command } from '@/commons/Command';
+import LightModel from '@/matcapEditor/LightModel';
 import SphereMaterialPaneFolderCtrl from '@/matcapEditor/panes/SphereMaterialPaneFolderCtrl';
-import { Color } from 'three';
 import SphereAmbiantPaneFolder from '@/matcapEditor/panes/SphereAmbiantPaneFolder';
+import { Color } from 'three';
+import type { TProject } from '@/ts/types/TProject';
+import type Editor from '@/Editor';
 
 class ImportProjectCommand extends Command {
     private _project: TProject;

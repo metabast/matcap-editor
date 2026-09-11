@@ -1,8 +1,8 @@
 import { SetSphereMaterialParamsCommand } from '@/commands/SetSphereMaterialParamsCommand';
+import PaneFolderControler from '@/commons/PaneFolderCtrl';
 import { Color } from 'three';
 import type { Pane, TabPageApi } from 'tweakpane';
 import type { ValuesPaneCtrl } from '@/ts/types/PanesTypes';
-import PaneFolderControler from '@/commons/PaneFolderCtrl';
 
 class SphereMaterialPaneFolderCtrl extends PaneFolderControler {
     private _roughnessCtrl: ValuesPaneCtrl;

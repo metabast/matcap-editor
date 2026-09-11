@@ -1,12 +1,12 @@
-import type { FolderApi } from '@tweakpane/core';
 import events from '@/commons/Events';
-import type { Pane } from 'tweakpane';
-import { computed } from 'vue';
 import { matcapPreviewStore } from '@/stores/matcapPreviewStore';
-import type { ValuesPaneCtrl } from '@/ts/types/PanesTypes';
-import type MatcapPreviewContent from '../MatcapPreviewContent';
 import { SetPreviewRoughnessCommand } from '@/commands/SetPreviewRoughnessCommand';
 import { SetPreviewMetalnessCommand } from '@/commands/SetPreviewMetalnessCommand';
+import { computed } from 'vue';
+import type { FolderApi } from '@tweakpane/core';
+import type { Pane } from 'tweakpane';
+import type { ValuesPaneCtrl } from '@/ts/types/PanesTypes';
+import type MatcapPreviewContent from '../MatcapPreviewContent';
 
 const store = computed(() => matcapPreviewStore());
 

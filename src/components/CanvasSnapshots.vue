@@ -1,7 +1,3 @@
-<template>
-    <canvas class="snapshots" width="768" height="768" :style="`z-index: ${store.showGrid ? '1' : '-1'};`" />
-</template>
-
 <script lang="ts" setup>
 import events from '@/commons/Events';
 import { matcapPreviewStore } from '@/stores/matcapPreviewStore';
@@ -39,8 +35,8 @@ events.on('matcap:snapshots:blobs:ready', (urls: [string]) => {
         promises.push(
             new Promise((resolve) => {
                 img.onload = () => {
-                    var posY = Math.floor(i / 3);
-                    var posX = i % 3;
+                    const posY = Math.floor(i / 3);
+                    const posX = i % 3;
                     context.drawImage(img, posX * 256, posY * 256, 256, 256);
                     if (debugCellsWithNumbers) {
                         context.font = '30px Arial';
@@ -67,3 +63,7 @@ events.on('matcap:export:grid:png', () => {
     a.click();
 });
 </script>
+
+<template>
+    <canvas class="snapshots" width="768" height="768" :style="`z-index: ${store.showGrid ? '1' : '-1'};`" />
+</template>

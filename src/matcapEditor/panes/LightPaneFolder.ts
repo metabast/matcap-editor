@@ -1,9 +1,3 @@
-import type { FolderApi } from '@tweakpane/core';
-import { DeleteLightCommand } from '@/commands/DeleteLightCommand';
-import events from '@/commons/Events';
-import type { Pane } from 'tweakpane';
-import type LightModel from '../LightModel';
-import type MatcapEditorContent from '../MatcapEditorContent';
 import LightColor from './lightInput/LightColor';
 import LightDistance from './lightInput/LightDistance';
 import LightIntensity from './lightInput/LightIntensity';
@@ -11,7 +5,13 @@ import LightModelBoolean from './lightInput/LightModelBoolean';
 import LightTarget from './lightInput/LightTarget';
 import RectAreaLightSize from './lightInput/RectAreaLightSize';
 import SpotLightInput from './lightInput/SpotLightInput';
+import events from '@/commons/Events';
+import { DeleteLightCommand } from '@/commands/DeleteLightCommand';
 import Editor from '@/Editor';
+import type MatcapEditorContent from '../MatcapEditorContent';
+import type LightModel from '../LightModel';
+import type { Pane } from 'tweakpane';
+import type { FolderApi } from '@tweakpane/core';
 
 export type DataLightPaneFolder = {
     pane: Pane;
@@ -68,7 +68,7 @@ const LightPaneFolder = {
             title: 'Current Light',
             expanded: true,
         });
-        const content = Editor.instance.matcapEditorWorld.content;
+        const { content } = Editor.instance.matcapEditorWorld;
         data = {
             pane,
             paneContainer,

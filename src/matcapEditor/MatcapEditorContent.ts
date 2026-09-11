@@ -1,3 +1,12 @@
+import LightModel from './LightModel';
+import RenderManager from './RenderManager';
+import { LightFabric } from './LightFabric';
+import { getScreenPosition } from '@/commons/VectorHelpers';
+
+import { AddLightCommand } from '@/commands';
+import { SetLightModelPositionCommand } from '@/commands/SetLightPositionCommand';
+import events, { emitSnapshot } from '@/commons/Events';
+import { matcapEditorStore } from '@/stores/matcapEditorStore';
 import {
     AmbientLight,
     ArrowHelper,
@@ -13,17 +22,8 @@ import {
     Vector3,
     type Intersection,
 } from 'three';
-
-import { getScreenPosition } from '@/commons/VectorHelpers';
-import { AddLightCommand } from '@/commands';
-import { SetLightModelPositionCommand } from '@/commands/SetLightPositionCommand';
-import type { ValuesCommand } from '@/ts/types/PanesTypes';
-import events, { emitSnapshot } from '@/commons/Events';
 import type MatcapEditorWorld from './MatcapEditorWorld';
-import LightModel from './LightModel';
-import RenderManager from './RenderManager';
-import { matcapEditorStore } from '@/stores/matcapEditorStore';
-import { LightFabric } from './LightFabric';
+import type { ValuesCommand } from '@/ts/types/PanesTypes';
 
 const data = {
     halfSize: 0.3,
