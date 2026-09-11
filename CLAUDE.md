@@ -57,9 +57,26 @@ docker compose exec app npm run lint        # corrige ce qui est auto-corrigeabl
 docker compose exec app npm run lint:check  # vérifie sans modifier
 ```
 
+## Cycle d'imports connu
+
+Il existe un cycle :
+
+    Editor -> Project -> SphereMaterialPaneFolderCtrl -> PaneFolderCtrl -> Editor
+
+Il est latent : tout changement de l'ordre d'évaluation des modules peut le
+faire ressortir en `ReferenceError: Cannot access 'X' before initialization`
+au chargement de la page. C'est arrivé en inversant `<template>` et `<script>`
+dans un composant.
+
+Conséquence pratique : **ne jamais lancer `eslint --fix` sans vérifier ensuite
+la page dans un navigateur**. Le build et `vue-tsc` ne détectent pas ce type
+de régression. `import/no-cycle` est désactivé, ce qui masque le problème de
+fond ; le corriger demande de revoir la façon dont `Project` accède aux
+contrôleurs de panneaux.
+
 ## État connu
 
-`npm run lint:check` remonte encore 88 anomalies qui demandent des
+`npm run lint:check` remonte encore 105 anomalies qui demandent des
 modifications de code, pas de configuration :
 
 - 23 `@typescript-eslint/no-explicit-any`
