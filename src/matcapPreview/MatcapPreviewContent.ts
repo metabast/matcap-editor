@@ -1,4 +1,4 @@
-import { MeshMatcapORMMaterial } from 'three-matcap-orm-material/src/materials/MeshMatcapORMMaterial';
+import { MeshMatcapORMMaterial } from '../../three-matcap-orm-material/src/materials/MeshMatcapORMMaterial';
 import { matcapPreviewStore } from '@/stores/matcapPreviewStore';
 import events from '@/commons/Events';
 import { Clock, Material, Mesh, Object3D, Raycaster, Texture, TextureLoader, TorusKnotGeometry, Vector2 } from 'three';
