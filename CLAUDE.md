@@ -44,9 +44,28 @@ sans vérifier que la cause a disparu :
   encore `typescript/lib/tsc`.
 - **eslint** reste en `^9` — aucun plugin Vue/TS ne supporte encore ESLint 10.
 
+## Lint
+
+ESLint est en flat config (`eslint.config.js`). `airbnb-base` et
+`eslint-plugin-import` n'ayant pas encore de version flat native, ils sont
+chargés via `FlatCompat`. `skip-formatting` doit rester le dernier élément du
+tableau : il neutralise les règles de style qui entreraient en conflit avec
+Prettier.
+
+```bash
+docker compose exec app npm run lint        # corrige ce qui est auto-corrigeable
+docker compose exec app npm run lint:check  # vérifie sans modifier
+```
+
 ## État connu
 
-`npm run lint` est cassé : le script utilise les drapeaux `--ext` et
-`--ignore-path` supprimés en ESLint 9, et `.eslintrc.cjs` est au format legacy
-alors qu'ESLint 9 attend un `eslint.config.js`. La migration en flat config
-reste à faire.
+`npm run lint:check` remonte encore 88 anomalies qui demandent des
+modifications de code, pas de configuration :
+
+- 23 `@typescript-eslint/no-explicit-any`
+- 21 `@typescript-eslint/no-unused-vars`
+- 20 `import/prefer-default-export`
+- 7 `import/extensions`, 5 `class-methods-use-this`, et divers
+
+À traiter progressivement. Ne pas désactiver une règle pour faire tomber le
+compteur sans avoir regardé ce qu'elle signale.
