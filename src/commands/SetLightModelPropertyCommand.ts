@@ -6,11 +6,7 @@ import type { ValuesCommand, ValuesPaneCtrl } from '@/ts/types/PanesTypes';
 import type { Vector3 } from 'three';
 import type { Pane } from 'tweakpane';
 
-type PropertiesAllowed =
-    | 'distance'
-    | 'lookAtTarget'
-    | 'front'
-    | 'positionTarget';
+type PropertiesAllowed = 'distance' | 'lookAtTarget' | 'front' | 'positionTarget';
 type SelectedTypes = number | boolean | Vector3;
 class SetLightModelPropertyCommand extends Command {
     private parameters: ValuesCommand;

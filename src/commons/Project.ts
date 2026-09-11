@@ -27,7 +27,6 @@ const serializeCurrentProject = (): string => {
 };
 
 const exportCurrentProject = () => {
-
     const blobURL = createBlobURL(serializeCurrentProject(), 'application/json');
     blobURL.then((url) => {
         const link = document.createElement('a');
@@ -35,7 +34,6 @@ const exportCurrentProject = () => {
         link.download = 'matcap.json';
         link.click();
     });
-
 };
 
 const clearCurrentProject = () => {
@@ -58,6 +56,5 @@ const Project = {
         events.on('matcap:project:read', importCurrentProject);
     },
 };
-
 
 export default Project;

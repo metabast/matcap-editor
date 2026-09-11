@@ -1,11 +1,8 @@
-<template >
-    <canvas class="snapshots"
-width="768"
-height="768"
-:style="`z-index: ${store.showGrid ? '1' : '-1'};`" />
-</template >
+<template>
+    <canvas class="snapshots" width="768" height="768" :style="`z-index: ${store.showGrid ? '1' : '-1'};`" />
+</template>
 
-<script lang="ts" setup >
+<script lang="ts" setup>
 import events from '@/commons/Events';
 import { matcapPreviewStore } from '@/stores/matcapPreviewStore';
 import { computed, onMounted } from 'vue';
@@ -44,18 +41,12 @@ events.on('matcap:snapshots:blobs:ready', (urls: [string]) => {
                 img.onload = () => {
                     var posY = Math.floor(i / 3);
                     var posX = i % 3;
-                    context.drawImage(
-                        img,
-                        posX * 256,
-                        posY * 256,
-                        256,
-                        256,
-                    );
-                    if(debugCellsWithNumbers) {
+                    context.drawImage(img, posX * 256, posY * 256, 256, 256);
+                    if (debugCellsWithNumbers) {
                         context.font = '30px Arial';
                         context.fillStyle = 'red';
                         context.textAlign = 'center';
-                        context.fillText(String(i), 256*.5 + posX * 256, 256*.5 + posY * 256);
+                        context.fillText(String(i), 256 * 0.5 + posX * 256, 256 * 0.5 + posY * 256);
                     }
                     resolve(true);
                 };
@@ -69,11 +60,10 @@ events.on('matcap:snapshots:blobs:ready', (urls: [string]) => {
 });
 
 events.on('matcap:export:grid:png', () => {
-    if(!currentBlobURL) return;
+    if (!currentBlobURL) return;
     const a = document.createElement('a');
     a.href = currentBlobURL;
     a.download = 'matcap.png';
     a.click();
 });
-
-</script >
+</script>

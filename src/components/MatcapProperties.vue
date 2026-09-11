@@ -1,11 +1,8 @@
-<template >
-    <div class="matcap-editor-pane"
-        :style="getStyles()" 
-    />
-</template >
+<template>
+    <div class="matcap-editor-pane" :style="getStyles()" />
+</template>
 
-<script lang="ts" setup >
-
+<script lang="ts" setup>
 import { computed, onMounted } from 'vue';
 import { Pane } from 'tweakpane';
 
@@ -44,14 +41,11 @@ events.on('matcap:editor:ready', () => {
     SpherePaneFolder.initialize(pane);
 
     LightPaneFolder.initialize(pane);
-    
 });
 
 onMounted(() => {
     pane = new Pane({
         container: document.querySelector('.matcap-editor-pane') as HTMLElement,
     });
-    
 });
-
-</script >
+</script>

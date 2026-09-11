@@ -166,11 +166,7 @@ class LightModel {
 
     static updateLightDistance = (lightModel: LightModel): void => {
         const lightPosition = lightModel.positionOnSphere.clone();
-        lightPosition.add(
-            lightModel.sphereFaceNormal
-                .clone()
-                .multiplyScalar(lightModel.distance),
-        );
+        lightPosition.add(lightModel.sphereFaceNormal.clone().multiplyScalar(lightModel.distance));
         lightModel.setPositionX(lightPosition.x);
         lightModel.setPositionY(lightPosition.y);
 
@@ -182,9 +178,7 @@ class LightModel {
         const lightModel = new LightModel();
 
         switch (serializedModel._light.object.type) {
-
             case 'RectAreaLight':
-
                 lightModel.light = new RectAreaLight(
                     serializedModel._light.object.color,
                     serializedModel._light.object.intensity,
@@ -197,12 +191,24 @@ class LightModel {
         }
 
         lightModel.screenPosition.set(serializedModel._screenPosition.x, serializedModel._screenPosition.y);
-        lightModel.positionOnSphere = new Vector3(serializedModel._positionOnSphere.x, serializedModel._positionOnSphere.y, serializedModel._positionOnSphere.z);
-        lightModel.sphereFaceNormal = new Vector3(serializedModel._sphereFaceNormal.x, serializedModel._sphereFaceNormal.y, serializedModel._sphereFaceNormal.z);
+        lightModel.positionOnSphere = new Vector3(
+            serializedModel._positionOnSphere.x,
+            serializedModel._positionOnSphere.y,
+            serializedModel._positionOnSphere.z,
+        );
+        lightModel.sphereFaceNormal = new Vector3(
+            serializedModel._sphereFaceNormal.x,
+            serializedModel._sphereFaceNormal.y,
+            serializedModel._sphereFaceNormal.z,
+        );
         lightModel.distance = serializedModel._distance;
         lightModel.front = serializedModel._front;
         LightModel.updateLightDistance(lightModel);
-        lightModel.positionTarget = new Vector3(serializedModel._positionTarget.x, serializedModel._positionTarget.y, serializedModel._positionTarget.z);
+        lightModel.positionTarget = new Vector3(
+            serializedModel._positionTarget.x,
+            serializedModel._positionTarget.y,
+            serializedModel._positionTarget.z,
+        );
         lightModel.lookAtTarget = serializedModel._lookAtTarget;
         lightModel.update();
 

@@ -33,8 +33,6 @@ const data = {
 };
 data.heightSegments = data.widthSegments / (4 / 3);
 
-
-
 class MatcapEditorContent {
     private _store: any;
     private _world: MatcapEditorWorld;
@@ -66,7 +64,6 @@ class MatcapEditorContent {
     private lightPosition: Vector3 = new Vector3();
 
     constructor(world: MatcapEditorWorld) {
-
         this._store = matcapEditorStore();
         this._world = world;
 
@@ -127,7 +124,6 @@ class MatcapEditorContent {
         this._world.canvas.addEventListener('pointerup', this.onPointerUp);
 
         events.emit('matcap:content:ready', this);
-
     }
 
     public get world(): MatcapEditorWorld {
@@ -237,7 +233,6 @@ class MatcapEditorContent {
         this.hitSphere = hit2;
 
         if (this.currentLightModel) {
-
             if (!this.hitSphere?.face) return;
             const positionOnSphere = this.hitSphere.point.clone();
             this.lightPosition = positionOnSphere.clone();
@@ -290,7 +285,7 @@ class MatcapEditorContent {
         RenderManager.snapshot();
     };
 
-    private onMaterialUpdate = () => { };
+    private onMaterialUpdate = () => {};
 
     public deleteLight = (lightModel: LightModel) => {
         lightModel.dispose();

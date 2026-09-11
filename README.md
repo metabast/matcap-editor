@@ -4,12 +4,9 @@
 [![License](https://img.shields.io/github/license/wanadev/matcap-editor)](https://github.com/wanadev/matcap-editor/blob/master/COPYING)
 [![Discord](https://img.shields.io/badge/chat-Discord-8c9eff?logo=discord&logoColor=ffffff)](https://discord.gg/BmUkEdMuFp)
 
-
->  Create and edit your matcap
-
+> Create and edit your matcap
 
 **THIS PROJECT IS CURRENTLY WORK IN PROGRESS**
-
 
 ## Usage
 
@@ -55,17 +52,17 @@ Docker with the Compose plugin. The image is based on `node:20-alpine`.
 
 If you have any question, you can:
 
-* [open an issue](https://github.com/wanadev/matcap-editor/issues>) on Github,
-* or [ask on Discord](https://discord.gg/BmUkEdMuFp>).
+- [open an issue](https://github.com/wanadev/matcap-editor/issues>) on Github,
+- or [ask on Discord](https://discord.gg/BmUkEdMuFp>).
 
 ### Bugs
 
 If you found a bug, please [open an issue](https://github.com/wanadev/matcap-editor/issues) on Github with as much information as possible:
 
-* Version of Matcap Editor you are using,
-* How you built it or from which website you are using it,
-* All the logs and message outputted by the software,
-* ...
+- Version of Matcap Editor you are using,
+- How you built it or from which website you are using it,
+- All the logs and message outputted by the software,
+- ...
 
 ### Pull Requests
 
@@ -77,9 +74,8 @@ Please note that your code must pass tests and follow the coding style (To be de
 
 TODO
 
-
 ## Changelog
 
-* **[NEXT]** (changes on `master` but not released yet):
+- **[NEXT]** (changes on `master` but not released yet):
 
-  * Nothing yet
+    - Nothing yet

@@ -1,13 +1,13 @@
 {
-  "extends": "./node_modules/@vue/tsconfig/tsconfig.dom",
-  "include": ["env.d.ts", "src/**/*", "src/**/*.vue"],
-  "exclude": ["src/**/__tests__/*"],
-  "compilerOptions": {
-    "composite": true,
-    "baseUrl": ".",
-    "paths": {
-      "@/*": ["./src/*"]
-    },
-    "esModuleInterop": true,
-  }
+    "extends": "./node_modules/@vue/tsconfig/tsconfig.dom",
+    "include": ["env.d.ts", "src/**/*", "src/**/*.vue"],
+    "exclude": ["src/**/__tests__/*"],
+    "compilerOptions": {
+        "composite": true,
+        "baseUrl": ".",
+        "paths": {
+            "@/*": ["./src/*"]
+        },
+        "esModuleInterop": true
+    }
 }

@@ -34,13 +34,15 @@ module.exports = {
         'no-underscore-dangle': 'off',
         'no-plusplus': 'off',
         'no-multi-spaces': [
-            'error', {
+            'error',
+            {
                 'ignoreEOLComments': true,
             },
         ],
         'import/no-extraneous-dependencies': 'off',
         'comma-dangle': [
-            'error', {
+            'error',
+            {
                 'arrays': 'always-multiline',
                 'objects': 'always-multiline',
                 'imports': 'always-multiline',
@@ -48,15 +50,21 @@ module.exports = {
                 'functions': 'ignore',
             },
         ],
-        'object-curly-newline': ['error', {
-            'ObjectPattern': {
-                'multiline': true,
-                'consistent': true,
+        'object-curly-newline': [
+            'error',
+            {
+                'ObjectPattern': {
+                    'multiline': true,
+                    'consistent': true,
+                },
             },
-        }],
-        'no-param-reassign': ['error', {
-            'props': false,
-        }],
+        ],
+        'no-param-reassign': [
+            'error',
+            {
+                'props': false,
+            },
+        ],
         'global-require': 'off',
         'function-call-argument-newline': 'off',
         'no-promise-executor-return': 'off',
@@ -67,32 +75,52 @@ module.exports = {
         'no-shadow': 'off',
         'import/no-cycle': 'off',
         'newline-before-return': 'off',
-        'import/order': ['error', {
-            groups: ['index', 'sibling', 'parent', 'internal', 'external', 'builtin', 'object', 'type'],
-        }],
-        'import/extensions': ['error', 'never', {
-            vue: 'always',
-            json: 'always',
-        }],
-        'lines-between-class-members': ['error', 'always', {
-            exceptAfterSingleLine: true,
-        }],
+        'import/order': [
+            'error',
+            {
+                groups: ['index', 'sibling', 'parent', 'internal', 'external', 'builtin', 'object', 'type'],
+            },
+        ],
+        'import/extensions': [
+            'error',
+            'never',
+            {
+                vue: 'always',
+                json: 'always',
+            },
+        ],
+        'lines-between-class-members': [
+            'error',
+            'always',
+            {
+                exceptAfterSingleLine: true,
+            },
+        ],
         '@typescript-eslint/no-shadow': ['error'],
-        'prefer-destructuring': ['error', {
-            'array': false,
-            'object': true,
-        }],
+        'prefer-destructuring': [
+            'error',
+            {
+                'array': false,
+                'object': true,
+            },
+        ],
         'vue/singleline-html-element-content-newline': 'off',
         'vue/no-v-html': 'warn',
         'vue/no-unused-refs': 'error',
         'vue/component-api-style': ['warn', ['script-setup', 'options']],
-        'vue/block-lang': ['error', {
-            script: {
-                lang: 'ts',
+        'vue/block-lang': [
+            'error',
+            {
+                script: {
+                    lang: 'ts',
+                },
             },
-        }],
-        'vue/component-tags-order': ['error', {
-            order: ['script', 'template', 'style'],
-        }],
+        ],
+        'vue/component-tags-order': [
+            'error',
+            {
+                order: ['script', 'template', 'style'],
+            },
+        ],
     },
 };

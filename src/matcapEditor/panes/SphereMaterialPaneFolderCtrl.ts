@@ -11,7 +11,9 @@ class SphereMaterialPaneFolderCtrl extends PaneFolderControler {
     constructor() {
         super();
         if (SphereMaterialPaneFolderCtrl._instance) {
-            throw new Error('Error: Instantiation failed: Use SphereMaterialPaneFolderCtrl.getInstance() instead of new.');
+            throw new Error(
+                'Error: Instantiation failed: Use SphereMaterialPaneFolderCtrl.getInstance() instead of new.',
+            );
         }
         SphereMaterialPaneFolderCtrl._instance = this;
     }
@@ -67,7 +69,10 @@ class SphereMaterialPaneFolderCtrl extends PaneFolderControler {
             .on('change', (event) => {
                 if (event.last && this._roughnessCtrl.history) {
                     this._editor.execute(
-                        this.createRoughnessCommand(this._mapcapEditorContent.sphereRenderMaterial.roughness, Number(this._roughnessCtrl.value)),
+                        this.createRoughnessCommand(
+                            this._mapcapEditorContent.sphereRenderMaterial.roughness,
+                            Number(this._roughnessCtrl.value),
+                        ),
                         'update material roughness',
                     );
                     this._roughnessCtrl.oldValue = Number(this._mapcapEditorContent.sphereRenderMaterial.roughness);
@@ -90,7 +95,10 @@ class SphereMaterialPaneFolderCtrl extends PaneFolderControler {
             .on('change', (event) => {
                 if (event.last && this._metalnessCtrl.history) {
                     this._editor.execute(
-                        this.createMetalnessCommand(this._mapcapEditorContent.sphereRenderMaterial.metalness, Number(this._metalnessCtrl.value)),
+                        this.createMetalnessCommand(
+                            this._mapcapEditorContent.sphereRenderMaterial.metalness,
+                            Number(this._metalnessCtrl.value),
+                        ),
                         'update material metalness',
                     );
                     this._metalnessCtrl.oldValue = Number(this._mapcapEditorContent.sphereRenderMaterial.metalness);
@@ -108,7 +116,10 @@ class SphereMaterialPaneFolderCtrl extends PaneFolderControler {
             this._mapcapEditorContent.sphereRenderMaterial.color.set(this._colorCtrl.value as Color);
             if (event.last && this._colorCtrl.history) {
                 this._editor.execute(
-                    this.createColorCommand(this._mapcapEditorContent.sphereRenderMaterial.color.getHex(), Number(this._colorCtrl.oldValue)),
+                    this.createColorCommand(
+                        this._mapcapEditorContent.sphereRenderMaterial.color.getHex(),
+                        Number(this._colorCtrl.oldValue),
+                    ),
                     'update material color',
                 );
                 this._colorCtrl.oldValue = new Color(this._colorCtrl.value as Color).getHex();

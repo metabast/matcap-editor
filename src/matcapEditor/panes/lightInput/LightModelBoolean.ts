@@ -6,10 +6,7 @@ import type { DataLightPaneFolder } from '../LightPaneFolder';
 import Editor from '@/Editor';
 
 const LightModelBoolean = {
-    addBinding(
-        data: DataLightPaneFolder,
-        propertyName: 'front' | 'lookAtTarget',
-    ) {
+    addBinding(data: DataLightPaneFolder, propertyName: 'front' | 'lookAtTarget') {
         if (!data.currentLightModel || !data.paneContainer) return;
         const paneCtrl: ValuesPaneCtrl = {
             value: Boolean(data.currentLightModel[propertyName]),
@@ -43,9 +40,7 @@ const LightModelBoolean = {
                         ),
                         `update light model ${propertyName}`,
                     );
-                    paneCtrl.oldValue = Boolean(
-                        data.currentLightModel[propertyName],
-                    );
+                    paneCtrl.oldValue = Boolean(data.currentLightModel[propertyName]);
                 }
             });
 

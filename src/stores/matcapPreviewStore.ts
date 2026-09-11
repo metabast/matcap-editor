@@ -9,6 +9,5 @@ export const matcapPreviewStore = defineStore('counter', {
             showGrid: false,
         };
     },
-    actions: {
-    },
+    actions: {},
 });

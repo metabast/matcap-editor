@@ -52,9 +52,7 @@ const RenderManager = {
             if (_snapshotCounter < _snapshotLimit) {
                 RenderManager.nextSnapshot();
             } else {
-                events.emit('matcap:snapshots:blobs:ready', [
-                    ..._snapshotsArray,
-                ]);
+                events.emit('matcap:snapshots:blobs:ready', [..._snapshotsArray]);
                 _snapshotCounter = 0;
                 _snapshotsArray = [];
                 _snapshotLimit = 1;
@@ -71,21 +69,13 @@ const RenderManager = {
         } else {
             _content?.world.renderer.setPixelRatio(1);
         }
-        _content.world.renderer.render(
-            _content.world.scene,
-            _content.cameraSnapshot,
-        );
+        _content.world.renderer.render(_content.world.scene, _content.cameraSnapshot);
         _content.arrowHelper.visible = arrowHelperVisibleState;
-        _content.world.renderer.domElement.toBlob(
-            RenderManager.onBlobReady,
-            'image/png',
-            1.0,
-        );
+        _content.world.renderer.domElement.toBlob(RenderManager.onBlobReady, 'image/png', 1.0);
     },
 
     nextSnapshot: () => {
-        _content.sphereRenderMaterial.roughness =
-            _snapshotCounter / (_snapshotLimit - 1);
+        _content.sphereRenderMaterial.roughness = _snapshotCounter / (_snapshotLimit - 1);
 
         RenderManager.snapshot();
     },

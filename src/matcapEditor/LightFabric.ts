@@ -3,8 +3,6 @@ import { PointLight, RectAreaLight, SpotLight } from 'three';
 
 let store: any;
 
-
-
 export const LightFabric = {
     getLightInstance(_TYPE: string): SpotLight | RectAreaLight | PointLight {
         if (!store) store = matcapEditorStore();
@@ -13,10 +11,7 @@ export const LightFabric = {
         let light: SpotLight | RectAreaLight | PointLight;
         switch (TYPE) {
             case 'Point':
-                light = new PointLight(
-                    store.create.color,
-                    store.create.intensity,
-                );
+                light = new PointLight(store.create.color, store.create.intensity);
                 break;
             case 'Area':
                 light = new RectAreaLight(
@@ -27,10 +22,7 @@ export const LightFabric = {
                 );
                 break;
             case 'Spot':
-                light = new SpotLight(
-                    store.create.color,
-                    store.create.intensity,
-                );
+                light = new SpotLight(store.create.color, store.create.intensity);
                 break;
 
             default:

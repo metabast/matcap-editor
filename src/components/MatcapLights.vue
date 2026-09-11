@@ -1,19 +1,17 @@
-<template >
-    <div id="matcapLights"
-        :style="getMatcapLightsStyle()"
-        v-if="store.isUILightVisible" 
-    >
-        <div v-for="light, index in store.lights"
+<template>
+    <div id="matcapLights" :style="getMatcapLightsStyle()" v-if="store.isUILightVisible">
+        <div
+            v-for="(light, index) in store.lights"
             :key="index"
             :style="getCSSPosition(light as LightModel)"
             class="light"
-            @mousedown="onMouseDown(light as LightModel)" >
-        </div >
-    </div >
+            @mousedown="onMouseDown(light as LightModel)"
+        ></div>
+    </div>
     <MatcapProperties />
-</template >
+</template>
 
-<script lang="ts" setup >
+<script lang="ts" setup>
 import events from '@/commons/Events';
 import type LightModel from '@/matcapEditor/LightModel';
 import { computed } from 'vue';
@@ -59,4 +57,4 @@ events.on('matcap:editor:light:added', lightAdded);
 events.on('matcap:editor:light:remove', (lightModel: LightModel) => {
     store.value.removeLight(lightModel);
 });
-</script >
+</script>

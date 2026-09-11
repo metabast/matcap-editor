@@ -11,7 +11,6 @@ class AddLightCommand extends Command {
         this.name = 'Add Light';
         this.updatable = true;
         this.lightModel = lightModel;
-
     }
 
     execute() {

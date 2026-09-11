@@ -24,7 +24,6 @@ class History {
         this.undos.push(cmd);
         cmd.id = ++this.idCounter;
 
-
         cmd.name = optionalName !== undefined ? optionalName : cmd.name;
         cmd.execute();
 

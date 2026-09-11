@@ -6,9 +6,13 @@ const acceptedFileTypes = ['glb'];
 function promiseReader(file: File): Promise<string> {
     return new Promise((resolve, reject) => {
         const reader = new FileReader();
-        reader.addEventListener('load', () => {
-            resolve(reader.result as string);
-        }, { once: true });
+        reader.addEventListener(
+            'load',
+            () => {
+                resolve(reader.result as string);
+            },
+            { once: true },
+        );
         reader.readAsBinaryString(file);
     });
 }

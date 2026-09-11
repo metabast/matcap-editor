@@ -53,8 +53,6 @@ const generate = () => {
         events.emit('matcap:export:grid:png', { exported: true });
     });
 
-
-
     _tab.pages[1].addButton({ title: 'Import project' }).on('click', () => {
         events.emit('show:dragNdrop', { msg: 'project file: *.json' });
     });
@@ -66,7 +64,6 @@ const generate = () => {
     _tab.pages[2].addButton({ title: 'Import GLB file' }).on('click', () => {
         events.emit('show:dragNdrop', { msg: 'object file: *.glb' });
     });
-
 };
 
 const ImportExportMatcapPaneFolder = {

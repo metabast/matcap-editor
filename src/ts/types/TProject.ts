@@ -9,4 +9,4 @@ export type TProject = {
     sphereRenderMaterial: TSphereRenderMaterial;
     sphereRenderAmbiant: TSphereRenderAmbiant;
     lights: any[];
-}
+};

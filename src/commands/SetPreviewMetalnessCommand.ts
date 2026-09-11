@@ -20,7 +20,13 @@ class SetPreviewMetalnessCommand extends Command {
     private paneCtrl: ValuesPaneCtrl;
     private paneRoughnessCtrl: ValuesPaneCtrl;
 
-    constructor(editor: Editor, parameters: ValuesCommand, pane: Pane, paneCtrl: ValuesPaneCtrl, paneRoughnessCtrl: ValuesPaneCtrl) {
+    constructor(
+        editor: Editor,
+        parameters: ValuesCommand,
+        pane: Pane,
+        paneCtrl: ValuesPaneCtrl,
+        paneRoughnessCtrl: ValuesPaneCtrl,
+    ) {
         super(editor);
         this.type = 'SetPreviewMetalnessCommand';
         this.name = 'Set Preview Roughness';

@@ -1,11 +1,9 @@
-<script lang="ts" setup >
+<script lang="ts" setup>
 import Canvas3D from '@/components/Canvas3D.vue';
-</script >
+</script>
 
-<template >
-  <Canvas3D />
-</template >
+<template>
+    <Canvas3D />
+</template>
 
-<style scoped >
-
-</style >
+<style scoped></style>

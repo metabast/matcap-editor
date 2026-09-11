@@ -20,7 +20,6 @@ class PaneFolderControler {
     protected _generate() {
         if (!this._paneFolder) return;
     }
-
 }
 
 export default PaneFolderControler;

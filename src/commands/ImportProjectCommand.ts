@@ -20,30 +20,37 @@ class ImportProjectCommand extends Command {
     }
 
     execute() {
-
-        const commandRoughness = SphereMaterialPaneFolderCtrl.instance.createRoughnessCommand(this._project.sphereRenderMaterial.roughness);
+        const commandRoughness = SphereMaterialPaneFolderCtrl.instance.createRoughnessCommand(
+            this._project.sphereRenderMaterial.roughness,
+        );
         this._commands.push(commandRoughness);
         commandRoughness.execute();
 
-        const commandMetalness = SphereMaterialPaneFolderCtrl.instance.createMetalnessCommand(this._project.sphereRenderMaterial.metalness);
+        const commandMetalness = SphereMaterialPaneFolderCtrl.instance.createMetalnessCommand(
+            this._project.sphereRenderMaterial.metalness,
+        );
         this._commands.push(commandMetalness);
         commandMetalness.execute();
 
-        const commandColor = SphereMaterialPaneFolderCtrl.instance.createColorCommand(new Color(this._project.sphereRenderMaterial.color).getHex());
+        const commandColor = SphereMaterialPaneFolderCtrl.instance.createColorCommand(
+            new Color(this._project.sphereRenderMaterial.color).getHex(),
+        );
         this._commands.push(commandColor);
         commandColor.execute();
 
-        const commandAmbiantInsensity = SphereAmbiantPaneFolder.instance.createAmbiantIntensityCommand(this._project.sphereRenderAmbiant.intensity);
+        const commandAmbiantInsensity = SphereAmbiantPaneFolder.instance.createAmbiantIntensityCommand(
+            this._project.sphereRenderAmbiant.intensity,
+        );
         this._commands.push(commandAmbiantInsensity);
         commandAmbiantInsensity.execute();
 
-        const commandAmbiantColor = SphereAmbiantPaneFolder.instance.createAmbiantColorCommand(new Color(this._project.sphereRenderAmbiant.color).getHex());
+        const commandAmbiantColor = SphereAmbiantPaneFolder.instance.createAmbiantColorCommand(
+            new Color(this._project.sphereRenderAmbiant.color).getHex(),
+        );
         this._commands.push(commandAmbiantColor);
         commandAmbiantColor.execute();
 
-
         this._project.lights.forEach((light: any) => {
-
             const lightModel = LightModel.createFromSerialized(light);
             const command = new AddLightCommand(this.editor, lightModel);
             this._commands.push(command);

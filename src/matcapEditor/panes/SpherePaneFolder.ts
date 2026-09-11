@@ -27,8 +27,6 @@ const SpherePaneFolder = {
             ],
         });
 
-
-
         SphereMaterialPaneFolderCtrl.instance.initialize(data.pane, data.tab.pages[0]);
         SphereAmbiantPaneFolder.instance.initialize(data.pane, data.tab.pages[1]);
     },

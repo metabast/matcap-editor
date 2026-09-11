@@ -10,91 +10,82 @@ import { OutlinePass } from 'three/examples/jsm/postprocessing/OutlinePass.js';
 import MatcapPreviewContent from './MatcapPreviewContent';
 
 class MatcapPreviewWorld {
-	private _editor: Editor;
+    private _editor: Editor;
 
-	canvas: HTMLCanvasElement;
+    canvas: HTMLCanvasElement;
 
-	scene: Scene;
+    scene: Scene;
 
-	camera: PerspectiveCamera;
+    camera: PerspectiveCamera;
 
-	stats: StatsSingle;
+    stats: StatsSingle;
 
-	renderer: WebGLRenderer;
+    renderer: WebGLRenderer;
 
-	control: OrbitControls;
+    control: OrbitControls;
 
-	clock: Clock;
+    clock: Clock;
 
-	resize: Resize;
+    resize: Resize;
 
-	content: MatcapPreviewContent;
+    content: MatcapPreviewContent;
 
-	composer: EffectComposer;
+    composer: EffectComposer;
 
-	outlinePass: OutlinePass;
+    outlinePass: OutlinePass;
 
-	constructor(editor: Editor) {
-		this._editor = editor;
+    constructor(editor: Editor) {
+        this._editor = editor;
 
-		this.stats = new StatsSingle();
+        this.stats = new StatsSingle();
 
-		this.canvas = document.querySelector('canvas.webgl') as HTMLCanvasElement;
-		this.scene = new Scene();
-		this.camera = new PerspectiveCamera(
-			75,
-			window.innerWidth / window.innerHeight,
-			0.1,
-			1000
-		);
-		// scene.background = new THREE.Color(0xffffff);
-		this.renderer = new WebGLRenderer({
-			canvas: this.canvas,
-			antialias: true,
-		});
-		this.renderer.setSize(window.innerWidth, window.innerHeight);
+        this.canvas = document.querySelector('canvas.webgl') as HTMLCanvasElement;
+        this.scene = new Scene();
+        this.camera = new PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        // scene.background = new THREE.Color(0xffffff);
+        this.renderer = new WebGLRenderer({
+            canvas: this.canvas,
+            antialias: true,
+        });
+        this.renderer.setSize(window.innerWidth, window.innerHeight);
 
-		this.control = new OrbitControls(this.camera, this.renderer.domElement);
-		this.control.enableDamping = true;
-		this.camera.position.set(0, 0, 4);
+        this.control = new OrbitControls(this.camera, this.renderer.domElement);
+        this.control.enableDamping = true;
+        this.camera.position.set(0, 0, 4);
 
-		this.clock = new Clock();
+        this.clock = new Clock();
 
-		this.content = new MatcapPreviewContent(this);
+        this.content = new MatcapPreviewContent(this);
 
-		this.resize = new Resize({
-			canvas: this.canvas,
-			camera: this.camera,
-			renderer: this.renderer,
-		});
+        this.resize = new Resize({
+            canvas: this.canvas,
+            camera: this.camera,
+            renderer: this.renderer,
+        });
 
-		this.composer = new EffectComposer(this.renderer);
+        this.composer = new EffectComposer(this.renderer);
 
-		const renderPass = new RenderPass(this.scene, this.camera);
-		this.composer.addPass(renderPass);
+        const renderPass = new RenderPass(this.scene, this.camera);
+        this.composer.addPass(renderPass);
 
-		this.outlinePass = new OutlinePass(
-			new Vector2(window.innerWidth, window.innerHeight),
-			this.scene,
-			this.camera
-		);
-		this.composer.addPass(this.outlinePass);
+        this.outlinePass = new OutlinePass(new Vector2(window.innerWidth, window.innerHeight), this.scene, this.camera);
+        this.composer.addPass(this.outlinePass);
 
-		this.tick();
-	}
+        this.tick();
+    }
 
-	public get editor() {
-		return this._editor;
-	}
+    public get editor() {
+        return this._editor;
+    }
 
-	tick = () => {
-		this.stats.begin();
-		this.control.update();
-		this.content.update(this.clock);
-		this.renderer.render(this.scene, this.camera);
-		this.composer.render();
-		requestAnimationFrame(this.tick);
-	};
+    tick = () => {
+        this.stats.begin();
+        this.control.update();
+        this.content.update(this.clock);
+        this.renderer.render(this.scene, this.camera);
+        this.composer.render();
+        requestAnimationFrame(this.tick);
+    };
 }
 
 export default MatcapPreviewWorld;

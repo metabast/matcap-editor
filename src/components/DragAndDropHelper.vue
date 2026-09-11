@@ -1,18 +1,15 @@
-<template >
-    <div
-        id="dragNdropContainer"
-        v-if="isVisible || isVisibleOver"
-    >
-        <div id="dragNdropHelper" >
-            <div class="bg" >
-                <div >Drag and drop your file here</div >
-                <div >{{ msg }}</div >
-            </div >
-        </div >
-    </div >
-</template >
+<template>
+    <div id="dragNdropContainer" v-if="isVisible || isVisibleOver">
+        <div id="dragNdropHelper">
+            <div class="bg">
+                <div>Drag and drop your file here</div>
+                <div>{{ msg }}</div>
+            </div>
+        </div>
+    </div>
+</template>
 
-<script setup lang="ts" >
+<script setup lang="ts">
 import events from '@/commons/Events';
 import { ref } from 'vue';
 const isVisible = ref(false);
@@ -31,9 +28,9 @@ events.on('show:dragNdrop', (payload) => {
         isVisible.value = false;
     }, 2000);
 });
-</script >
+</script>
 
-<style >
+<style>
 #dragNdropContainer {
     position: fixed;
     top: 0;
@@ -55,8 +52,7 @@ events.on('show:dragNdrop', (payload) => {
     flex-direction: column;
     width: 100%;
     height: 100%;
-    border-radius: .4rem;
+    border-radius: 0.4rem;
     background: rgba(86, 165, 255, 0.5);
 }
-
-</style >
+</style>

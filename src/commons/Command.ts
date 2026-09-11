@@ -39,13 +39,13 @@ class Command extends Object {
     }
 
     // eslint-disable-next-line class-methods-use-this
-    execute(): void { }
+    execute(): void {}
 
     // eslint-disable-next-line class-methods-use-this
-    update(cmd: Command): void { }
+    update(cmd: Command): void {}
 
     // eslint-disable-next-line class-methods-use-this
-    undo(): void { }
+    undo(): void {}
 }
 
 export { Command };

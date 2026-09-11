@@ -28,9 +28,9 @@ three-matcap-orm-material/
 ```json
 {
     "name": "three-matcap-orm-material",
-    "type": "module",                    // Module ES6
+    "type": "module", // Module ES6
     "dependencies": {
-        "three": "^0.153.0"             // Version Three.js compatible
+        "three": "^0.153.0" // Version Three.js compatible
     },
     "scripts": {
         "build": "tsc ./src/index.ts --outDir ./dist --module esnext --target esnext"
@@ -39,6 +39,7 @@ three-matcap-orm-material/
 ```
 
 **Caractéristiques :**
+
 - Module ES6 privé (non publié sur npm)
 - Build TypeScript manuel avec configuration custom
 - Dépendance Three.js v0.153.0
@@ -51,11 +52,11 @@ three-matcap-orm-material/
 ```typescript
 export class MeshMatcapORMMaterial extends THREE.MeshMatcapMaterial {
     private customUniforms: {
-        uMap2: { value: THREE.Texture | null };      // Texture albedo alternative
-        uRoughness: { value: number };               // Valeur de rugosité (0-1)
+        uMap2: { value: THREE.Texture | null }; // Texture albedo alternative
+        uRoughness: { value: number }; // Valeur de rugosité (0-1)
         uRoughnessMap: { value: THREE.Texture | null }; // Texture de rugosité
-        uMetalness: { value: number };               // Valeur de metalness (0-1)
-        uColor: { value: THREE.Color };              // Couleur de base
+        uMetalness: { value: number }; // Valeur de metalness (0-1)
+        uColor: { value: THREE.Color }; // Couleur de base
     };
 }
 ```
@@ -65,31 +66,32 @@ export class MeshMatcapORMMaterial extends THREE.MeshMatcapMaterial {
 ### Système d'uniforms personnalisés
 
 #### Déclaration des uniforms
+
 ```typescript
 this.customUniforms = {
-    uMap2: { value: null },                          // Pas de texture par défaut
-    uRoughness: { value: 0 },                        // Surface parfaitement lisse
-    uRoughnessMap: { value: null },                  // Pas de carte de rugosité
-    uMetalness: { value: 0 },                        // Surface non métallique
-    uColor: { value: new THREE.Color(0xFFFFFF) },    // Blanc par défaut
+    uMap2: { value: null }, // Pas de texture par défaut
+    uRoughness: { value: 0 }, // Surface parfaitement lisse
+    uRoughnessMap: { value: null }, // Pas de carte de rugosité
+    uMetalness: { value: 0 }, // Surface non métallique
+    uColor: { value: new THREE.Color(0xffffff) }, // Blanc par défaut
 };
 ```
 
 #### Injection dans le shader
+
 ```typescript
 this.onBeforeCompile = (shader: THREE.Shader) => {
     // Ajout des defines nécessaires
     shader.defines = Object.assign(shader.defines, { USE_UV: '' });
-    
+
     // Injection des uniforms personnalisés
     shader.uniforms = Object.assign(shader.uniforms, this.customUniforms);
-    
+
     // Remplacement des chunks de shader
+    shader.fragmentShader = shader.fragmentShader.replace('#define MATCAP', matcapORMUniform);
     shader.fragmentShader = shader.fragmentShader.replace(
-        '#define MATCAP', matcapORMUniform
-    );
-    shader.fragmentShader = shader.fragmentShader.replace(
-        'vec3 outgoingLight = diffuseColor.rgb * matcapColor.rgb;', matcapORM
+        'vec3 outgoingLight = diffuseColor.rgb * matcapColor.rgb;',
+        matcapORM,
     );
 };
 ```
@@ -97,6 +99,7 @@ this.onBeforeCompile = (shader: THREE.Shader) => {
 ### API publique (Getters/Setters)
 
 #### Propriétés de couleur et texture
+
 ```typescript
 // Couleur alternative (uColor)
 set color2(value: THREE.Color): void
@@ -112,6 +115,7 @@ get map2(): THREE.Texture | null
 ```
 
 #### Propriétés PBR
+
 ```typescript
 // Rugosité (contrôle l'interpolation matcap)
 set roughness(value: number): void
@@ -127,6 +131,7 @@ get metalness(): number
 ```
 
 #### Méthode utilitaire
+
 ```typescript
 applyMapsFromOtherMaterial(material: MeshMatcapORMMaterial): void {
     // Copie toutes les propriétés d'un autre matériau
@@ -164,12 +169,14 @@ vec4 getCellMatcap(sampler2D matcap, vec2 uv, float row, float col) {
 ```
 
 **Fonctions clés :**
+
 - **`map()`** : Remapping linéaire entre deux plages de valeurs
 - **`getCellMatcap()`** : Extraction d'une cellule spécifique dans une grille 3x3
 
 ### 2. matcapORM.ts - Logique de rendu principal
 
 #### Extraction de la grille matcap 3x3
+
 ```glsl
 // Extraction des 9 cellules de la grille matcap
 vec4 matcap0 = getCellMatcap(matcap, uv, 2., 0.);  // Rangée 2, Colonne 0
@@ -179,6 +186,7 @@ vec4 matcap2 = getCellMatcap(matcap, uv, 2., 2.);  // Rangée 2, Colonne 2
 ```
 
 **Organisation de la grille :**
+
 ```
 matcap6  matcap7  matcap8    (Rangée 0 - Rugosité élevée)
 matcap3  matcap4  matcap5    (Rangée 1 - Rugosité moyenne)
@@ -186,6 +194,7 @@ matcap0  matcap1  matcap2    (Rangée 2 - Rugosité faible)
 ```
 
 #### Gestion de la rugosité
+
 ```glsl
 float roughness = uRoughness;
 
@@ -197,6 +206,7 @@ float roughness = uRoughness;
 ```
 
 #### Interpolation progressive des matcaps
+
 ```glsl
 float interval = 1./8.;  // 8 niveaux de transition
 
@@ -210,15 +220,17 @@ matcap1.rgb *= clamp(map(roughness, interval, interval * 2., 1., 0.), 0., 1.);
 ```
 
 **Logique d'interpolation :**
+
 - Chaque matcap est actif sur une plage de rugosité spécifique
 - Transitions fluides entre les niveaux grâce aux fonctions `clamp()` et `map()`
 - 8 intervalles de rugosité pour 9 matcaps
 
 #### Rendu final
+
 ```glsl
 // Combinaison de tous les matcaps
-vec3 matcapProgress = 
-    matcap0.rgb + matcap1.rgb + matcap2.rgb + matcap3.rgb + matcap4.rgb + 
+vec3 matcapProgress =
+    matcap0.rgb + matcap1.rgb + matcap2.rgb + matcap3.rgb + matcap4.rgb +
     matcap5.rgb + matcap6.rgb + matcap7.rgb + matcap8.rgb;
 
 // Application de la couleur/texture de base
@@ -236,6 +248,7 @@ outgoingLight = diffuseColor.rgb * matcapProgress;
 ### 1. Système de grille matcap dynamique
 
 **Concept :** Une texture matcap unique contient 9 variations organisées en grille 3x3
+
 - **Rangée 0** : Surfaces très rugueuses (diffuses)
 - **Rangée 1** : Surfaces moyennement rugueuses
 - **Rangée 2** : Surfaces lisses (réfléchissantes)
@@ -243,6 +256,7 @@ outgoingLight = diffuseColor.rgb * matcapProgress;
 ### 2. Interpolation basée sur la rugosité
 
 **Algorithme :**
+
 ```
 Rugosité 0.0 → 100% matcap0 (surface parfaitement lisse)
 Rugosité 0.125 → 50% matcap0 + 50% matcap1
@@ -253,13 +267,13 @@ Rugosité 1.0 → 100% matcap8 (surface très rugueuse)
 
 ### 3. Support complet des textures PBR
 
-| Propriété | Uniform GLSL | Define | Description |
-|-----------|--------------|--------|-------------|
-| **Albedo** | `uColor` | - | Couleur de base |
-| **Albedo Map** | `uMap2` | `USE_MAP2` | Texture couleur alternative |
-| **Roughness** | `uRoughness` | - | Valeur de rugosité (0-1) |
-| **Roughness Map** | `uRoughnessMap` | `USE_ROUGHNESSMAP` | Carte de rugosité (canal G) |
-| **Metalness** | `uMetalness` | - | Valeur metalness (extensible) |
+| Propriété         | Uniform GLSL    | Define             | Description                   |
+| ----------------- | --------------- | ------------------ | ----------------------------- |
+| **Albedo**        | `uColor`        | -                  | Couleur de base               |
+| **Albedo Map**    | `uMap2`         | `USE_MAP2`         | Texture couleur alternative   |
+| **Roughness**     | `uRoughness`    | -                  | Valeur de rugosité (0-1)      |
+| **Roughness Map** | `uRoughnessMap` | `USE_ROUGHNESSMAP` | Carte de rugosité (canal G)   |
+| **Metalness**     | `uMetalness`    | -                  | Valeur metalness (extensible) |
 
 ### 4. Système de defines conditionnels
 
@@ -270,6 +284,7 @@ else delete this.defines.USE_MAP2;
 ```
 
 **Avantages :**
+
 - Optimisation automatique du shader
 - Compilation conditionnelle des fonctionnalités
 - Performance optimale selon les besoins
@@ -277,15 +292,17 @@ else delete this.defines.USE_MAP2;
 ## Utilisation dans le projet
 
 ### Import et instanciation
+
 ```typescript
 import { MeshMatcapORMMaterial } from '../three-matcap-orm-material/src/index';
 
 const material = new MeshMatcapORMMaterial({
-    matcap: matcapGridTexture,  // Texture grille 3x3
+    matcap: matcapGridTexture, // Texture grille 3x3
 });
 ```
 
 ### Configuration des propriétés
+
 ```typescript
 // Propriétés de base
 material.roughness = 0.5;
@@ -298,6 +315,7 @@ material.roughnessMap = roughnessTexture;
 ```
 
 ### Intégration avec l'éditeur matcap
+
 ```typescript
 // Dans MatcapEditorContent.ts
 this.sphereRenderMaterial = new MeshMatcapORMMaterial({
@@ -314,66 +332,69 @@ material.metalness = store.material.metalness;
 ### ✅ Points forts
 
 1. **Extension propre de Three.js**
-   - Aucune modification du core Three.js
-   - Compatibilité totale avec l'écosystème existant
-   - API cohérente avec les matériaux standards
+    - Aucune modification du core Three.js
+    - Compatibilité totale avec l'écosystème existant
+    - API cohérente avec les matériaux standards
 
 2. **Système matcap sophistiqué**
-   - Grille 3x3 pour 9 variations de surface
-   - Interpolation fluide entre niveaux de rugosité
-   - Rendu réaliste avec une seule texture
+    - Grille 3x3 pour 9 variations de surface
+    - Interpolation fluide entre niveaux de rugosité
+    - Rendu réaliste avec une seule texture
 
 3. **Performance optimisée**
-   - Compilation conditionnelle des shaders
-   - Uniforms optimisés selon les besoins
-   - Pas de calculs inutiles
+    - Compilation conditionnelle des shaders
+    - Uniforms optimisés selon les besoins
+    - Pas de calculs inutiles
 
 4. **Flexibilité d'usage**
-   - Support complet des workflows PBR
-   - API simple et intuitive
-   - Extensibilité pour nouvelles fonctionnalités
+    - Support complet des workflows PBR
+    - API simple et intuitive
+    - Extensibilité pour nouvelles fonctionnalités
 
 5. **Architecture modulaire**
-   - Module indépendant et réutilisable
-   - Séparation claire shader/logique
-   - Documentation par l'exemple (CodePen)
+    - Module indépendant et réutilisable
+    - Séparation claire shader/logique
+    - Documentation par l'exemple (CodePen)
 
 ### 🔧 Améliorations possibles
 
 1. **Support metalness complet**
-   ```glsl
-   // Utilisation de uMetalness dans le fragment shader
-   vec3 metallic = mix(diffuseColor.rgb, vec3(0.0), metalness);
-   ```
+
+    ```glsl
+    // Utilisation de uMetalness dans le fragment shader
+    vec3 metallic = mix(diffuseColor.rgb, vec3(0.0), metalness);
+    ```
 
 2. **Support des normales maps**
-   ```typescript
-   set normalMap(value: THREE.Texture | null): void
-   ```
+
+    ```typescript
+    set normalMap(value: THREE.Texture | null): void
+    ```
 
 3. **Optimisations shader**
-   - Pré-calculs des intervalles
-   - Optimisation des boucles d'interpolation
-   - Support des LOD matcap
+    - Pré-calculs des intervalles
+    - Optimisation des boucles d'interpolation
+    - Support des LOD matcap
 
 4. **Documentation technique**
-   - Commentaires GLSL détaillés
-   - Diagrammes d'architecture
-   - Exemples d'usage avancés
+    - Commentaires GLSL détaillés
+    - Diagrammes d'architecture
+    - Exemples d'usage avancés
 
 5. **Tests et validation**
-   ```typescript
-   // Tests unitaires pour les propriétés
-   describe('MeshMatcapORMMaterial', () => {
-       it('should interpolate roughness correctly', () => {
-           // Test interpolation
-       });
-   });
-   ```
+    ```typescript
+    // Tests unitaires pour les propriétés
+    describe('MeshMatcapORMMaterial', () => {
+        it('should interpolate roughness correctly', () => {
+            // Test interpolation
+        });
+    });
+    ```
 
 ## Workflow de développement
 
 ### Build et développement
+
 ```bash
 # Build du module
 npm run build
@@ -383,19 +404,21 @@ npm run tsc
 ```
 
 ### Intégration dans l'éditeur
+
 ```typescript
 // Import dans le projet principal
 import { MeshMatcapORMMaterial } from './three-matcap-orm-material/src/index';
 
 // Utilisation dans MatcapEditorWorld
 const material = new MeshMatcapORMMaterial({
-    matcap: this.matcapTexture
+    matcap: this.matcapTexture,
 });
 ```
 
 ## Exemple d'usage complet
 
 ### Création et configuration
+
 ```typescript
 import { MeshMatcapORMMaterial } from './three-matcap-orm-material/src/index';
 import * as THREE from 'three';
@@ -406,8 +429,8 @@ const material = new MeshMatcapORMMaterial({
 });
 
 // Configuration des propriétés PBR
-material.roughness = 0.3;          // Surface moyennement rugueuse
-material.metalness = 0.9;          // Surface très métallique
+material.roughness = 0.3; // Surface moyennement rugueuse
+material.metalness = 0.9; // Surface très métallique
 material.color2 = new THREE.Color(0x00ff00);
 
 // Application des textures
@@ -420,11 +443,12 @@ scene.add(sphere);
 ```
 
 ### Animation de la rugosité
+
 ```typescript
 // Animation en temps réel
 function animate() {
     const time = Date.now() * 0.001;
-    material.roughness = (Math.sin(time) + 1) * 0.5;  // 0 à 1
+    material.roughness = (Math.sin(time) + 1) * 0.5; // 0 à 1
     requestAnimationFrame(animate);
 }
 ```

@@ -35,13 +35,11 @@ class Editor implements IEditor {
     private _contextIsReady = false;
 
     constructor() {
-
         //Singleton control
         if (Editor._instance) {
             throw new Error('Cannot initialize singleton class using new');
         }
         Editor._instance = this;
-
 
         this._loader = new Loader(this);
         this._history = new History(this);
@@ -53,10 +51,7 @@ class Editor implements IEditor {
         (globalThis as any).matcapEditorWorld = this._matcapEditorWorld;
         Project.initialize(this);
 
-        document.addEventListener(
-            'keydown',
-            debounce(this.onKeydown.bind(this), 100),
-        );
+        document.addEventListener('keydown', debounce(this.onKeydown.bind(this), 100));
 
         events.emit('matcap:editor:ready', this);
     }
@@ -64,7 +59,6 @@ class Editor implements IEditor {
     contextIsReady() {
         this._contextIsReady = true;
     }
-
 
     private onKeydown(event: KeyboardEvent) {
         switch (event.key.toLowerCase()) {

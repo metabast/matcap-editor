@@ -9,9 +9,7 @@ type JSON_Matcap = {
     };
 };
 
-
 class Loader {
-
     private _editor: Editor;
 
     constructor(editor: Editor) {
@@ -20,7 +18,6 @@ class Loader {
     }
 
     public onFilesDropped(files: File[]): void {
-
         if (files.length > 0) {
             for (let i = 0; i < files.length; i++) {
                 this.loadFile(files[i]);
@@ -35,7 +32,6 @@ class Loader {
     }
 
     private loadFile(file: File): void {
-
         const filename = file.name;
         if (!file.name || file.name.indexOf('.') === -1) return;
         const extension = filename.split('.')?.pop()?.toLowerCase();
@@ -44,29 +40,23 @@ class Loader {
         reader.addEventListener('progress', this.onReaderProgress.bind(this), false);
 
         switch (extension) {
-
             case 'glb':
-
                 reader.addEventListener('load', this.onGLBLoaded.bind(this), false);
                 reader.readAsArrayBuffer(file);
 
                 break;
 
             case 'json':
-
                 reader.addEventListener('load', this.onJSONLoaded.bind(this), false);
                 reader.readAsText(file);
 
                 break;
 
             default:
-
                 console.error('Unsupported file format (' + extension + ').');
 
                 break;
-
         }
-
     }
 
     private async onGLBLoaded(event: ProgressEvent<FileReader>) {
@@ -86,7 +76,6 @@ class Loader {
     }
 
     private onJSONLoaded(event: ProgressEvent<FileReader>) {
-
         const contents = (event.target as FileReader).result as string;
         let data;
         try {

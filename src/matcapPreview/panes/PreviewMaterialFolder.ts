@@ -59,8 +59,6 @@ const generate = (content: MatcapPreviewContent) => {
             events.emit('object:power:update');
         });
 
-
-
     _paneFolder
         .addBinding(roughnessCtrl, 'value', {
             min: 0,
@@ -70,17 +68,19 @@ const generate = (content: MatcapPreviewContent) => {
         })
         .on('change', (event) => {
             if (event.last && roughnessCtrl.history) {
-                _content.world.editor.execute(new SetPreviewRoughnessCommand(
-                    _content.world.editor,
-                    {
-                        name: 'roughness',
-                        value: roughnessCtrl.value,
-                        oldValue: Number(roughnessCtrl.oldValue),
-                    },
-                    _pane,
-                    roughnessCtrl,
-                    metalnessCtrl,
-                ));
+                _content.world.editor.execute(
+                    new SetPreviewRoughnessCommand(
+                        _content.world.editor,
+                        {
+                            name: 'roughness',
+                            value: roughnessCtrl.value,
+                            oldValue: Number(roughnessCtrl.oldValue),
+                        },
+                        _pane,
+                        roughnessCtrl,
+                        metalnessCtrl,
+                    ),
+                );
                 // store.value.metalness = 1 - event.value;
                 // events.emit('object:roughness:update');
                 // _pane.refresh();
@@ -95,17 +95,19 @@ const generate = (content: MatcapPreviewContent) => {
         })
         .on('change', (event) => {
             if (event.last && metalnessCtrl.history) {
-                _content.world.editor.execute(new SetPreviewMetalnessCommand(
-                    _content.world.editor,
-                    {
-                        name: 'metalness',
-                        value: metalnessCtrl.value,
-                        oldValue: Number(metalnessCtrl.oldValue),
-                    },
-                    _pane,
-                    metalnessCtrl,
-                    roughnessCtrl,
-                ));
+                _content.world.editor.execute(
+                    new SetPreviewMetalnessCommand(
+                        _content.world.editor,
+                        {
+                            name: 'metalness',
+                            value: metalnessCtrl.value,
+                            oldValue: Number(metalnessCtrl.oldValue),
+                        },
+                        _pane,
+                        metalnessCtrl,
+                        roughnessCtrl,
+                    ),
+                );
                 // store.value.roughness = 1 - event.value;
                 // events.emit('object:metalness:update');
                 // _pane.refresh();

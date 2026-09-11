@@ -21,28 +21,18 @@ export class MeshMatcapORMMaterial extends THREE.MeshMatcapMaterial {
             uRoughness: { value: 0 },
             uRoughnessMap: { value: null },
             uMetalness: { value: 0 },
-            uColor: { value: new THREE.Color(0xFFFFFF) },
+            uColor: { value: new THREE.Color(0xffffff) },
         };
 
         this.setValues(parameters as THREE.MeshMatcapMaterialParameters);
 
         this.onBeforeCompile = (shader: THREE.Shader) => {
+            (shader as any).defines = Object.assign((shader as any).defines, {
+                USE_UV: '',
+            });
 
-            (shader as any).defines = Object.assign(
-                (shader as any).defines,
-                {
-                    USE_UV: '',
-                }
-            );
-
-            shader.uniforms = Object.assign(
-                shader.uniforms,
-                this.customUniforms,
-            );
-            shader.fragmentShader = shader.fragmentShader.replace(
-                '#define MATCAP',
-                matcapORMUniform,
-            );
+            shader.uniforms = Object.assign(shader.uniforms, this.customUniforms);
+            shader.fragmentShader = shader.fragmentShader.replace('#define MATCAP', matcapORMUniform);
             shader.fragmentShader = shader.fragmentShader.replace(
                 'vec3 outgoingLight = diffuseColor.rgb * matcapColor.rgb;',
                 matcapORM,
@@ -58,10 +48,8 @@ export class MeshMatcapORMMaterial extends THREE.MeshMatcapMaterial {
     }
 
     set map2(value: THREE.Texture | null) {
-        if (value)
-            this.defines.USE_MAP2 = '';
-        else
-            delete this.defines.USE_MAP2;
+        if (value) this.defines.USE_MAP2 = '';
+        else delete this.defines.USE_MAP2;
         this.customUniforms.uMap2.value = value;
     }
 
@@ -94,20 +82,16 @@ export class MeshMatcapORMMaterial extends THREE.MeshMatcapMaterial {
     }
 
     applyMapsFromOtherMaterial(material: MeshMatcapORMMaterial) {
-        if (material.color)
-            this.color2 = material.color;
+        if (material.color) this.color2 = material.color;
 
         if (material.map) {
             this.map2 = material.map;
         }
 
-        if (material.roughness)
-            this.roughness = material.roughness;
+        if (material.roughness) this.roughness = material.roughness;
 
-        if (material.roughnessMap)
-            this.roughnessMap = material.roughnessMap;
+        if (material.roughnessMap) this.roughnessMap = material.roughnessMap;
 
-        if (material.normalMap)
-            this.normalMap = material.normalMap;
+        if (material.normalMap) this.normalMap = material.normalMap;
     }
 }

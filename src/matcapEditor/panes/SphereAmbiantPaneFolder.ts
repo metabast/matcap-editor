@@ -45,7 +45,10 @@ class SphereAmbiantPaneFolder extends PaneFolderControler {
                 this._ambiantLight.intensity = Number(event.value);
                 if (event.last && this._intensityCtrl.history) {
                     this._editor.execute(
-                        this.createAmbiantIntensityCommand(this._ambiantLight.intensity, Number(this._intensityCtrl.oldValue)),
+                        this.createAmbiantIntensityCommand(
+                            this._ambiantLight.intensity,
+                            Number(this._intensityCtrl.oldValue),
+                        ),
                         'update ambiant intensity',
                     );
                     this._intensityCtrl.oldValue = Number(this._ambiantLight.intensity);
