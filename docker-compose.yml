@@ -1,0 +1,10 @@
+services:
+  app:
+    build: .
+    ports:
+      - "${DEV_PORT:-5174}:5173"
+    volumes:
+      - .:/app
+      # Anonymous volume: keeps the image's node_modules from being shadowed
+      # by the host bind mount.
+      - /app/node_modules

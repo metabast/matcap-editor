@@ -13,17 +13,41 @@
 
 ## Usage
 
-```
-npm install
-npm run dev
-npm run build
-```
-view at http://localhost:3005
+Everything runs in Docker — no local Node.js installation required.
 
-TODO : docker node ?
+```
+docker compose up -d
+```
+
+The dev server (Vite, with HMR) is then available at http://localhost:5174
+
+Other commands run inside the container:
+
+```
+docker compose exec app npm run build       # production build, outputs to dist/
+docker compose exec app npm run lint
+docker compose exec app npm run type-check
+docker compose exec app npm install <pkg>   # add a dependency
+docker compose logs -f app                  # follow the dev server output
+docker compose down                         # stop
+```
+
+Rebuild the image after changing `package.json` or the `Dockerfile`:
+
+```
+docker compose up -d --build
+```
+
+The host port defaults to `5174` (5173, the Vite default, is often already
+taken). Override it with the `DEV_PORT` environment variable:
+
+```
+DEV_PORT=3005 docker compose up -d
+```
 
 ## Requirement
-node 18
+
+Docker with the Compose plugin. The image is based on `node:20-alpine`.
 
 ## Contributing
 
