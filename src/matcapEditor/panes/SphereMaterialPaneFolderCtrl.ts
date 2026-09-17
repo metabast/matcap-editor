@@ -2,6 +2,7 @@ import { SetSphereMaterialParamsCommand } from '@/commands/SetSphereMaterialPara
 import PaneFolderControler from '@/commons/PaneFolderCtrl';
 import { Color } from 'three';
 import type { Pane, TabPageApi } from 'tweakpane';
+import type Editor from '@/Editor';
 import type { ValuesPaneCtrl } from '@/ts/types/PanesTypes';
 
 class SphereMaterialPaneFolderCtrl extends PaneFolderControler {
@@ -18,8 +19,8 @@ class SphereMaterialPaneFolderCtrl extends PaneFolderControler {
         SphereMaterialPaneFolderCtrl._instance = this;
     }
 
-    public initialize(pane: Pane, paneContainer: TabPageApi) {
-        super.initialize(pane, paneContainer);
+    public initialize(pane: Pane, paneContainer: TabPageApi, editor: Editor) {
+        super.initialize(pane, paneContainer, editor);
     }
 
     public get pane() {

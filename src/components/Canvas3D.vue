@@ -14,9 +14,8 @@
 </template>
 
 <script lang="ts" setup>
-import Editor from '@/Editor';
 import { matcapEditorStore } from '@/stores/matcapEditorStore';
-import { onMounted, computed, ref } from 'vue';
+import { computed, ref } from 'vue';
 import DragAndDropHelperVue from '@/components/DragAndDropHelper.vue';
 import MatcapLights from './MatcapLights.vue';
 import CanvasSnapshots from './CanvasSnapshots.vue';
@@ -25,10 +24,6 @@ import DroppedFileManager from '@/commons/DroppedFileManager';
 
 const store = computed(() => matcapEditorStore());
 const dragNdropIsVisible = ref(false);
-onMounted(async () => {
-    Editor.instance.contextIsReady();
-});
-
 function onDrop(e: DragEvent) {
     e.preventDefault();
     e.stopPropagation();

@@ -57,27 +57,34 @@ docker compose exec app npm run lint        # corrige ce qui est auto-corrigeabl
 docker compose exec app npm run lint:check  # vérifie sans modifier
 ```
 
-## Cycle d'imports connu
+## Cycles d'imports
 
-Il existe un cycle :
+Le cycle qui cassait le chargement est coupé :
 
-    Editor -> Project -> SphereMaterialPaneFolderCtrl -> PaneFolderCtrl -> Editor
+    SphereAmbiantPaneFolder -> PaneFolderCtrl -> Editor -> Project
+        -> SphereMaterialPaneFolderCtrl -> PaneFolderCtrl
 
-Il est latent : tout changement de l'ordre d'évaluation des modules peut le
-faire ressortir en `ReferenceError: Cannot access 'X' before initialization`
-au chargement de la page. C'est arrivé en inversant `<template>` et `<script>`
-dans un composant.
+`PaneFolderCtrl` n'importe plus `Editor` en valeur : il le reçoit en paramètre
+de `initialize()`, l'editor descendant depuis le payload de l'événement
+`matcap:editor:ready`. L'import est devenu `import type`, donc effacé à la
+compilation.
 
-Conséquence pratique : **ne jamais lancer `eslint --fix` sans vérifier ensuite
-la page dans un navigateur**. Le build et `vue-tsc` ne détectent pas ce type
-de régression. `import/no-cycle` est désactivé, ce qui masque le problème de
-fond ; le corriger demande de revoir la façon dont `Project` accède aux
-contrôleurs de panneaux.
+Il reste un cycle latent `Editor <-> MatcapEditorWorld`, inoffensif tant que
+`MatcapEditorWorld` ne lit `Editor.instance` que dans son constructeur. Il
+disparaîtra avec l'injection de dépendances (MATC-7), qui conditionne la
+réactivation d'`import/no-cycle`.
+
+Conséquence pratique, toujours valable : **ne jamais lancer `eslint --fix` sans
+vérifier ensuite la page dans un navigateur**. Le build et `vue-tsc` ne
+détectent pas une régression d'ordre d'évaluation.
 
 ## État connu
 
-`npm run lint:check` remonte encore 105 anomalies qui demandent des
-modifications de code, pas de configuration :
+`npm run lint:check` remonte encore ~200 anomalies qui demandent des
+modifications de code, pas de configuration. Attention : le compteur affiché
+double une partie des fichiers, le lint scannant aussi la copie obsolète
+`.board/worktrees/43/src`. Comparer des totaux avant/après, pas se fier au
+chiffre absolu. Réparties en :
 
 - 23 `@typescript-eslint/no-explicit-any`
 - 21 `@typescript-eslint/no-unused-vars`

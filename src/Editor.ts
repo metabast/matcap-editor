@@ -32,8 +32,6 @@ class Editor implements IEditor {
         return this._loader;
     }
 
-    private _contextIsReady = false;
-
     constructor() {
         // Singleton control
         if (Editor._instance) {
@@ -54,10 +52,6 @@ class Editor implements IEditor {
         document.addEventListener('keydown', debounce(this.onKeydown.bind(this), 100));
 
         events.emit('matcap:editor:ready', this);
-    }
-
-    contextIsReady() {
-        this._contextIsReady = true;
     }
 
     private onKeydown(event: KeyboardEvent) {
@@ -143,9 +137,19 @@ class Editor implements IEditor {
 
     // SINGLETON
     private static _instance: IEditor;
+
+    /** The one construction path, called by the composition root in main.ts. */
+    public static bootstrap(): Editor {
+        return new Editor();
+    }
+
+    /**
+     * Accessor only: the editor is built by the composition root in main.ts.
+     * Reading this before that point is a module evaluation order bug.
+     */
     public static get instance(): Editor {
         if (!Editor._instance) {
-            new Editor();
+            throw new Error('Editor is not initialized yet');
         }
 
         return Editor._instance as Editor;

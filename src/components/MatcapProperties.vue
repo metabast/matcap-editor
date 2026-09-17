@@ -13,6 +13,7 @@ import SpherePaneFolder from '@/matcapEditor/panes/SpherePaneFolder';
 import CreatePaneFolder from '@/matcapEditor/panes/CreatePaneFolder';
 import LightPaneFolder from '@/matcapEditor/panes/LightPaneFolder';
 import ImportExportMatcapPaneFolder from '@/matcapEditor/panes/ImportExportMatcapPaneFolder';
+import type Editor from '@/Editor';
 
 const store = computed(() => matcapEditorStore());
 let pane: Pane;
@@ -24,7 +25,7 @@ function getStyles() {
     `;
 }
 
-events.on('matcap:editor:ready', () => {
+events.on('matcap:editor:ready', (editor: Editor) => {
     CreatePaneFolder.initialize(pane);
 
     pane.addBinding(store.value.create, 'front', {
@@ -38,7 +39,7 @@ events.on('matcap:editor:ready', () => {
 
     ImportExportMatcapPaneFolder.initialize(pane);
 
-    SpherePaneFolder.initialize(pane);
+    SpherePaneFolder.initialize(pane, editor);
 
     LightPaneFolder.initialize(pane);
 });

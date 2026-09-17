@@ -33,3 +33,26 @@ Dire qu'un changement est vérifié alors que seule une partie de la chaîne a
 codebase avec des cycles d'imports, les règles d'ordonnancement (`import/order`,
 `vue/block-order`) changent la sémantique d'exécution. Les appliquer par lots
 et vérifier entre chaque.
+
+## Supprimer un import peut déplacer l'entrée d'un cycle
+
+En rendant la composition root explicite (MATC-6), l'import d'`Editor` en tête
+de `Canvas3D.vue` a été retiré. Page blanche : `ReferenceError: Cannot access
+'PaneFolderControler' before initialization`.
+
+Cet import ne servait à rien fonctionnellement — il appelait `contextIsReady()`,
+du code mort. Son rôle réel était d'amorcer le graphe de modules dans un ordre
+où `PaneFolderCtrl` était évalué avant que `SphereMaterialPaneFolderCtrl` en
+hérite. Une béquille d'ordre de chargement que rien ne signalait.
+
+**Règle :** sur un codebase à cycles, retirer un import est un changement
+d'ordre d'évaluation au même titre qu'en ajouter un. Et la bonne réponse n'est
+pas de rétablir l'ordre, mais de couper l'arête : une dépendance utilisée
+seulement à l'intérieur d'une méthode se passe en paramètre, ce qui transforme
+l'import en `import type` et l'efface à la compilation.
+
+## Utiliser la vérification navigateur déjà documentée
+
+Le harnais Playwright décrit plus haut existait ; il a été redemandé à
+l'utilisateur de tester à la main deux fois avant d'y penser. Lire ce fichier
+avant de déclarer qu'une vérification est hors de portée.
