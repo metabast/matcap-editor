@@ -23,9 +23,10 @@ export class MeshMatcapORMMaterial extends THREE.MeshMatcapMaterial {
         };
 
         this.setValues(parameters as THREE.MeshMatcapMaterialParameters);
+        this.defines = this.defines ?? {};
 
-        this.onBeforeCompile = (shader: THREE.Shader) => {
-            (shader as any).defines = Object.assign((shader as any).defines, {
+        this.onBeforeCompile = (shader: THREE.WebGLProgramParametersWithUniforms) => {
+            shader.defines = Object.assign(shader.defines ?? {}, {
                 USE_UV: '',
             });
 
@@ -47,8 +48,9 @@ export class MeshMatcapORMMaterial extends THREE.MeshMatcapMaterial {
     }
 
     set map2(value: THREE.Texture | null) {
-        if (value) this.defines.USE_MAP2 = '';
-        else delete this.defines.USE_MAP2;
+        const defines = (this.defines ??= {});
+        if (value) defines.USE_MAP2 = '';
+        else delete defines.USE_MAP2;
         this.customUniforms.uMap2.value = value;
     }
 

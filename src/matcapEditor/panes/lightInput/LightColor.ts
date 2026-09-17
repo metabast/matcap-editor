@@ -6,9 +6,13 @@ import type { DataLightPaneFolder } from '../LightPaneFolder';
 
 const LightColor = {
     addBinding(data: DataLightPaneFolder) {
+        // Bindings only exist while a light is selected.
+        const lightModel = data.currentLightModel;
+        if (!lightModel) return;
+
         const paneCtrl: ValuesPaneCtrl = {
-            value: `#${data.currentLightModel.light.color.getHexString()}`,
-            oldValue: data.currentLightModel.light.color.getHex(),
+            value: `#${lightModel.light.color.getHexString()}`,
+            oldValue: lightModel.light.color.getHex(),
             history: true,
         };
         data.paneContainer
@@ -19,23 +23,23 @@ const LightColor = {
                 step: 0.001,
             })
             .on('change', (event) => {
-                data.currentLightModel.light.color.set(paneCtrl.value as Color);
+                lightModel.light.color.set(paneCtrl.value as Color);
                 if (event.last && paneCtrl.history) {
                     Editor.instance.execute(
                         new SetLightPropertyCommand(
                             Editor.instance.scene,
                             {
                                 name: 'color',
-                                value: data.currentLightModel.light.color.getHex(),
+                                value: lightModel.light.color.getHex(),
                                 oldValue: paneCtrl.oldValue,
                             },
-                            data.currentLightModel.light,
+                            lightModel.light,
                             data.pane,
                             paneCtrl,
                         ),
                         'update ambiant color',
                     );
-                    paneCtrl.oldValue = new Color(data.currentLightModel.light.color).getHex();
+                    paneCtrl.oldValue = new Color(lightModel.light.color).getHex();
                 }
             });
     },

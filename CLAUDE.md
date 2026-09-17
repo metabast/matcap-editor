@@ -57,27 +57,27 @@ docker compose exec app npm run lint        # corrige ce qui est auto-corrigeabl
 docker compose exec app npm run lint:check  # vérifie sans modifier
 ```
 
-## Le type-check ne vérifie rien
+## Type-check
 
-`npm run type-check` lance `vue-tsc --noEmit` sur un `tsconfig.json` qui n'a que
-des `references` et `"files": []`. Sans `--build`, il ne traverse pas les
-sous-projets : il sort en vert sur n'importe quel code. Vérifié en y injectant
-`const x: number = 'boom'` — aucune sortie.
+`npm run type-check` lance `vue-tsc --build --force` et échoue réellement. Il a
+longtemps lancé `vue-tsc --noEmit` sur un `tsconfig.json` qui n'a que des
+`references` et `"files": []` : sans `--build`, il ne traverse pas les
+sous-projets et sortait en vert sur n'importe quel code.
 
-Pour obtenir un vrai type-check :
+Les 109 erreurs que cela masquait sont corrigées. Deux conventions en sont
+issues :
 
-```bash
-docker compose exec app npx vue-tsc --build --force
-```
+- **`!` d'assignation définitive** sur les propriétés remplies par un
+  `initialize()` ou par des setters plutôt que par le constructeur
+  (`PaneFolderCtrl`, `LightModel`, les contrôleurs de panneaux). L'invariant est
+  commenté au-dessus de chaque classe concernée.
+- **Garde en tête de binding** dans `panes/lightInput/*` :
+  `const lightModel = data.currentLightModel; if (!lightModel) return;`. Un
+  binding sans lumière courante n'a pas de sens ; le garde le dit au type comme
+  à l'exécution.
 
-Il remonte ~109 erreurs préexistantes (surtout `strictNullChecks` dans
-`panes/lightInput/*` et `strictPropertyInitialization`). Procéder par
-comparaison de totaux avant/après, comme pour le lint, et nettoyer les
-artefacts que `--build` écrit à la racine (`*.tsbuildinfo`, `vite.config.js`)
-— ils sont gitignorés.
-
-Corriger le script demande de traiter ces 109 erreurs d'abord, sans quoi
-`npm run build` échouerait. À planifier comme un ticket à part.
+`src/**` appartient à la fois au projet app et au projet vitest, donc chaque
+erreur est rapportée deux fois. Comparer des totaux, pas des occurrences.
 
 ## Vérification navigateur
 

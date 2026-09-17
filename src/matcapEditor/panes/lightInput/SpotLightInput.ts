@@ -28,7 +28,11 @@ const inputParams = {
 
 const SpotLightInput = {
     addBinding(data: DataLightPaneFolder, propertyName: 'distance' | 'angle' | 'penumbra' | 'decay') {
-        const spotlight = data.currentLightModel.light as SpotLight;
+        // Bindings only exist while a light is selected.
+        const lightModel = data.currentLightModel;
+        if (!lightModel) return;
+
+        const spotlight = lightModel.light as SpotLight;
         const paneCtrl: ValuesPaneCtrl = {
             value: Number(spotlight[propertyName]),
             oldValue: Number(spotlight[propertyName]),
@@ -48,7 +52,7 @@ const SpotLightInput = {
                             value: spotlight[propertyName],
                             oldValue: Number(paneCtrl.oldValue),
                         },
-                        data.currentLightModel.light as SpotLight,
+                        lightModel.light as SpotLight,
                         data.pane,
                         paneCtrl,
                     ),

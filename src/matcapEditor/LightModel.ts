@@ -3,16 +3,20 @@ import type { LightModelPositions } from '@/ts/types/PanesTypes';
 
 type LightType = PointLight | RectAreaLight | SpotLight;
 
+/**
+ * Built empty and filled through its setters as the light is placed, so most
+ * fields are asserted rather than initialized.
+ */
 class LightModel {
-    private _light: LightType;
+    private _light!: LightType;
 
     private _screenPosition: Vector2 = new Vector2();
 
-    private _distance: number;
+    private _distance!: number;
 
-    private _sphereFaceNormal: Vector3;
+    private _sphereFaceNormal!: Vector3;
 
-    private _positionOnSphere: Vector3;
+    private _positionOnSphere!: Vector3;
 
     private _positionTarget: Vector3 = new Vector3(0, 0, 0);
 
@@ -20,7 +24,7 @@ class LightModel {
 
     private _front: boolean;
 
-    private _oldPositions: LightModelPositions;
+    private _oldPositions!: LightModelPositions;
 
     constructor() {
         this._lookAtTarget = true;

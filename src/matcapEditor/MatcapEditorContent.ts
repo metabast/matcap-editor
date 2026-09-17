@@ -53,13 +53,13 @@ class MatcapEditorContent {
 
     private _arrowHelper: ArrowHelper = new ArrowHelper(new Vector3(), new Vector3(), 1, '#ff0000');
 
-    private currentLightModel: LightModel | null;
+    private currentLightModel!: LightModel | null;
 
     private raycaster: Raycaster = new Raycaster();
 
     private pointer: Vector2 = new Vector2();
 
-    private hitSphere: Intersection;
+    private hitSphere!: Intersection;
 
     private lightPosition: Vector3 = new Vector3();
 

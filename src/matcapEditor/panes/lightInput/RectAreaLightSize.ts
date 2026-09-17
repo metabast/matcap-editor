@@ -6,7 +6,11 @@ import type { DataLightPaneFolder } from '../LightPaneFolder';
 
 const RectAreaLightSize = {
     addBinding(data: DataLightPaneFolder, propertyName: 'width' | 'height') {
-        const rectAreaLight = data.currentLightModel.light as RectAreaLight;
+        // Bindings only exist while a light is selected.
+        const lightModel = data.currentLightModel;
+        if (!lightModel) return;
+
+        const rectAreaLight = lightModel.light as RectAreaLight;
         const paneCtrl: ValuesPaneCtrl = {
             value: Number(rectAreaLight[propertyName]),
             oldValue: Number(rectAreaLight[propertyName]),
@@ -30,7 +34,7 @@ const RectAreaLightSize = {
                                 value: rectAreaLight[propertyName],
                                 oldValue: Number(paneCtrl.oldValue),
                             },
-                            data.currentLightModel.light as RectAreaLight,
+                            lightModel.light as RectAreaLight,
                             data.pane,
                             paneCtrl,
                         ),

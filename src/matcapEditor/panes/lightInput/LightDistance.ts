@@ -6,9 +6,13 @@ import type { DataLightPaneFolder } from '../LightPaneFolder';
 
 const LightDistance = {
     addBinding(data: DataLightPaneFolder) {
+        // Bindings only exist while a light is selected.
+        const lightModel = data.currentLightModel;
+        if (!lightModel) return;
+
         const distancetCtrl: ValuesPaneCtrl = {
-            value: Number(data.currentLightModel.distance),
-            oldValue: Number(data.currentLightModel.distance),
+            value: Number(lightModel.distance),
+            oldValue: Number(lightModel.distance),
             history: true,
         };
         data.paneContainer
@@ -19,24 +23,24 @@ const LightDistance = {
                 step: 0.001,
             })
             .on('change', (event) => {
-                data.currentLightModel.distance = Number(event.value);
-                LightModel.updateLightDistance(data.currentLightModel);
+                lightModel.distance = Number(event.value);
+                LightModel.updateLightDistance(lightModel);
                 if (event.last && distancetCtrl.history) {
                     Editor.instance.execute(
                         new SetLightModelPropertyCommand(
                             Editor.instance.scene,
                             {
                                 name: 'distance',
-                                value: data.currentLightModel.distance,
+                                value: lightModel.distance,
                                 oldValue: Number(distancetCtrl.oldValue),
                             },
-                            data.currentLightModel,
+                            lightModel,
                             data.pane,
                             distancetCtrl,
                         ),
                         'update ambiant distance',
                     );
-                    distancetCtrl.oldValue = Number(data.currentLightModel.distance);
+                    distancetCtrl.oldValue = Number(lightModel.distance);
                 }
             });
     },

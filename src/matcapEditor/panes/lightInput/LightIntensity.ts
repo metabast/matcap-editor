@@ -5,9 +5,13 @@ import type { DataLightPaneFolder } from '../LightPaneFolder';
 
 const LightIntensity = {
     addBinding(data: DataLightPaneFolder) {
+        // Bindings only exist while a light is selected.
+        const lightModel = data.currentLightModel;
+        if (!lightModel) return;
+
         const paneCtrl: ValuesPaneCtrl = {
-            value: Number(data.currentLightModel.light.intensity),
-            oldValue: Number(data.currentLightModel.light.intensity),
+            value: Number(lightModel.light.intensity),
+            oldValue: Number(lightModel.light.intensity),
             history: true,
         };
         data.paneContainer
@@ -18,23 +22,23 @@ const LightIntensity = {
                 step: 0.001,
             })
             .on('change', (event) => {
-                data.currentLightModel.light.intensity = Number(event.value);
+                lightModel.light.intensity = Number(event.value);
                 if (event.last && paneCtrl.history) {
                     Editor.instance.execute(
                         new SetLightPropertyCommand(
                             Editor.instance.scene,
                             {
                                 name: 'intensity',
-                                value: data.currentLightModel.light.intensity,
+                                value: lightModel.light.intensity,
                                 oldValue: Number(paneCtrl.oldValue),
                             },
-                            data.currentLightModel.light,
+                            lightModel.light,
                             data.pane,
                             paneCtrl,
                         ),
                         'update ambiant intensity',
                     );
-                    paneCtrl.oldValue = Number(data.currentLightModel.light.intensity);
+                    paneCtrl.oldValue = Number(lightModel.light.intensity);
                 }
             });
     },

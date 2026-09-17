@@ -7,10 +7,14 @@ import type { DataLightPaneFolder } from '../LightPaneFolder';
 
 const LightModelBoolean = {
     addBinding(data: DataLightPaneFolder, propertyName: 'front' | 'lookAtTarget') {
-        if (!data.currentLightModel || !data.paneContainer) return;
+        // Bindings only exist while a light is selected.
+        const lightModel = data.currentLightModel;
+        if (!lightModel) return;
+
+        if (!lightModel || !data.paneContainer) return;
         const paneCtrl: ValuesPaneCtrl = {
-            value: Boolean(data.currentLightModel[propertyName]),
-            oldValue: Boolean(data.currentLightModel[propertyName]),
+            value: Boolean(lightModel[propertyName]),
+            oldValue: Boolean(lightModel[propertyName]),
             history: true,
         };
         data.paneContainer
@@ -21,26 +25,26 @@ const LightModelBoolean = {
                 step: 0.001,
             })
             .on('change', (event) => {
-                if (!data.currentLightModel || !data.content || !data.pane) return;
+                if (!lightModel || !data.content || !data.pane) return;
 
-                data.currentLightModel[propertyName] = Boolean(event.value);
-                LightModel.updateLightDistance(data.currentLightModel);
+                lightModel[propertyName] = Boolean(event.value);
+                LightModel.updateLightDistance(lightModel);
                 if (event.last && paneCtrl.history) {
                     Editor.instance.execute(
                         new SetLightModelPropertyCommand(
                             Editor.instance.scene,
                             {
                                 name: propertyName,
-                                value: data.currentLightModel[propertyName],
+                                value: lightModel[propertyName],
                                 oldValue: Boolean(paneCtrl.oldValue),
                             },
-                            data.currentLightModel,
+                            lightModel,
                             data.pane,
                             paneCtrl,
                         ),
                         `update light model ${propertyName}`,
                     );
-                    paneCtrl.oldValue = Boolean(data.currentLightModel[propertyName]);
+                    paneCtrl.oldValue = Boolean(lightModel[propertyName]);
                 }
             });
 

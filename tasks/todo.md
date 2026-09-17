@@ -58,3 +58,29 @@ Trois découvertes en cours de route :
 
 Reste pour MATC-8b : les 19 sites qui écrivent `Editor.instance.scene` nomment
 désormais leur dépendance, mais l'attrapent encore par le singleton.
+
+---
+
+# Ticket type-check — rendre `npm run type-check` effectif
+
+- [x] `vue-tsc --build --force` dans le script ; falsifié, il échoue bien (exit 2).
+- [x] Configuration : `module`/`moduleResolution` incohérents dans
+      `tsconfig.node.json`, `three-matcap-orm-material/src` absent des `include`,
+      sortie du projet node redirigée hors de l'arbre.
+- [x] `window.d.ts` n'augmentait rien : un import en tête en faisait un module.
+- [x] `THREE.Shader` a disparu des types de Three → `WebGLProgramParametersWithUniforms`.
+- [x] 56 `strictNullChecks` dans `panes/lightInput/*` → garde en tête de binding.
+- [x] 34 `strictPropertyInitialization` → `!` documenté par classe.
+- [x] 109 → 0.
+
+## Revue
+
+Les gardes transforment un plantage en retour silencieux : un garde qui se
+déclencherait à tort viderait le panneau sans rien signaler. D'où une huitième
+étape dans `pw/check.mjs`, qui vérifie que la lumière sélectionnée expose bien
+ses bindings.
+
+Cette assertion a dû être reprise deux fois avant de prouver quoi que ce soit :
+« intensity » existe aussi dans le panneau ambiant, donc un sélecteur global
+restait vert alors que le binding était supprimé. Elle est maintenant restreinte
+au dossier « Current Light », et la falsification la fait échouer.

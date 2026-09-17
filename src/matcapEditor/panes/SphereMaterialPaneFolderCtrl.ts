@@ -6,9 +6,9 @@ import type Editor from '@/Editor';
 import type { ValuesPaneCtrl } from '@/ts/types/PanesTypes';
 
 class SphereMaterialPaneFolderCtrl extends PaneFolderControler {
-    private _roughnessCtrl: ValuesPaneCtrl;
-    private _metalnessCtrl: ValuesPaneCtrl;
-    private _colorCtrl: ValuesPaneCtrl;
+    private _roughnessCtrl!: ValuesPaneCtrl;
+    private _metalnessCtrl!: ValuesPaneCtrl;
+    private _colorCtrl!: ValuesPaneCtrl;
     constructor() {
         super();
         if (SphereMaterialPaneFolderCtrl._instance) {

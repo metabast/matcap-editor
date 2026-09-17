@@ -73,6 +73,22 @@ check(
     added ? `${afterUndo} -> ${afterRedo}` : 'skipped, nothing was added',
 );
 
+// --- the selected light's bindings ---------------------------------------------
+// Selecting a light builds its Tweakpane bindings, each of which bails out early
+// when no light is current. A guard firing wrongly would leave the folder empty
+// without raising anything, so assert the labels are actually there.
+const currentLightFolder = page
+    .locator('.tp-fldv', { has: page.locator('.tp-fldv_t', { hasText: 'Current Light' }) })
+    .first();
+const labels = await currentLightFolder.locator('.tp-lblv_l').allTextContents();
+const expected = ['front', 'intensity', 'color', 'distance'];
+const missing = expected.filter((label) => !labels.some((l) => l.trim() === label));
+check(
+    'the selected light exposes its bindings',
+    missing.length === 0,
+    missing.length ? `missing ${missing.join(', ')}` : labels.length + ' labels',
+);
+
 // --- drag a light, then undo it ----------------------------------------------
 // The handle follows the pointer on its own during the drag, so moving it proves
 // nothing about the command. Undoing does: SetLightPositionCommand.undo is the

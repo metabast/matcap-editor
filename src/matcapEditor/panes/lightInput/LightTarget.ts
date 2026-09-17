@@ -5,9 +5,13 @@ import type { DataLightPaneFolder } from '../LightPaneFolder';
 
 const LightTarget = {
     addBinding(data: DataLightPaneFolder) {
+        // Bindings only exist while a light is selected.
+        const lightModel = data.currentLightModel;
+        if (!lightModel) return;
+
         const paneCtrl: ValuesPaneCtrl = {
-            value: data.currentLightModel.positionTarget.clone(),
-            oldValue: data.currentLightModel.positionTarget.clone(),
+            value: lightModel.positionTarget.clone(),
+            oldValue: lightModel.positionTarget.clone(),
             history: true,
         };
         data.paneContainer
@@ -18,23 +22,23 @@ const LightTarget = {
                 step: 0.001,
             })
             .on('change', (event) => {
-                data.currentLightModel.positionTarget = event.value as Vector3;
+                lightModel.positionTarget = event.value as Vector3;
                 if (event.last && paneCtrl.history) {
                     data.content.world.editor.execute(
                         new SetLightModelPropertyCommand(
                             data.content.world.editor.scene,
                             {
                                 name: 'positionTarget',
-                                value: data.currentLightModel.positionTarget.clone(),
+                                value: lightModel.positionTarget.clone(),
                                 oldValue: paneCtrl.oldValue,
                             },
-                            data.currentLightModel,
+                            lightModel,
                             data.pane,
                             paneCtrl,
                         ),
                         'update ambiant positionTarget',
                     );
-                    paneCtrl.oldValue = data.currentLightModel.positionTarget.clone();
+                    paneCtrl.oldValue = lightModel.positionTarget.clone();
                 }
             });
     },

@@ -1,6 +1,9 @@
-import type MatcapPreviewWorld from './matcapPreview/MatcapPreviewWorld';
+export {};
 
-interface Window {
-    matcapPreviewWorld: MatcapPreviewWorld;
-    matcapEditorWorld: MatcapEditorWorld;
+declare global {
+    interface Window {
+        THREE: typeof import('three');
+        matcapPreviewWorld: import('./matcapPreview/MatcapPreviewWorld').default;
+        matcapEditorWorld: import('./matcapEditor/MatcapEditorWorld').default;
+    }
 }

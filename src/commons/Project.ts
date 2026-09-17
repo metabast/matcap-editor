@@ -1,4 +1,5 @@
 import events from './Events';
+import type { TProject } from '@/ts/types/TProject';
 import { matcapEditorStore } from '@/stores/matcapEditorStore';
 import { ImportProjectCommand } from '@/commands/ImportProjectCommand';
 import SphereMaterialPaneFolderCtrl from '@/matcapEditor/panes/SphereMaterialPaneFolderCtrl';
@@ -42,7 +43,7 @@ const clearCurrentProject = () => {
     _editor.clearHistory();
 };
 
-const importCurrentProject = (data) => {
+const importCurrentProject = (data: TProject) => {
     clearCurrentProject();
     _editor.execute(new ImportProjectCommand(_editor.scene, data));
 };

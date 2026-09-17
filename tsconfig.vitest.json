@@ -1,7 +1,7 @@
 {
     "extends": "./tsconfig.app.json",
     "exclude": [],
-    "include": ["src/**/*.vue", "src/**/*.ts", "src/**/*.d.ts", "src/**/*.json"],
+    "include": ["src/**/*.vue", "src/**/*.ts", "src/**/*.d.ts", "src/**/*.json", "three-matcap-orm-material/src/**/*"],
     "compilerOptions": {
         "composite": true,
         "ignoreDeprecations": "5.0",

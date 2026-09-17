@@ -4,9 +4,9 @@ import { AmbientLight, Color } from 'three';
 import type { ValuesPaneCtrl } from '@/ts/types/PanesTypes';
 
 class SphereAmbiantPaneFolder extends PaneFolderControler {
-    _intensityCtrl: ValuesPaneCtrl;
-    _colorCtrl: ValuesPaneCtrl;
-    private _ambiantLight: AmbientLight;
+    _intensityCtrl!: ValuesPaneCtrl;
+    _colorCtrl!: ValuesPaneCtrl;
+    private _ambiantLight!: AmbientLight;
     constructor() {
         super();
         if (SphereAmbiantPaneFolder._instance) {
