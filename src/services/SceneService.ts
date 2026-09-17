@@ -1,4 +1,5 @@
 import events, { emitSnapshot } from '@/commons/Events';
+import { matcapEditorStore } from '@/stores/matcapEditorStore';
 import type MatcapEditorWorld from '@/matcapEditor/MatcapEditorWorld';
 import type MatcapPreviewWorld from '@/matcapPreview/MatcapPreviewWorld';
 import type LightModel from '@/matcapEditor/LightModel';
@@ -15,9 +16,46 @@ class SceneService {
 
     private _previewWorld: MatcapPreviewWorld;
 
+    private _store: ReturnType<typeof matcapEditorStore>;
+
     constructor(editorWorld: MatcapEditorWorld, previewWorld: MatcapPreviewWorld) {
         this._editorWorld = editorWorld;
         this._previewWorld = previewWorld;
+        this._store = matcapEditorStore();
+    }
+
+    /**
+     * The store owns the sphere rendering parameters; these push them onto the
+     * Three.js objects. The flow is one-way — store, then service, then render —
+     * and nothing reads back from the material.
+     */
+    applySphereMaterial() {
+        const material = this._editorWorld.content.sphereRenderMaterial;
+        material.roughness = this._store.material.roughness;
+        material.metalness = this._store.material.metalness;
+        material.color.set(this._store.material.color);
+    }
+
+    applyAmbiant() {
+        const light = this._editorWorld.content.ambiantLight;
+        light.intensity = this._store.ambiant.intensity;
+        light.color.set(this._store.ambiant.color);
+    }
+
+    setSphereMaterialParam(name: 'roughness' | 'metalness' | 'color', value: number | string) {
+        if (name === 'color') this._store.material.color = String(value);
+        else this._store.material[name] = Number(value);
+
+        this.applySphereMaterial();
+        events.emit('matcap:ui:pane:refresh');
+    }
+
+    setAmbiantParam(name: 'intensity' | 'color', value: number | string) {
+        if (name === 'color') this._store.ambiant.color = String(value);
+        else this._store.ambiant[name] = Number(value);
+
+        this.applyAmbiant();
+        events.emit('matcap:ui:pane:refresh');
     }
 
     public get editorWorld() {

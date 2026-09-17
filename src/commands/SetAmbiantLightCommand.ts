@@ -1,63 +1,33 @@
 import { Command } from '@/commons/Command';
 import { emitSnapshot } from '@/commons/Events';
-import { Color, type AmbientLight } from 'three';
 import type SceneService from '@/services/SceneService';
-import type { ValuesCommand, ValuesPaneCtrl } from '@/ts/types/PanesTypes';
-import type { Pane } from 'tweakpane';
+import type { ValuesCommand } from '@/ts/types/PanesTypes';
 
 type PropertiesAllowed = 'intensity' | 'color';
-type SelectedTypes = number | Color;
+
 class SetAmbiantLightCommand extends Command {
     private parameters: ValuesCommand;
 
-    private ambientLight: AmbientLight;
-
-    private pane: Pane;
-
-    private paneCtrl: ValuesPaneCtrl;
-
-    constructor(
-        scene: SceneService,
-        parameters: ValuesCommand,
-        ambientLight: AmbientLight,
-        pane: Pane,
-        paneCtrl: ValuesPaneCtrl,
-    ) {
+    constructor(scene: SceneService, parameters: ValuesCommand) {
         super(scene);
         this.type = 'SetAmbiantLightCommand';
         this.name = 'Set ambientLight Params';
         this.updatable = true;
         this.parameters = parameters;
-        this.pane = pane;
-        this.paneCtrl = paneCtrl;
-        this.ambientLight = ambientLight;
     }
 
     execute(): void {
-        this.apply(this.parameters.value as SelectedTypes);
+        this.apply(this.parameters.value as number | string);
         emitSnapshot();
     }
 
     undo(): void {
-        this.apply(this.parameters.oldValue as SelectedTypes);
+        this.apply(this.parameters.oldValue as number | string);
         emitSnapshot();
     }
 
-    apply(value: SelectedTypes): void {
-        const name = this.parameters.name as PropertiesAllowed;
-
-        this.paneCtrl.history = false;
-        if (name === 'color') {
-            this.ambientLight.color.setHex(Number(value));
-            this.paneCtrl.value = `#${new Color(value).getHexString()}`;
-        } else {
-            this.ambientLight[name] = Number(value);
-            this.paneCtrl.value = value;
-        }
-
-        this.pane.refresh();
-
-        this.paneCtrl.history = true;
+    apply(value: number | string): void {
+        this.scene.setAmbiantParam(this.parameters.name as PropertiesAllowed, value);
     }
 }
 

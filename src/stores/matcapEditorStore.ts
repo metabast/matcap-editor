@@ -1,5 +1,4 @@
 import { defineStore } from 'pinia';
-import { Color } from 'three';
 import type LightModel from '@/matcapEditor/LightModel';
 import type { TSphereRenderMaterial } from '@/ts/types/TSphereRenderMaterial';
 
@@ -14,12 +13,15 @@ export const matcapEditorStore = defineStore('matcapEditor', {
             exportRatio: 1,
         },
         ratio: 256 / viewSize,
+        // Source of truth for the sphere rendering. Colours are hex strings, the
+        // form Tweakpane binds to; the Three.js side converts on application.
         material: {
             roughness: 0,
             metalness: 1,
+            color: '#ffffff',
         },
         ambiant: {
-            color: new Color(),
+            color: '#ffffff',
             intensity: 0, // 0.004
         },
         create: {
@@ -46,6 +48,7 @@ export const matcapEditorStore = defineStore('matcapEditor', {
         setSphereRenderMaterial(material: TSphereRenderMaterial) {
             this.material.roughness = material.roughness;
             this.material.metalness = material.metalness;
+            this.material.color = material.color;
         },
     },
 });

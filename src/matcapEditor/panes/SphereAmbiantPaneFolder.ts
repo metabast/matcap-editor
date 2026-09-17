@@ -1,12 +1,16 @@
 import { SetAmbiantLightCommand } from '@/commands/SetAmbiantLightCommand';
 import PaneFolderControler from '@/commons/PaneFolderCtrl';
-import { AmbientLight, Color } from 'three';
-import type { ValuesPaneCtrl } from '@/ts/types/PanesTypes';
+import { isRefreshing } from '@/commons/PaneRefresh';
+import { matcapEditorStore } from '@/stores/matcapEditorStore';
 
+type AmbiantParam = 'intensity' | 'color';
+
+/** Same shape as the material folder: bound to the store, holding only old values. */
 class SphereAmbiantPaneFolder extends PaneFolderControler {
-    _intensityCtrl!: ValuesPaneCtrl;
-    _colorCtrl!: ValuesPaneCtrl;
-    private _ambiantLight!: AmbientLight;
+    private _store = matcapEditorStore();
+
+    private _oldValues: Record<AmbiantParam, number | string> = { intensity: 0, color: '#ffffff' };
+
     constructor() {
         super();
         if (SphereAmbiantPaneFolder._instance) {
@@ -15,94 +19,36 @@ class SphereAmbiantPaneFolder extends PaneFolderControler {
         SphereAmbiantPaneFolder._instance = this;
     }
 
-    public get serializedParams() {
-        return {
-            intensity: this._intensityCtrl.value,
-            color: this._colorCtrl.value,
-        };
-    }
-
     protected _generate(): void {
         super._generate();
-        this._ambiantLight = this._mapcapEditorContent.ambiantLight;
-        this._generateIntensityFolder();
-        this._generateColorFolder();
+        if (!this._paneFolder) return;
+
+        this._store = matcapEditorStore();
+        this._oldValues = { ...this._store.ambiant };
+
+        this._bind('intensity', { min: 0, max: 2, step: 0.01 });
+        this._bind('color', {});
     }
 
-    private _generateIntensityFolder() {
-        this._intensityCtrl = {
-            value: Number(this._ambiantLight.intensity),
-            oldValue: Number(this._ambiantLight.intensity),
-            history: true,
-        };
-        this._paneFolder
-            .addBinding(this._intensityCtrl, 'value', {
-                min: 0,
-                max: 2,
-                step: 0.01,
-            })
-            .on('change', (event) => {
-                this._ambiantLight.intensity = Number(event.value);
-                if (event.last && this._intensityCtrl.history) {
-                    this._editor.execute(
-                        this.createAmbiantIntensityCommand(
-                            this._ambiantLight.intensity,
-                            Number(this._intensityCtrl.oldValue),
-                        ),
-                        'update ambiant intensity',
-                    );
-                    this._intensityCtrl.oldValue = Number(this._ambiantLight.intensity);
-                }
-            });
-    }
+    private _bind(name: AmbiantParam, options: Record<string, unknown>) {
+        this._paneFolder.addBinding(this._store.ambiant, name, options).on('change', (event) => {
+            this._editor.scene.applyAmbiant();
 
-    private _generateColorFolder() {
-        this._colorCtrl = {
-            value: `#${this._ambiantLight.color.getHexString()}`,
-            oldValue: this._ambiantLight.color.getHex(),
-            history: true,
-        };
-        this._paneFolder.addBinding(this._colorCtrl, 'value', { label: 'color' }).on('change', (event) => {
-            this._ambiantLight.color.set(this._colorCtrl.value as Color);
-            if (event.last && this._colorCtrl.history) {
-                this._editor.execute(
-                    this.createAmbiantColorCommand(this._ambiantLight.color.getHex(), Number(this._colorCtrl.oldValue)),
-                    'update material color',
-                );
-                this._colorCtrl.oldValue = new Color(this._colorCtrl.value as Color).getHex();
-            }
+            if (!event.last || isRefreshing()) return;
+
+            const value = this._store.ambiant[name];
+            this._editor.execute(
+                new SetAmbiantLightCommand(this._editor.scene, {
+                    name,
+                    value,
+                    oldValue: this._oldValues[name],
+                }),
+                `update ambiant ${name}`,
+            );
+            this._oldValues[name] = value;
         });
     }
 
-    public createAmbiantIntensityCommand(value: number, oldValue?: number) {
-        return new SetAmbiantLightCommand(
-            this._editor.scene,
-            {
-                name: 'intensity',
-                value,
-                oldValue: oldValue || value,
-            },
-            this._ambiantLight,
-            this._pane,
-            this._intensityCtrl,
-        );
-    }
-
-    public createAmbiantColorCommand(value: number, oldValue?: number) {
-        return new SetAmbiantLightCommand(
-            this._editor.scene,
-            {
-                name: 'color',
-                value,
-                oldValue: oldValue || value,
-            },
-            this._ambiantLight,
-            this._pane,
-            this._colorCtrl,
-        );
-    }
-
-    // SINGLETON
     private static _instance: SphereAmbiantPaneFolder;
     public static get instance(): SphereAmbiantPaneFolder {
         if (!this._instance) this._instance = new SphereAmbiantPaneFolder();

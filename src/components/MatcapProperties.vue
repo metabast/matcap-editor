@@ -8,6 +8,7 @@ import { Pane } from 'tweakpane';
 
 import { matcapEditorStore } from '@/stores/matcapEditorStore';
 import events from '@/commons/Events';
+import { refreshPane } from '@/commons/PaneRefresh';
 
 import SpherePaneFolder from '@/matcapEditor/panes/SpherePaneFolder';
 import CreatePaneFolder from '@/matcapEditor/panes/CreatePaneFolder';
@@ -24,6 +25,11 @@ function getStyles() {
         height: ${store.value.sizes.view}px!important;
     `;
 }
+
+// Commands change the store; the pane has to be told to re-read it.
+events.on('matcap:ui:pane:refresh', () => {
+    if (pane) refreshPane(pane);
+});
 
 events.on('matcap:editor:ready', (editor: Editor) => {
     CreatePaneFolder.initialize(pane);

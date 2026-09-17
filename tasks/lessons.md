@@ -64,3 +64,21 @@ rien n'avait été ajouté, et un `hasText` non exact cliquait le bouton
 **Règle :** après avoir écrit une vérification, la falsifier — casser la ligne
 qu'elle est censée protéger et confirmer qu'elle échoue, avec un code de sortie
 non nul. Vérifier le code de sortie sans le masquer derrière un pipe.
+
+## L'oracle d'un test doit être hors de portée du mécanisme testé
+
+Trois assertions de `pw/check.mjs` sont passées au vert sans rien tester :
+
+1. « glisser une lumière la déplace » — la poignée suit le pointeur seule ;
+2. « la lumière expose ses bindings » — `intensity` existe aussi dans le
+   panneau ambiant, un sélecteur global restait vert ;
+3. « annuler restaure la rugosité » — `Ctrl+Z` déclenche l'annulation de texte
+   du navigateur sur le champ Tweakpane, qui remet l'ancienne valeur même avec
+   `undo()` cassé, et même après un `blur()`.
+
+Le point commun : l'oracle était contaminé par un autre mécanisme capable de
+produire le résultat attendu. Choisir un observable que seul le code testé peut
+produire — ici le matériau rendu, pas le champ de saisie.
+
+**Règle :** ne jamais retenir une assertion sans l'avoir vue échouer sur une
+cassure délibérée de la ligne exacte qu'elle protège.

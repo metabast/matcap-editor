@@ -92,9 +92,16 @@ docker run --rm --network host -v "$PWD/pw":/pw -w /pw -u 1000:1000 \
   mcr.microsoft.com/playwright:v1.56.0-noble node check.mjs http://localhost:5174/
 ```
 
-Étapes couvertes : rendu des canvas, ajout de lumière, undo, redo, export de
-projet. Le parcours traverse `Editor`, l'historique, le store, et la
-sérialisation qui lit dans les contrôleurs de panneaux.
+Étapes couvertes : rendu des canvas, ajout de lumière, undo, redo, bindings de
+la lumière sélectionnée, glisser et son annulation, export de projet, et un
+aller-retour complet sur la rugosité de la sphère.
+
+Piège à connaître : **`Ctrl+Z` déclenche aussi l'annulation de texte native du
+navigateur** quand un champ Tweakpane vient d'être édité, et ce malgré un
+`blur()`. Le champ revient alors à sa valeur précédente quoi que fasse
+l'application, ce qui rend toute assertion portant sur le champ verte en
+permanence. Les assertions d'undo portent donc sur le matériau rendu, pas sur
+l'affichage.
 
 À lancer avant tout commit touchant aux imports, à l'ordre des blocs d'un SFC
 ou au câblage des dépendances. Ne pas se contenter d'un build vert.

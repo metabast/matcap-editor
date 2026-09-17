@@ -122,22 +122,87 @@ try {
 }
 
 // --- export project ----------------------------------------------------------
-// Exercises Project's serialization, which reads through the pane controllers.
-// The button lives in a folder that Tweakpane renders collapsed.
+// Exercises Project's serialization, which now reads the store.
+const readFile = async (download) => {
+    const path = await download.path();
+    return JSON.parse(await (await import('node:fs/promises')).readFile(path, 'utf8'));
+};
+
+const exportProject = async () => {
+    const pending = page.waitForEvent('download', { timeout: 5000 });
+    await paneButton('Export project').click({ timeout: 5000 });
+    return readFile(await pending);
+};
+
 try {
+    // The button lives in a folder Tweakpane renders collapsed, under a tab.
     await page.locator('.tp-fldv_b', { hasText: 'Import/Export' }).first().click();
     await page.waitForTimeout(300);
-    // That folder holds a tab bar; the project buttons live under 'Project'.
     await page.locator('.tp-tbiv_b', { hasText: 'Project' }).first().click();
     await page.waitForTimeout(300);
 
-    const exportButton = paneButton('Export project');
-    const download = page.waitForEvent('download', { timeout: 5000 }).catch(() => null);
-    await exportButton.click({ timeout: 5000 });
-    const file = await download;
-    check('exporting the project downloads a file', file !== null, file ? file.suggestedFilename() : 'no download');
+    const project = await exportProject();
+    check(
+        'exporting the project downloads a file',
+        typeof project?.sphereRenderMaterial?.roughness === 'number',
+        JSON.stringify(project?.sphereRenderMaterial),
+    );
+
+    // --- sphere material: store -> command -> undo ---------------------------
+    // Asserted on the value the field shows, not on the exported file: the field
+    // is what the user reads, and it needs no round trip through a download.
+    const editorPane = page.locator('.matcap-editor-pane');
+    const roughnessRow = editorPane
+        .locator('.tp-lblv', { has: page.locator('.tp-lblv_l', { hasText: 'roughness' }) })
+        .first();
+    const input = roughnessRow.locator('input').first();
+    // Oracle: the rendered material, not the field. Ctrl+Z also triggers the
+    // browser's own text undo on a Tweakpane input, which rewrites the field
+    // whatever the application does — so the field cannot tell the two apart.
+    const roughnessApplied = () =>
+        page.evaluate(() => globalThis.matcapEditorWorld.content.sphereRenderMaterial.roughness);
+    const roughnessShown = () => input.inputValue();
+
+    const roughnessBefore = await roughnessApplied();
+    await input.fill('0.75');
+    await input.press('Enter');
+    // Blur first: with focus still in the field, ctrl+z is the browser's own text
+    // undo, which rewrites the binding without ever reaching the application.
+    await page.evaluate(() => document.activeElement instanceof HTMLElement && document.activeElement.blur());
+    await page.waitForTimeout(400);
+    check('the roughness field takes the new value', (await roughnessShown()) === '0.75', await roughnessShown());
+    check(
+        'the new roughness reaches the material',
+        (await roughnessApplied()) === 0.75,
+        String(await roughnessApplied()),
+    );
+
+    const afterEdit = await exportProject();
+    check(
+        'changing roughness reaches the exported project',
+        afterEdit.sphereRenderMaterial.roughness === 0.75,
+        String(afterEdit.sphereRenderMaterial.roughness),
+    );
+
+    await page.keyboard.press('Control+z');
+    await page.waitForTimeout(600);
+    check(
+        'undoing the roughness change restores it',
+        (await roughnessApplied()) === roughnessBefore,
+        `0.75 -> ${await roughnessApplied()}`,
+    );
+
+    // A refresh that re-fired the change handler would stack a second command,
+    // so a second undo must leave the material alone.
+    await page.keyboard.press('Control+z');
+    await page.waitForTimeout(600);
+    check(
+        'a second undo does not re-apply the material',
+        (await roughnessApplied()) === roughnessBefore,
+        String(await roughnessApplied()),
+    );
 } catch (err) {
-    check('exporting the project downloads a file', false, err.message.split('\n')[0]);
+    check('sphere material round trip', false, err.message.split('\n')[0]);
 }
 
 for (const { name, ok, detail } of steps) {

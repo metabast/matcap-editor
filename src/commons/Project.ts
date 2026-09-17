@@ -1,9 +1,7 @@
 import events from './Events';
-import type { TProject } from '@/ts/types/TProject';
 import { matcapEditorStore } from '@/stores/matcapEditorStore';
 import { ImportProjectCommand } from '@/commands/ImportProjectCommand';
-import SphereMaterialPaneFolderCtrl from '@/matcapEditor/panes/SphereMaterialPaneFolderCtrl';
-import SphereAmbiantPaneFolder from '@/matcapEditor/panes/SphereAmbiantPaneFolder';
+import type { TProject } from '@/ts/types/TProject';
 import type Editor from '@/Editor';
 
 let _store: ReturnType<typeof matcapEditorStore>;
@@ -22,8 +20,8 @@ const serializeCurrentProject = (): string =>
             type: 'matcap',
         },
         lights: _store.lights,
-        sphereRenderMaterial: SphereMaterialPaneFolderCtrl.instance.serializedParams,
-        sphereRenderAmbiant: SphereAmbiantPaneFolder.instance.serializedParams,
+        sphereRenderMaterial: { ..._store.material },
+        sphereRenderAmbiant: { ..._store.ambiant },
     });
 
 const exportCurrentProject = () => {

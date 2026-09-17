@@ -1,9 +1,8 @@
 import { AddLightCommand } from './AddLightCommand';
+import { SetAmbiantLightCommand } from './SetAmbiantLightCommand';
+import { SetSphereMaterialParamsCommand } from './SetSphereMaterialParamsCommand';
 import { Command } from '@/commons/Command';
 import LightModel from '@/matcapEditor/LightModel';
-import SphereMaterialPaneFolderCtrl from '@/matcapEditor/panes/SphereMaterialPaneFolderCtrl';
-import SphereAmbiantPaneFolder from '@/matcapEditor/panes/SphereAmbiantPaneFolder';
-import { Color } from 'three';
 import type { TProject } from '@/ts/types/TProject';
 import type SceneService from '@/services/SceneService';
 
@@ -20,35 +19,28 @@ class ImportProjectCommand extends Command {
     }
 
     execute() {
-        const commandRoughness = SphereMaterialPaneFolderCtrl.instance.createRoughnessCommand(
-            this._project.sphereRenderMaterial.roughness,
-        );
-        this._commands.push(commandRoughness);
-        commandRoughness.execute();
+        const { sphereRenderMaterial, sphereRenderAmbiant } = this._project;
 
-        const commandMetalness = SphereMaterialPaneFolderCtrl.instance.createMetalnessCommand(
-            this._project.sphereRenderMaterial.metalness,
-        );
-        this._commands.push(commandMetalness);
-        commandMetalness.execute();
+        const params: [string, number | string][] = [
+            ['roughness', sphereRenderMaterial.roughness],
+            ['metalness', sphereRenderMaterial.metalness],
+            ['color', sphereRenderMaterial.color],
+        ];
+        params.forEach(([name, value]) => {
+            const command = new SetSphereMaterialParamsCommand(this.scene, { name, value, oldValue: value });
+            this._commands.push(command);
+            command.execute();
+        });
 
-        const commandColor = SphereMaterialPaneFolderCtrl.instance.createColorCommand(
-            new Color(this._project.sphereRenderMaterial.color).getHex(),
-        );
-        this._commands.push(commandColor);
-        commandColor.execute();
-
-        const commandAmbiantInsensity = SphereAmbiantPaneFolder.instance.createAmbiantIntensityCommand(
-            this._project.sphereRenderAmbiant.intensity,
-        );
-        this._commands.push(commandAmbiantInsensity);
-        commandAmbiantInsensity.execute();
-
-        const commandAmbiantColor = SphereAmbiantPaneFolder.instance.createAmbiantColorCommand(
-            new Color(this._project.sphereRenderAmbiant.color).getHex(),
-        );
-        this._commands.push(commandAmbiantColor);
-        commandAmbiantColor.execute();
+        const ambiantParams: [string, number | string][] = [
+            ['intensity', sphereRenderAmbiant.intensity],
+            ['color', sphereRenderAmbiant.color],
+        ];
+        ambiantParams.forEach(([name, value]) => {
+            const command = new SetAmbiantLightCommand(this.scene, { name, value, oldValue: value });
+            this._commands.push(command);
+            command.execute();
+        });
 
         this._project.lights.forEach((light: any) => {
             const lightModel = LightModel.createFromSerialized(light);

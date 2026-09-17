@@ -84,3 +84,38 @@ Cette assertion a dû être reprise deux fois avant de prouver quoi que ce soit 
 « intensity » existe aussi dans le panneau ambiant, donc un sélecteur global
 restait vert alors que le binding était supprimé. Elle est maintenant restreinte
 au dossier « Current Light », et la falsification la fait échouer.
+
+---
+
+# MATC-9 — Source de vérité unique
+
+- [x] Le store porte `material` (roughness, metalness, color) et `ambiant`.
+- [x] `SceneService.applySphereMaterial()` / `applyAmbiant()` : le store pousse
+      vers Three, jamais l'inverse.
+- [x] Les deux contrôleurs se lient au store ; la copie fantôme
+      `_roughnessCtrl` / `_metalnessCtrl` / `_colorCtrl` disparaît.
+- [x] `SetSphereMaterialParamsCommand` et `SetAmbiantLightCommand` ne prennent
+      plus de `Pane` ni de `ValuesPaneCtrl`, et n'appellent plus `pane.refresh()`.
+- [x] Le rafraîchissement devient un événement, `MatcapProperties` s'y abonne.
+- [x] `Project` sérialise le store ; `ImportProjectCommand` n'importe plus de
+      contrôleur Tweakpane.
+- [x] Harnais étendu à l'aller-retour rugosité, falsifié.
+
+## Revue
+
+L'état réel était pire que « trois canaux » : `store.material` n'était lu qu'une
+fois, à la construction, puis jamais mis à jour ; l'action
+`setSphereRenderMaterial` n'avait aucun appelant. La vérité vivait dans le
+matériau Three, avec une copie fantôme dans le contrôleur pour l'undo et
+l'export.
+
+Le garde anti-boucle s'est révélé indispensable : sans lui, `pane.refresh()`
+réenregistre une commande à chaque undo, et le second undo réapplique la valeur.
+Le harnais le prouve — c'est la falsification qui l'a montré, pas le
+raisonnement.
+
+Trois assertions ont dû être reprises avant de prouver quoi que ce soit. La
+dernière a coûté le plus cher : `Ctrl+Z` déclenche l'annulation de texte du
+navigateur sur le champ Tweakpane, qui remet la valeur précédente quoi que fasse
+l'application. L'assertion était verte même avec `undo()` volontairement cassé.
+Elle porte maintenant sur le matériau rendu.

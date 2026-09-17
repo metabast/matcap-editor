@@ -84,6 +84,7 @@ class MatcapEditorContent {
         });
         this._sphereRenderMaterial.roughness = this._store.material.roughness;
         this._sphereRenderMaterial.metalness = this._store.material.metalness;
+        this._sphereRenderMaterial.color.set(this._store.material.color);
 
         this.sphereRender = new Mesh(sphereRenderGeometry, this._sphereRenderMaterial);
 
@@ -105,7 +106,7 @@ class MatcapEditorContent {
         this._world.scene.add(this.sphereNormal);
 
         this._ambiantLight.intensity = this._store.ambiant.intensity;
-        this._ambiantLight.color = this._store.ambiant.color;
+        this._ambiantLight.color.set(this._store.ambiant.color);
         this._world.scene.add(this._ambiantLight);
 
         this._world.scene.add(this._arrowHelper);
@@ -153,7 +154,7 @@ class MatcapEditorContent {
 
     private onAmbiantChanged = () => {
         this._ambiantLight.intensity = this._store.ambiant.intensity;
-        this._ambiantLight.color = this._store.ambiant.color;
+        this._ambiantLight.color.set(this._store.ambiant.color);
         RenderManager.snapshot();
         emitSnapshot();
     };

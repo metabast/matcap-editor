@@ -1,14 +1,22 @@
 import { SetSphereMaterialParamsCommand } from '@/commands/SetSphereMaterialParamsCommand';
 import PaneFolderControler from '@/commons/PaneFolderCtrl';
-import { Color } from 'three';
+import { isRefreshing } from '@/commons/PaneRefresh';
+import { matcapEditorStore } from '@/stores/matcapEditorStore';
 import type { Pane, TabPageApi } from 'tweakpane';
 import type Editor from '@/Editor';
-import type { ValuesPaneCtrl } from '@/ts/types/PanesTypes';
 
+type MaterialParam = 'roughness' | 'metalness' | 'color';
+
+/**
+ * Binds the sphere material folder straight onto the store, which owns these
+ * values. The only local state is the previous value each binding needs to build
+ * an undoable command.
+ */
 class SphereMaterialPaneFolderCtrl extends PaneFolderControler {
-    private _roughnessCtrl!: ValuesPaneCtrl;
-    private _metalnessCtrl!: ValuesPaneCtrl;
-    private _colorCtrl!: ValuesPaneCtrl;
+    private _store = matcapEditorStore();
+
+    private _oldValues: Record<MaterialParam, number | string> = { roughness: 0, metalness: 0, color: '#ffffff' };
+
     constructor() {
         super();
         if (SphereMaterialPaneFolderCtrl._instance) {
@@ -27,147 +35,37 @@ class SphereMaterialPaneFolderCtrl extends PaneFolderControler {
         return this._pane;
     }
 
-    public get roughnessCtrl() {
-        return this._roughnessCtrl;
-    }
-
-    public get metalnessCtrl() {
-        return this._metalnessCtrl;
-    }
-
-    public get colorCtrl() {
-        return this._colorCtrl;
-    }
-
-    public get serializedParams() {
-        return {
-            roughness: this._roughnessCtrl.value,
-            metalness: this._metalnessCtrl.value,
-            color: this._colorCtrl.value,
-        };
-    }
-
     protected _generate() {
         if (!this._paneFolder) return;
 
-        this._generateRoughnessFolder();
-        this._generateMetalnessFolder();
-        this._generateColorFolder();
+        this._store = matcapEditorStore();
+        this._oldValues = { ...this._store.material };
+
+        this._bind('roughness', { min: 0, max: 1, step: 0.01 });
+        this._bind('metalness', { min: 0, max: 1, step: 0.01 });
+        this._bind('color', {});
     }
 
-    private _generateRoughnessFolder() {
-        this._roughnessCtrl = {
-            value: Number(this._mapcapEditorContent.sphereRenderMaterial.roughness),
-            oldValue: Number(this._mapcapEditorContent.sphereRenderMaterial.roughness),
-            history: true,
-        };
-        this._paneFolder
-            .addBinding(this._mapcapEditorContent.sphereRenderMaterial, 'roughness', {
-                min: 0,
-                max: 1,
-                step: 0.01,
-            })
-            .on('change', (event) => {
-                if (event.last && this._roughnessCtrl.history) {
-                    this._editor.execute(
-                        this.createRoughnessCommand(
-                            this._mapcapEditorContent.sphereRenderMaterial.roughness,
-                            Number(this._roughnessCtrl.value),
-                        ),
-                        'update material roughness',
-                    );
-                    this._roughnessCtrl.oldValue = Number(this._mapcapEditorContent.sphereRenderMaterial.roughness);
-                }
-            });
-    }
+    private _bind(name: MaterialParam, options: Record<string, unknown>) {
+        this._paneFolder.addBinding(this._store.material, name, options).on('change', (event) => {
+            // Live feedback while dragging; the command only lands on the last event.
+            this._editor.scene.applySphereMaterial();
 
-    private _generateMetalnessFolder() {
-        this._metalnessCtrl = {
-            value: Number(this._mapcapEditorContent.sphereRenderMaterial.metalness),
-            oldValue: Number(this._mapcapEditorContent.sphereRenderMaterial.metalness),
-            history: true,
-        };
-        this._paneFolder
-            .addBinding(this._mapcapEditorContent.sphereRenderMaterial, 'metalness', {
-                min: 0,
-                max: 1,
-                step: 0.01,
-            })
-            .on('change', (event) => {
-                if (event.last && this._metalnessCtrl.history) {
-                    this._editor.execute(
-                        this.createMetalnessCommand(
-                            this._mapcapEditorContent.sphereRenderMaterial.metalness,
-                            Number(this._metalnessCtrl.value),
-                        ),
-                        'update material metalness',
-                    );
-                    this._metalnessCtrl.oldValue = Number(this._mapcapEditorContent.sphereRenderMaterial.metalness);
-                }
-            });
-    }
+            if (!event.last || isRefreshing()) return;
 
-    private _generateColorFolder() {
-        this._colorCtrl = {
-            value: `#${this._mapcapEditorContent.sphereRenderMaterial.color.getHexString()}`,
-            oldValue: this._mapcapEditorContent.sphereRenderMaterial.color.getHex(),
-            history: true,
-        };
-        this._paneFolder.addBinding(this._colorCtrl, 'value', { label: 'color' }).on('change', (event) => {
-            this._mapcapEditorContent.sphereRenderMaterial.color.set(this._colorCtrl.value as Color);
-            if (event.last && this._colorCtrl.history) {
-                this._editor.execute(
-                    this.createColorCommand(
-                        this._mapcapEditorContent.sphereRenderMaterial.color.getHex(),
-                        Number(this._colorCtrl.oldValue),
-                    ),
-                    'update material color',
-                );
-                this._colorCtrl.oldValue = new Color(this._colorCtrl.value as Color).getHex();
-            }
+            const value = this._store.material[name];
+            this._editor.execute(
+                new SetSphereMaterialParamsCommand(this._editor.scene, {
+                    name,
+                    value,
+                    oldValue: this._oldValues[name],
+                }),
+                `update material ${name}`,
+            );
+            this._oldValues[name] = value;
         });
     }
 
-    public createRoughnessCommand(value: number, oldValue?: number) {
-        return new SetSphereMaterialParamsCommand(
-            this._editor.scene,
-            {
-                name: 'roughness',
-                value,
-                oldValue: oldValue || value,
-            },
-            this._pane,
-            this._roughnessCtrl,
-        );
-    }
-
-    public createMetalnessCommand(value: number, oldValue?: number) {
-        return new SetSphereMaterialParamsCommand(
-            this._editor.scene,
-            {
-                name: 'metalness',
-                value,
-                oldValue: oldValue || value,
-            },
-            this._pane,
-            this._metalnessCtrl,
-        );
-    }
-
-    public createColorCommand(value: number, oldValue?: number) {
-        return new SetSphereMaterialParamsCommand(
-            this._editor.scene,
-            {
-                name: 'color',
-                value,
-                oldValue: oldValue || value,
-            },
-            this._pane,
-            this._colorCtrl,
-        );
-    }
-
-    // SINGLETON
     private static _instance: SphereMaterialPaneFolderCtrl;
     public static get instance(): SphereMaterialPaneFolderCtrl {
         if (!this._instance) {
