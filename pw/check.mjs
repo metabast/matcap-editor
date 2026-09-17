@@ -58,12 +58,52 @@ const added = afterAdd === before + 1;
 await page.keyboard.press('Control+z');
 await page.waitForTimeout(500);
 const afterUndo = await lightCount();
-check('ctrl+z removes it again', added && afterUndo === before, added ? `${afterAdd} -> ${afterUndo}` : 'skipped, nothing was added');
+check(
+    'ctrl+z removes it again',
+    added && afterUndo === before,
+    added ? `${afterAdd} -> ${afterUndo}` : 'skipped, nothing was added',
+);
 
 await page.keyboard.press('Control+Shift+z');
 await page.waitForTimeout(500);
 const afterRedo = await lightCount();
-check('ctrl+shift+z puts it back', added && afterRedo === afterAdd, added ? `${afterUndo} -> ${afterRedo}` : 'skipped, nothing was added');
+check(
+    'ctrl+shift+z puts it back',
+    added && afterRedo === afterAdd,
+    added ? `${afterUndo} -> ${afterRedo}` : 'skipped, nothing was added',
+);
+
+// --- drag a light, then undo it ----------------------------------------------
+// The handle follows the pointer on its own during the drag, so moving it proves
+// nothing about the command. Undoing does: SetLightPositionCommand.undo is the
+// only thing that can put the handle back, and it goes through the scene
+// service's updateLightPositions.
+try {
+    const handle = page.locator('#matcapLights .light').first();
+    const styleBefore = await handle.getAttribute('style');
+    const from = await handle.boundingBox();
+
+    await page.mouse.move(from.x + from.width / 2, from.y + from.height / 2);
+    await page.mouse.down();
+    await page.mouse.move(box.x + box.width * 0.35, box.y + box.height * 0.65, { steps: 10 });
+    await page.mouse.up();
+    await page.waitForTimeout(700);
+
+    const styleDragged = await page.locator('#matcapLights .light').first().getAttribute('style');
+    const moved = styleDragged !== null && styleDragged !== styleBefore;
+    check('dragging a light moves its handle', moved, `${styleBefore} -> ${styleDragged}`);
+
+    await page.keyboard.press('Control+z');
+    await page.waitForTimeout(700);
+    const styleUndone = await page.locator('#matcapLights .light').first().getAttribute('style');
+    check(
+        'undoing the drag restores the position',
+        moved && styleUndone === styleBefore,
+        moved ? `${styleDragged} -> ${styleUndone}` : 'skipped, the drag did not move anything',
+    );
+} catch (err) {
+    check('dragging a light and undoing it', false, err.message.split('\n')[0]);
+}
 
 // --- export project ----------------------------------------------------------
 // Exercises Project's serialization, which reads through the pane controllers.

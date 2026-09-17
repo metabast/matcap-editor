@@ -1,9 +1,6 @@
 import type { Command } from './commons/Command';
-import type Editor from './Editor';
 
 class History {
-    public editor: Editor;
-
     public undos: Command[];
 
     public redos: Command[];
@@ -12,8 +9,7 @@ class History {
 
     public idCounter: number;
 
-    constructor(editor: Editor) {
-        this.editor = editor;
+    constructor() {
         this.undos = [];
         this.redos = [];
         this.lastCmdTime = Date.now();

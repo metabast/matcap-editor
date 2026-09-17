@@ -22,7 +22,7 @@ const LightIntensity = {
                 if (event.last && paneCtrl.history) {
                     Editor.instance.execute(
                         new SetLightPropertyCommand(
-                            Editor.instance,
+                            Editor.instance.scene,
                             {
                                 name: 'intensity',
                                 value: data.currentLightModel.light.intensity,

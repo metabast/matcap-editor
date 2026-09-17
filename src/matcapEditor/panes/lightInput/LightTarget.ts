@@ -22,7 +22,7 @@ const LightTarget = {
                 if (event.last && paneCtrl.history) {
                     data.content.world.editor.execute(
                         new SetLightModelPropertyCommand(
-                            data.content.world.editor,
+                            data.content.world.editor.scene,
                             {
                                 name: 'positionTarget',
                                 value: data.currentLightModel.positionTarget.clone(),

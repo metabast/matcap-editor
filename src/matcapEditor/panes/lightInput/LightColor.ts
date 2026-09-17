@@ -23,7 +23,7 @@ const LightColor = {
                 if (event.last && paneCtrl.history) {
                     Editor.instance.execute(
                         new SetLightPropertyCommand(
-                            Editor.instance,
+                            Editor.instance.scene,
                             {
                                 name: 'color',
                                 value: data.currentLightModel.light.color.getHex(),

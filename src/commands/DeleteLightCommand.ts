@@ -1,12 +1,12 @@
 import { Command } from '@/commons/Command';
-import type Editor from '@/Editor';
+import type SceneService from '@/services/SceneService';
 import type LightModel from '@/matcapEditor/LightModel';
 
 class DeleteLightCommand extends Command {
     private lightModel: LightModel;
 
-    constructor(editor: Editor, lightModel: LightModel) {
-        super(editor);
+    constructor(scene: SceneService, lightModel: LightModel) {
+        super(scene);
         this.type = 'DeleteLightCommand';
         this.name = 'Delete Light';
         this.updatable = true;
@@ -14,11 +14,11 @@ class DeleteLightCommand extends Command {
     }
 
     execute() {
-        this.editor.deleteLight(this.lightModel);
+        this.scene.deleteLight(this.lightModel);
     }
 
     undo() {
-        this.editor.addLight(this.lightModel);
+        this.scene.addLight(this.lightModel);
     }
 }
 

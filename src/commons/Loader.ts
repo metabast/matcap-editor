@@ -71,7 +71,7 @@ class Loader {
         const loader = new GLTFLoader();
         loader.setDRACOLoader(dracoLoader);
         loader.parse(contents, '', (result) => {
-            this._editor.execute(new AddObjectCommand(this._editor, result.scene));
+            this._editor.execute(new AddObjectCommand(this._editor.scene, result.scene));
         });
     }
 

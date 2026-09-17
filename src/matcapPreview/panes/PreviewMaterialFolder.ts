@@ -70,7 +70,7 @@ const generate = (content: MatcapPreviewContent) => {
             if (event.last && roughnessCtrl.history) {
                 _content.world.editor.execute(
                     new SetPreviewRoughnessCommand(
-                        _content.world.editor,
+                        _content.world.editor.scene,
                         {
                             name: 'roughness',
                             value: roughnessCtrl.value,
@@ -97,7 +97,7 @@ const generate = (content: MatcapPreviewContent) => {
             if (event.last && metalnessCtrl.history) {
                 _content.world.editor.execute(
                     new SetPreviewMetalnessCommand(
-                        _content.world.editor,
+                        _content.world.editor.scene,
                         {
                             name: 'metalness',
                             value: metalnessCtrl.value,

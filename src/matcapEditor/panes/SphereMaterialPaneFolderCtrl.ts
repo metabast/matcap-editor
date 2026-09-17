@@ -130,7 +130,7 @@ class SphereMaterialPaneFolderCtrl extends PaneFolderControler {
 
     public createRoughnessCommand(value: number, oldValue?: number) {
         return new SetSphereMaterialParamsCommand(
-            this._editor,
+            this._editor.scene,
             {
                 name: 'roughness',
                 value,
@@ -143,7 +143,7 @@ class SphereMaterialPaneFolderCtrl extends PaneFolderControler {
 
     public createMetalnessCommand(value: number, oldValue?: number) {
         return new SetSphereMaterialParamsCommand(
-            this._editor,
+            this._editor.scene,
             {
                 name: 'metalness',
                 value,
@@ -156,7 +156,7 @@ class SphereMaterialPaneFolderCtrl extends PaneFolderControler {
 
     public createColorCommand(value: number, oldValue?: number) {
         return new SetSphereMaterialParamsCommand(
-            this._editor,
+            this._editor.scene,
             {
                 name: 'color',
                 value,

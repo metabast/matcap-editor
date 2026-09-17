@@ -24,7 +24,7 @@ const LightDistance = {
                 if (event.last && distancetCtrl.history) {
                     Editor.instance.execute(
                         new SetLightModelPropertyCommand(
-                            Editor.instance,
+                            Editor.instance.scene,
                             {
                                 name: 'distance',
                                 value: data.currentLightModel.distance,

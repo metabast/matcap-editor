@@ -2,7 +2,7 @@ import { Command } from '@/commons/Command';
 import events, { emitSnapshot } from '@/commons/Events';
 import { matcapPreviewStore } from '@/stores/matcapPreviewStore';
 import { computed } from 'vue';
-import type Editor from '@/Editor';
+import type SceneService from '@/services/SceneService';
 import type { Pane } from 'tweakpane';
 import type { ValuesCommand, ValuesPaneCtrl } from '@/ts/types/PanesTypes';
 import type MatcapPreviewWorld from '@/matcapPreview/MatcapPreviewWorld';
@@ -21,17 +21,17 @@ class SetPreviewRoughnessCommand extends Command {
     private paneMetalnessCtrl: ValuesPaneCtrl;
 
     constructor(
-        editor: Editor,
+        scene: SceneService,
         parameters: ValuesCommand,
         pane: Pane,
         paneCtrl: ValuesPaneCtrl,
         paneMetalnessCtrl: ValuesPaneCtrl,
     ) {
-        super(editor);
+        super(scene);
         this.type = 'SetPreviewRoughnessCommand';
         this.name = 'Set Preview Roughness';
         this.updatable = true;
-        this.world = this.editor.matcapPreviewWorld;
+        this.world = this.scene.previewWorld;
         this.parameters = parameters;
         this.pane = pane;
         this.paneCtrl = paneCtrl;

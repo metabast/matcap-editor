@@ -5,13 +5,13 @@ import SphereMaterialPaneFolderCtrl from '@/matcapEditor/panes/SphereMaterialPan
 import SphereAmbiantPaneFolder from '@/matcapEditor/panes/SphereAmbiantPaneFolder';
 import { Color } from 'three';
 import type { TProject } from '@/ts/types/TProject';
-import type Editor from '@/Editor';
+import type SceneService from '@/services/SceneService';
 
 class ImportProjectCommand extends Command {
     private _project: TProject;
     private _commands: Command[];
-    constructor(editor: Editor, project: TProject) {
-        super(editor);
+    constructor(scene: SceneService, project: TProject) {
+        super(scene);
         this.type = 'ImportProjectCommand';
         this.name = 'Import Project';
         this.updatable = true;
@@ -52,7 +52,7 @@ class ImportProjectCommand extends Command {
 
         this._project.lights.forEach((light: any) => {
             const lightModel = LightModel.createFromSerialized(light);
-            const command = new AddLightCommand(this.editor, lightModel);
+            const command = new AddLightCommand(this.scene, lightModel);
             this._commands.push(command);
             command.execute();
         });

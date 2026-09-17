@@ -1,7 +1,7 @@
 import { Command } from '@/commons/Command';
 import { emitSnapshot } from '@/commons/Events';
 import { Color, PointLight, RectAreaLight, SpotLight } from 'three';
-import type Editor from '@/Editor';
+import type SceneService from '@/services/SceneService';
 import type { ValuesCommand, ValuesPaneCtrl } from '@/ts/types/PanesTypes';
 import type { Pane } from 'tweakpane';
 
@@ -17,13 +17,13 @@ class SetLightPropertyCommand extends Command {
     private paneCtrl: ValuesPaneCtrl;
 
     constructor(
-        editor: Editor,
+        scene: SceneService,
         parameters: ValuesCommand,
         light: RectAreaLight | PointLight | SpotLight,
         pane: Pane,
         paneCtrl: ValuesPaneCtrl,
     ) {
-        super(editor);
+        super(scene);
         this.type = 'SetLightPropertyCommand';
         this.name = 'Set Light Property';
         this.updatable = true;

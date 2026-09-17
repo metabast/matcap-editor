@@ -1,7 +1,7 @@
 import { Command } from '@/commons/Command';
 import { emitSnapshot } from '@/commons/Events';
 import { Color, type AmbientLight } from 'three';
-import type Editor from '@/Editor';
+import type SceneService from '@/services/SceneService';
 import type { ValuesCommand, ValuesPaneCtrl } from '@/ts/types/PanesTypes';
 import type { Pane } from 'tweakpane';
 
@@ -17,13 +17,13 @@ class SetAmbiantLightCommand extends Command {
     private paneCtrl: ValuesPaneCtrl;
 
     constructor(
-        editor: Editor,
+        scene: SceneService,
         parameters: ValuesCommand,
         ambientLight: AmbientLight,
         pane: Pane,
         paneCtrl: ValuesPaneCtrl,
     ) {
-        super(editor);
+        super(scene);
         this.type = 'SetAmbiantLightCommand';
         this.name = 'Set ambientLight Params';
         this.updatable = true;

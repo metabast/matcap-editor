@@ -76,7 +76,7 @@ class SphereAmbiantPaneFolder extends PaneFolderControler {
 
     public createAmbiantIntensityCommand(value: number, oldValue?: number) {
         return new SetAmbiantLightCommand(
-            this._editor,
+            this._editor.scene,
             {
                 name: 'intensity',
                 value,
@@ -90,7 +90,7 @@ class SphereAmbiantPaneFolder extends PaneFolderControler {
 
     public createAmbiantColorCommand(value: number, oldValue?: number) {
         return new SetAmbiantLightCommand(
-            this._editor,
+            this._editor.scene,
             {
                 name: 'color',
                 value,

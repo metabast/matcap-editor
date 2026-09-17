@@ -1,7 +1,7 @@
 import { Command } from '@/commons/Command';
 import { emitSnapshot } from '@/commons/Events';
 import { Color, type MeshPhysicalMaterial } from 'three';
-import type Editor from '@/Editor';
+import type SceneService from '@/services/SceneService';
 import type MatcapEditorWorld from '@/matcapEditor/MatcapEditorWorld';
 import type { Pane } from 'tweakpane';
 import type { ValuesCommand, ValuesPaneCtrl } from '@/ts/types/PanesTypes';
@@ -29,12 +29,12 @@ class SetSphereMaterialParamsCommand extends Command {
 
     private paneCtrl: ValuesPaneCtrl;
 
-    constructor(editor: Editor, parameters: ValuesCommand, pane: Pane, paneCtrl: ValuesPaneCtrl) {
-        super(editor);
+    constructor(scene: SceneService, parameters: ValuesCommand, pane: Pane, paneCtrl: ValuesPaneCtrl) {
+        super(scene);
         this.type = 'SetSphereMaterialParamsCommand';
         this.name = 'Set Sphere Material Params';
         this.updatable = true;
-        this.world = this.editor.matcapEditorWorld;
+        this.world = this.scene.editorWorld;
         this.material = this.world.content.sphereRenderMaterial;
         this.parameters = parameters;
         this.pane = pane;

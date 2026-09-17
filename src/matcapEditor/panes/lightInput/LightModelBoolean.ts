@@ -28,7 +28,7 @@ const LightModelBoolean = {
                 if (event.last && paneCtrl.history) {
                     Editor.instance.execute(
                         new SetLightModelPropertyCommand(
-                            Editor.instance,
+                            Editor.instance.scene,
                             {
                                 name: propertyName,
                                 value: data.currentLightModel[propertyName],

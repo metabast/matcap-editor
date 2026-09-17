@@ -1,6 +1,6 @@
 import { Command } from '@/commons/Command';
 import { emitSnapshot } from '@/commons/Events';
-import type Editor from '@/Editor';
+import type SceneService from '@/services/SceneService';
 import type { ValuesCommand, ValuesPaneCtrl } from '@/ts/types/PanesTypes';
 import type { SpotLight } from 'three';
 import type { Pane } from 'tweakpane';
@@ -16,8 +16,14 @@ class SetSpotLightPropertyCommand extends Command {
 
     private paneCtrl: ValuesPaneCtrl;
 
-    constructor(editor: Editor, parameters: ValuesCommand, light: SpotLight, pane: Pane, paneCtrl: ValuesPaneCtrl) {
-        super(editor);
+    constructor(
+        scene: SceneService,
+        parameters: ValuesCommand,
+        light: SpotLight,
+        pane: Pane,
+        paneCtrl: ValuesPaneCtrl,
+    ) {
+        super(scene);
         this.type = 'SetSpotLightPropertyCommand';
         this.name = 'Set SpotLight Property';
         this.updatable = true;

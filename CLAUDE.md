@@ -57,6 +57,28 @@ docker compose exec app npm run lint        # corrige ce qui est auto-corrigeabl
 docker compose exec app npm run lint:check  # vérifie sans modifier
 ```
 
+## Le type-check ne vérifie rien
+
+`npm run type-check` lance `vue-tsc --noEmit` sur un `tsconfig.json` qui n'a que
+des `references` et `"files": []`. Sans `--build`, il ne traverse pas les
+sous-projets : il sort en vert sur n'importe quel code. Vérifié en y injectant
+`const x: number = 'boom'` — aucune sortie.
+
+Pour obtenir un vrai type-check :
+
+```bash
+docker compose exec app npx vue-tsc --build --force
+```
+
+Il remonte ~109 erreurs préexistantes (surtout `strictNullChecks` dans
+`panes/lightInput/*` et `strictPropertyInitialization`). Procéder par
+comparaison de totaux avant/après, comme pour le lint, et nettoyer les
+artefacts que `--build` écrit à la racine (`*.tsbuildinfo`, `vite.config.js`)
+— ils sont gitignorés.
+
+Corriger le script demande de traiter ces 109 erreurs d'abord, sans quoi
+`npm run build` échouerait. À planifier comme un ticket à part.
+
 ## Vérification navigateur
 
 Ni `vue-tsc` ni `vite build` ne voient une régression d'ordre d'évaluation des

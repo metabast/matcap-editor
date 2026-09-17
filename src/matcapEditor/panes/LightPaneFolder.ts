@@ -58,7 +58,7 @@ const updateCurrentLight = (lightModel: LightModel): void => {
     data.paneContainer?.addButton({ title: 'Delete' }).on('click', () => {
         if (!data.currentLightModel) return;
         clean();
-        Editor.instance.execute(new DeleteLightCommand(Editor.instance, data.currentLightModel));
+        Editor.instance.execute(new DeleteLightCommand(Editor.instance.scene, data.currentLightModel));
     });
 };
 

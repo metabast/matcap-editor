@@ -200,7 +200,7 @@ class MatcapEditorContent {
         lightModel.distance = Number(this._store.create.distance);
         lightModel.front = Boolean(this._store.create.front);
 
-        this.world.editor.execute(new AddLightCommand(this.world.editor, lightModel));
+        this.world.editor.execute(new AddLightCommand(this.world.editor.scene, lightModel));
     };
 
     private onPointerMove = (event: PointerEvent) => {
@@ -266,7 +266,7 @@ class MatcapEditorContent {
             } as ValuesCommand;
 
             this.world.editor.execute(
-                new SetLightModelPositionCommand(this.world.editor, parameters, this.currentLightModel),
+                new SetLightModelPositionCommand(this.world.editor.scene, parameters, this.currentLightModel),
             );
         }
 

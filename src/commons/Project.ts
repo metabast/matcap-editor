@@ -37,14 +37,14 @@ const exportCurrentProject = () => {
 
 const clearCurrentProject = () => {
     _store.lights.forEach((light: any) => {
-        _editor.deleteLight(light);
+        _editor.scene.deleteLight(light);
     });
     _editor.clearHistory();
 };
 
 const importCurrentProject = (data) => {
     clearCurrentProject();
-    _editor.execute(new ImportProjectCommand(_editor, data));
+    _editor.execute(new ImportProjectCommand(_editor.scene, data));
 };
 
 const Project = {

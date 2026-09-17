@@ -1,10 +1,10 @@
 /**
- * @param editor pointer to main editor object used to initialize
- *        each command object with a reference to the editor
+ * @param scene the scene service each command mutates; commands know nothing of
+ *        the application shell, so that undo/redo stays pure domain logic
  * @constructor
  */
 
-import type Editor from '../Editor';
+import type SceneService from '@/services/SceneService';
 
 export interface ICommandOutput {
     type: string;
@@ -27,15 +27,15 @@ class Command extends Object {
 
     public name: string;
 
-    public editor: Editor;
+    public scene: SceneService;
 
-    constructor(editor: Editor) {
+    constructor(scene: SceneService) {
         super();
         this.id = -1;
         this.updatable = false;
         this.type = '';
         this.name = '';
-        this.editor = editor;
+        this.scene = scene;
     }
 
     // eslint-disable-next-line class-methods-use-this

@@ -1,36 +1,24 @@
-import events, { emitSnapshot } from './commons/Events';
+import events from './commons/Events';
+import bindKeyboardShortcuts from './commons/KeyboardShortcuts';
 import { Loader } from './commons/Loader';
-import { debounce } from './commons/Utils';
 import { History } from './history';
 import MatcapEditorWorld from './matcapEditor/MatcapEditorWorld';
 import MatcapPreviewWorld from './matcapPreview/MatcapPreviewWorld';
 import Project from '@/commons/Project';
-import { matcapEditorStore } from '@/stores/matcapEditorStore';
-import type { LightModelPositions } from './ts/types/PanesTypes';
-import type LightModel from './matcapEditor/LightModel';
+import SceneService from '@/services/SceneService';
 import type { Command } from './commons/Command';
-import type { Object3D, SpotLight } from 'three';
 
-interface IEditor {
-    matcapEditorWorld: MatcapEditorWorld;
-    matcapPreviewWorld: MatcapPreviewWorld;
-    loader: Loader;
-    matcapEditorStore: any;
-}
-class Editor implements IEditor {
+/**
+ * Application shell. It composes the services and, for now, forwards to them so
+ * that existing call sites keep working; the forwarding disappears once callers
+ * receive the services they actually need (MATC-8b).
+ */
+class Editor {
     private _history: History;
 
-    private _matcapEditorWorld: MatcapEditorWorld;
-
-    private _matcapPreviewWorld: MatcapPreviewWorld;
+    private _scene: SceneService;
 
     private _loader: Loader;
-
-    private _matcapEditorStore: any;
-
-    public get loader() {
-        return this._loader;
-    }
 
     constructor() {
         // Singleton control
@@ -40,83 +28,31 @@ class Editor implements IEditor {
         Editor._instance = this;
 
         this._loader = new Loader(this);
-        this._history = new History(this);
-        this._matcapEditorStore = matcapEditorStore();
+        this._history = new History();
 
-        this._matcapPreviewWorld = new MatcapPreviewWorld(this);
-        this._matcapEditorWorld = new MatcapEditorWorld(this);
-        (globalThis as any).matcapPreviewWorld = this._matcapPreviewWorld;
-        (globalThis as any).matcapEditorWorld = this._matcapEditorWorld;
+        const previewWorld = new MatcapPreviewWorld(this);
+        const editorWorld = new MatcapEditorWorld(this);
+        this._scene = new SceneService(editorWorld, previewWorld);
+
+        (globalThis as any).matcapPreviewWorld = previewWorld;
+        (globalThis as any).matcapEditorWorld = editorWorld;
         Project.initialize(this);
 
-        document.addEventListener('keydown', debounce(this.onKeydown.bind(this), 100));
+        bindKeyboardShortcuts(this._history);
 
         events.emit('matcap:editor:ready', this);
     }
 
-    private onKeydown(event: KeyboardEvent) {
-        switch (event.key.toLowerCase()) {
-            case 'z':
-                if (event.ctrlKey) {
-                    event.preventDefault(); // Prevent browser specific hotkeys
-
-                    if (event.shiftKey) {
-                        this.redo();
-                    } else {
-                        this.undo();
-                    }
-                }
-
-                break;
-
-            default:
-                break;
-        }
+    public get scene() {
+        return this._scene;
     }
 
     public get matcapEditorWorld() {
-        return this._matcapEditorWorld;
+        return this._scene.editorWorld;
     }
 
     public get matcapPreviewWorld() {
-        return this._matcapPreviewWorld;
-    }
-
-    public get matcapEditorStore() {
-        return this._matcapEditorStore;
-    }
-
-    addLight(lightModel: LightModel) {
-        this._matcapEditorWorld.scene.add(lightModel.light);
-
-        if (lightModel.light.type === 'SpotLight')
-            this._matcapEditorWorld.scene.add((lightModel.light as SpotLight).target);
-
-        events.emit('matcap:editor:light:added', lightModel);
-        emitSnapshot();
-    }
-
-    deleteLight(lightModel: LightModel) {
-        events.emit('matcap:editor:light:remove', lightModel);
-        this._matcapEditorWorld.content.deleteLight(lightModel);
-    }
-
-    updateLightPositions(lightModel: LightModel, value: LightModelPositions) {
-        events.emit('matcap:ui:light:update:current', lightModel);
-        lightModel.screenPosition = value.screenPosition;
-        lightModel.setPositionX(value.position.x);
-        lightModel.setPositionY(value.position.y);
-        lightModel.setPositionZ(value.position.z);
-        lightModel.update();
-        emitSnapshot();
-    }
-
-    addObject(object3d: Object3D) {
-        this._matcapPreviewWorld.content.addObject(object3d);
-    }
-
-    removeObject(object3d: Object3D) {
-        this._matcapPreviewWorld.scene.remove(object3d);
+        return this._scene.previewWorld;
     }
 
     execute(cmd: Command, optionalName?: string) {
@@ -136,7 +72,7 @@ class Editor implements IEditor {
     }
 
     // SINGLETON
-    private static _instance: IEditor;
+    private static _instance: Editor;
 
     /** The one construction path, called by the composition root in main.ts. */
     public static bootstrap(): Editor {
@@ -152,7 +88,7 @@ class Editor implements IEditor {
             throw new Error('Editor is not initialized yet');
         }
 
-        return Editor._instance as Editor;
+        return Editor._instance;
     }
 }
 

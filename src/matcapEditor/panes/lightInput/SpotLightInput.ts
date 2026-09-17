@@ -42,7 +42,7 @@ const SpotLightInput = {
             if (event.last && paneCtrl.history) {
                 data.content.world.editor.execute(
                     new SetSpotLightPropertyCommand(
-                        data.content.world.editor,
+                        data.content.world.editor.scene,
                         {
                             name: propertyName,
                             value: spotlight[propertyName],
