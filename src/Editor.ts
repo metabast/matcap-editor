@@ -44,7 +44,7 @@ class Editor implements IEditor {
         this._matcapEditorStore = matcapEditorStore();
 
         this._matcapPreviewWorld = new MatcapPreviewWorld(this);
-        this._matcapEditorWorld = new MatcapEditorWorld();
+        this._matcapEditorWorld = new MatcapEditorWorld(this);
         (globalThis as any).matcapPreviewWorld = this._matcapPreviewWorld;
         (globalThis as any).matcapEditorWorld = this._matcapEditorWorld;
         Project.initialize(this);

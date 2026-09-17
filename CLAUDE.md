@@ -69,14 +69,22 @@ de `initialize()`, l'editor descendant depuis le payload de l'événement
 `matcap:editor:ready`. L'import est devenu `import type`, donc effacé à la
 compilation.
 
-Il reste un cycle latent `Editor <-> MatcapEditorWorld`, inoffensif tant que
-`MatcapEditorWorld` ne lit `Editor.instance` que dans son constructeur. Il
-disparaîtra avec l'injection de dépendances (MATC-7), qui conditionne la
-réactivation d'`import/no-cycle`.
+Le cycle `Editor <-> MatcapEditorWorld` est coupé de la même façon : le world
+reçoit l'editor en paramètre de constructeur, comme `MatcapPreviewWorld` le
+faisait déjà.
+
+`import/no-cycle` est donc **activé** et vert. Il tient lieu de garde-fou : la
+règle échoue désormais au lieu de laisser réapparaître le problème
+silencieusement. Ne pas la redésactiver pour faire passer un changement.
+
+La méthode qui marche, quand une dépendance ne sert qu'à l'intérieur d'une
+méthode ou d'un constructeur : la passer en paramètre plutôt que l'importer.
+L'import devient `import type`, effacé à la compilation, et l'arête disparaît.
 
 Conséquence pratique, toujours valable : **ne jamais lancer `eslint --fix` sans
 vérifier ensuite la page dans un navigateur**. Le build et `vue-tsc` ne
-détectent pas une régression d'ordre d'évaluation.
+détectent pas une régression d'ordre d'évaluation. Le harnais `pw/check.mjs`
+sert à ça (voir `tasks/lessons.md`).
 
 ## État connu
 

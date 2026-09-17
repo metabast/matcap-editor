@@ -50,7 +50,7 @@ export default defineConfigWithVueTs(
             'no-console': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
             'no-debugger': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
             'no-shadow': 'off',
-            'import/no-cycle': 'off',
+            'import/no-cycle': 'error',
             // three-matcap-orm-material is a local source folder, not an installed
             // package: the bare specifier this rule mandates resolves nowhere at
             // dev-server time, so relative imports into it must stay relative.
