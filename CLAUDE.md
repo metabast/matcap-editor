@@ -96,12 +96,23 @@ docker run --rm --network host -v "$PWD/pw":/pw -w /pw -u 1000:1000 \
 la lumière sélectionnée, glisser et son annulation, export de projet, et un
 aller-retour complet sur la rugosité de la sphère.
 
-Piège à connaître : **`Ctrl+Z` déclenche aussi l'annulation de texte native du
-navigateur** quand un champ Tweakpane vient d'être édité, et ce malgré un
-`blur()`. Le champ revient alors à sa valeur précédente quoi que fasse
-l'application, ce qui rend toute assertion portant sur le champ verte en
-permanence. Les assertions d'undo portent donc sur le matériau rendu, pas sur
-l'affichage.
+Le harnais lit le matériau rendu via `globalThis.matcapEditor`, un point
+d'entrée exposé uniquement sous `import.meta.env.DEV` — Vite le replie à `false`
+en production, où il ne reste donc rien sur `globalThis` (vérifié dans le
+bundle). Il sert aussi de poignée de debug en console.
+
+Deux oracles à écarter pour les assertions d'undo, tous deux vus verts sur un
+`undo()` volontairement cassé :
+
+- le **champ de saisie** — **`Ctrl+Z` déclenche aussi l'annulation de texte
+  native du navigateur** quand un champ Tweakpane vient d'être édité, et ce malgré un
+  `blur()`. Le champ revient alors à sa valeur précédente quoi que fasse
+  l'application ;
+- le **fichier exporté** — cliquer « Export project » fait réécrire au widget
+  Tweakpane sa valeur périmée dans le store, ce qui masque exactement la
+  régression cherchée.
+
+D'où la lecture du matériau rendu, que seul le code testé peut produire.
 
 À lancer avant tout commit touchant aux imports, à l'ordre des blocs d'un SFC
 ou au câblage des dépendances. Ne pas se contenter d'un build vert.

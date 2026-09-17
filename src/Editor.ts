@@ -34,8 +34,13 @@ class Editor {
         const editorWorld = new MatcapEditorWorld(this);
         this._scene = new SceneService(editorWorld, previewWorld);
 
-        (globalThis as any).matcapPreviewWorld = previewWorld;
-        (globalThis as any).matcapEditorWorld = editorWorld;
+        // Dev-only console handle. Vite folds `import.meta.env.DEV` to false in a
+        // production build, so this leaves nothing on globalThis there. The
+        // browser harness reads the rendered material through it.
+        if (import.meta.env.DEV) {
+            (globalThis as any).matcapEditor = { editorWorld, previewWorld, scene: this._scene };
+        }
+
         Project.initialize(this);
 
         bindKeyboardShortcuts(this._history);

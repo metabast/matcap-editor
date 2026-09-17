@@ -156,11 +156,13 @@ try {
         .locator('.tp-lblv', { has: page.locator('.tp-lblv_l', { hasText: 'roughness' }) })
         .first();
     const input = roughnessRow.locator('input').first();
-    // Oracle: the rendered material, not the field. Ctrl+Z also triggers the
-    // browser's own text undo on a Tweakpane input, which rewrites the field
-    // whatever the application does — so the field cannot tell the two apart.
+    // Oracle: the rendered material, read through the dev-only console handle.
+    // Not the field — Ctrl+Z also triggers the browser's own text undo on a
+    // Tweakpane input, which rewrites it whatever the application does. Not the
+    // exported file either — clicking Export makes the widget write its stale
+    // value back into the store, which hides the very regression this checks.
     const roughnessApplied = () =>
-        page.evaluate(() => globalThis.matcapEditorWorld.content.sphereRenderMaterial.roughness);
+        page.evaluate(() => globalThis.matcapEditor.editorWorld.content.sphereRenderMaterial.roughness);
     const roughnessShown = () => input.inputValue();
 
     const roughnessBefore = await roughnessApplied();
