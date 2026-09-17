@@ -15,11 +15,7 @@ imports, à l'ordre des blocs d'un SFC ou à la résolution de modules se valide
 en chargeant la page et en vérifiant l'absence d'erreur console.
 
 Vérification navigateur disponible sans MCP (npx absent de l'hôte) :
-
-```bash
-docker run --rm --network host -v "$PWD/pw":/pw -w /pw -u 1000:1000 \
-  mcr.microsoft.com/playwright:v1.56.0-noble node check.mjs http://localhost:5174/
-```
+`pw/check.mjs`, voir la section dédiée de `CLAUDE.md`.
 
 ## Ne pas annoncer « vérifié » sur un signal partiel
 
@@ -56,3 +52,15 @@ l'import en `import type` et l'efface à la compilation.
 Le harnais Playwright décrit plus haut existait ; il a été redemandé à
 l'utilisateur de tester à la main deux fois avant d'y penser. Lire ce fichier
 avant de déclarer qu'une vérification est hors de portée.
+
+## Un test qui n'a jamais échoué ne prouve rien
+
+`pw/check.mjs` passait au vert sur ses cinq étapes. En cassant volontairement
+l'injection d'`editor` dans `MatcapEditorWorld`, deux défauts sont apparus :
+les assertions undo/redo comparaient `0` à `0` et restaient vertes alors que
+rien n'avait été ajouté, et un `hasText` non exact cliquait le bouton
+« Export » au lieu d'« Export project ».
+
+**Règle :** après avoir écrit une vérification, la falsifier — casser la ligne
+qu'elle est censée protéger et confirmer qu'elle échoue, avec un code de sortie
+non nul. Vérifier le code de sortie sans le masquer derrière un pipe.

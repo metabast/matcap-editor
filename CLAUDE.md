@@ -57,6 +57,26 @@ docker compose exec app npm run lint        # corrige ce qui est auto-corrigeabl
 docker compose exec app npm run lint:check  # vérifie sans modifier
 ```
 
+## Vérification navigateur
+
+Ni `vue-tsc` ni `vite build` ne voient une régression d'ordre d'évaluation des
+modules ou un câblage de dépendance cassé. `pw/check.mjs` pilote l'UI réelle —
+pointeur sur le canvas, undo/redo clavier, boutons Tweakpane — et sort en
+erreur si une étape échoue :
+
+```bash
+docker compose up -d   # le serveur doit tourner
+docker run --rm --network host -v "$PWD/pw":/pw -w /pw -u 1000:1000 \
+  mcr.microsoft.com/playwright:v1.56.0-noble node check.mjs http://localhost:5174/
+```
+
+Étapes couvertes : rendu des canvas, ajout de lumière, undo, redo, export de
+projet. Le parcours traverse `Editor`, l'historique, le store, et la
+sérialisation qui lit dans les contrôleurs de panneaux.
+
+À lancer avant tout commit touchant aux imports, à l'ordre des blocs d'un SFC
+ou au câblage des dépendances. Ne pas se contenter d'un build vert.
+
 ## Cycles d'imports
 
 Le cycle qui cassait le chargement est coupé :
