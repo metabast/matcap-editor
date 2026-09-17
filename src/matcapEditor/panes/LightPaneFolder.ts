@@ -7,13 +7,14 @@ import RectAreaLightSize from './lightInput/RectAreaLightSize';
 import SpotLightInput from './lightInput/SpotLightInput';
 import events from '@/commons/Events';
 import { DeleteLightCommand } from '@/commands/DeleteLightCommand';
-import Editor from '@/Editor';
+import type Editor from '@/Editor';
 import type MatcapEditorContent from '../MatcapEditorContent';
 import type LightModel from '../LightModel';
 import type { Pane } from 'tweakpane';
 import type { FolderApi } from '@tweakpane/core';
 
 export type DataLightPaneFolder = {
+    editor: Editor;
     pane: Pane;
     paneContainer: FolderApi;
     content: MatcapEditorContent;
@@ -58,18 +59,19 @@ const updateCurrentLight = (lightModel: LightModel): void => {
     data.paneContainer?.addButton({ title: 'Delete' }).on('click', () => {
         if (!data.currentLightModel) return;
         clean();
-        Editor.instance.execute(new DeleteLightCommand(Editor.instance.scene, data.currentLightModel));
+        data.editor.execute(new DeleteLightCommand(data.editor.scene, data.currentLightModel));
     });
 };
 
 const LightPaneFolder = {
-    initialize(pane: Pane) {
+    initialize(pane: Pane, editor: Editor) {
         const paneContainer = pane.addFolder({
             title: 'Current Light',
             expanded: true,
         });
-        const { content } = Editor.instance.matcapEditorWorld;
+        const { content } = editor.matcapEditorWorld;
         data = {
+            editor,
             pane,
             paneContainer,
             content,

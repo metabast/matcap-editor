@@ -93,8 +93,15 @@ docker run --rm --network host -v "$PWD/pw":/pw -w /pw -u 1000:1000 \
 ```
 
 Étapes couvertes : rendu des canvas, ajout de lumière, undo, redo, bindings de
-la lumière sélectionnée, glisser et son annulation, export de projet, et un
-aller-retour complet sur la rugosité de la sphère.
+la lumière sélectionnée, glisser et son annulation, intensité de la lumière et
+son annulation, export de projet, et un aller-retour complet sur la rugosité de
+la sphère.
+
+Les libellés Tweakpane se répètent d'un panneau à l'autre — `intensity` existe
+dans « Create », « Current Light » et « Ambiant », `roughness` dans l'éditeur et
+dans la prévisualisation. **Toujours restreindre un sélecteur au dossier
+concerné** : un sélecteur global a déjà rendu deux assertions vertes sur du code
+cassé.
 
 Le harnais lit le matériau rendu via `globalThis.matcapEditor`, un point
 d'entrée exposé uniquement sous `import.meta.env.DEV` — Vite le replie à `false`

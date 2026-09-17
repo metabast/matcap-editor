@@ -1,5 +1,4 @@
 import { SetAreaLightPropertyCommand } from '@/commands/SetAreaLightPropertyCommand';
-import Editor from '@/Editor';
 import type { ValuesPaneCtrl } from '@/ts/types/PanesTypes';
 import type { RectAreaLight } from 'three';
 import type { DataLightPaneFolder } from '../LightPaneFolder';
@@ -26,9 +25,9 @@ const RectAreaLightSize = {
             .on('change', (event) => {
                 rectAreaLight[propertyName] = Number(event.value);
                 if (event.last && paneCtrl.history) {
-                    Editor.instance.execute(
+                    data.editor.execute(
                         new SetAreaLightPropertyCommand(
-                            Editor.instance.scene,
+                            data.editor.scene,
                             {
                                 name: propertyName,
                                 value: rectAreaLight[propertyName],

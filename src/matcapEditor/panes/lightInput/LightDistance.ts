@@ -1,6 +1,5 @@
 import { SetLightModelPropertyCommand } from '@/commands/SetLightModelPropertyCommand';
 import LightModel from '@/matcapEditor/LightModel';
-import Editor from '@/Editor';
 import type { ValuesPaneCtrl } from '@/ts/types/PanesTypes';
 import type { DataLightPaneFolder } from '../LightPaneFolder';
 
@@ -26,9 +25,9 @@ const LightDistance = {
                 lightModel.distance = Number(event.value);
                 LightModel.updateLightDistance(lightModel);
                 if (event.last && distancetCtrl.history) {
-                    Editor.instance.execute(
+                    data.editor.execute(
                         new SetLightModelPropertyCommand(
-                            Editor.instance.scene,
+                            data.editor.scene,
                             {
                                 name: 'distance',
                                 value: lightModel.distance,

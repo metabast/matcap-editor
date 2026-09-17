@@ -119,3 +119,26 @@ dernière a coûté le plus cher : `Ctrl+Z` déclenche l'annulation de texte du
 navigateur sur le champ Tweakpane, qui remet la valeur précédente quoi que fasse
 l'application. L'assertion était verte même avec `undo()` volontairement cassé.
 Elle porte maintenant sur le matériau rendu.
+
+---
+
+# MATC-8b — Débrancher le singleton
+
+- [x] `DataLightPaneFolder` porte l'editor ; `LightPaneFolder.initialize(pane, editor)`.
+- [x] Les sept modules `lightInput/*` lisent `data.editor` au lieu de `Editor.instance`.
+- [x] `Editor.instance` n'a plus aucun appelant : l'accesseur public est supprimé.
+- [x] Le garde contre une seconde construction reste, sans accesseur.
+- [x] Harnais étendu à l'intensité de la lumière et son annulation, falsifié.
+
+## Revue
+
+Le vecteur décrit dans l'épic — « tant que `Editor.instance` est joignable
+partout, toute nouveauté a une raison d'y atterrir » — n'existe plus : il n'y a
+plus de point d'accès public. Chaque collaborateur reçoit ce dont il a besoin
+depuis la racine de composition.
+
+Le bug applicatif que je soupçonnais sur la réécriture Tweakpane n'en est pas
+un : sur un build sain, champ et matériau restent cohérents à chaque étape,
+redo compris. Il ne se manifeste que lorsque commande et widget sont déjà
+désynchronisés, donc dans un build volontairement cassé. C'est un piège
+d'oracle de test, pas un défaut utilisateur — pas de ticket.

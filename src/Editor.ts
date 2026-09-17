@@ -76,24 +76,13 @@ class Editor {
         this._history.clear();
     }
 
-    // SINGLETON
+    // Guard against a second editor. There is no public accessor: every
+    // collaborator receives what it needs from the composition root.
     private static _instance: Editor;
 
     /** The one construction path, called by the composition root in main.ts. */
     public static bootstrap(): Editor {
         return new Editor();
-    }
-
-    /**
-     * Accessor only: the editor is built by the composition root in main.ts.
-     * Reading this before that point is a module evaluation order bug.
-     */
-    public static get instance(): Editor {
-        if (!Editor._instance) {
-            throw new Error('Editor is not initialized yet');
-        }
-
-        return Editor._instance;
     }
 }
 

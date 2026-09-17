@@ -47,7 +47,7 @@ events.on('matcap:editor:ready', (editor: Editor) => {
 
     SpherePaneFolder.initialize(pane, editor);
 
-    LightPaneFolder.initialize(pane);
+    LightPaneFolder.initialize(pane, editor);
 });
 
 onMounted(() => {

@@ -1,5 +1,4 @@
 import { SetLightPropertyCommand } from '@/commands/SetLightPropertyCommand';
-import Editor from '@/Editor';
 import type { ValuesPaneCtrl } from '@/ts/types/PanesTypes';
 import type { DataLightPaneFolder } from '../LightPaneFolder';
 
@@ -24,9 +23,9 @@ const LightIntensity = {
             .on('change', (event) => {
                 lightModel.light.intensity = Number(event.value);
                 if (event.last && paneCtrl.history) {
-                    Editor.instance.execute(
+                    data.editor.execute(
                         new SetLightPropertyCommand(
-                            Editor.instance.scene,
+                            data.editor.scene,
                             {
                                 name: 'intensity',
                                 value: lightModel.light.intensity,

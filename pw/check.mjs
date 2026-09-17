@@ -134,6 +134,14 @@ const exportProject = async () => {
     return readFile(await pending);
 };
 
+// Labels repeat across panels ('intensity' and 'roughness' both exist in the
+// preview pane), so every row lookup is scoped to the editor pane.
+const editorPaneFor = (label) =>
+    page
+        .locator('.matcap-editor-pane')
+        .locator('.tp-lblv', { has: page.locator('.tp-lblv_l', { hasText: label }) })
+        .first();
+
 try {
     // The button lives in a folder Tweakpane renders collapsed, under a tab.
     await page.locator('.tp-fldv_b', { hasText: 'Import/Export' }).first().click();
@@ -148,14 +156,42 @@ try {
         JSON.stringify(project?.sphereRenderMaterial),
     );
 
+    // --- the selected light's own bindings ------------------------------------
+    // These build their commands from the editor carried in the folder's data
+    // object; nothing else in this run exercises that path.
+    const intensityRow = currentLightFolder
+        .locator('.tp-lblv', { has: page.locator('.tp-lblv_l', { hasText: 'intensity' }) })
+        .first();
+    const intensityInput = intensityRow.locator('input').first();
+    // Read from the scene rather than from a selection: currentLightModel is
+    // null unless a handle is actively being interacted with.
+    const lightIntensity = () =>
+        page.evaluate(() => {
+            const light = globalThis.matcapEditor.editorWorld.scene.children.find(
+                (child) => child.isLight && child.type !== 'AmbientLight',
+            );
+            return light ? light.intensity : null;
+        });
+
+    const intensityBefore = await lightIntensity();
+    await intensityInput.fill('4');
+    await intensityInput.press('Enter');
+    await page.evaluate(() => document.activeElement instanceof HTMLElement && document.activeElement.blur());
+    await page.waitForTimeout(400);
+    check('changing the light intensity applies it', (await lightIntensity()) === 4, String(await lightIntensity()));
+
+    await page.keyboard.press('Control+z');
+    await page.waitForTimeout(600);
+    check(
+        'undoing the intensity change restores it',
+        (await lightIntensity()) === intensityBefore,
+        `4 -> ${await lightIntensity()}`,
+    );
+
     // --- sphere material: store -> command -> undo ---------------------------
     // Asserted on the value the field shows, not on the exported file: the field
     // is what the user reads, and it needs no round trip through a download.
-    const editorPane = page.locator('.matcap-editor-pane');
-    const roughnessRow = editorPane
-        .locator('.tp-lblv', { has: page.locator('.tp-lblv_l', { hasText: 'roughness' }) })
-        .first();
-    const input = roughnessRow.locator('input').first();
+    const input = editorPaneFor('roughness').locator('input').first();
     // Oracle: the rendered material, read through the dev-only console handle.
     // Not the field — Ctrl+Z also triggers the browser's own text undo on a
     // Tweakpane input, which rewrites it whatever the application does. Not the
