@@ -97,7 +97,7 @@ Chaque assertion a été falsifiée : onze mutations d'une ligne dans `history.t
 `SetSphereMaterialParamsCommand` et `AddLightCommand` (redos non vidés, `pop()`
 devenu `shift()`, undo réappliquant `value` au lieu de `oldValue`, …) rendent
 toutes au moins un test rouge. Une assertion qu'on n'a jamais vue échouer ne
-prouve rien — voir `tasks/lessons.md`.
+prouve rien — voir `.board/mind/falsifier-chaque-assertion.md`.
 
 Ces tests ne remplacent pas `pw/check.mjs` : ils isolent une régression dans la
 pile d'undo, pas un câblage de dépendance cassé.
@@ -174,7 +174,7 @@ L'import devient `import type`, effacé à la compilation, et l'arête disparaî
 Conséquence pratique, toujours valable : **ne jamais lancer `eslint --fix` sans
 vérifier ensuite la page dans un navigateur**. Le build et `vue-tsc` ne
 détectent pas une régression d'ordre d'évaluation. Le harnais `pw/check.mjs`
-sert à ça (voir `tasks/lessons.md`).
+sert à ça (voir `.board/mind/verification-des-changements.md`).
 
 ## État connu
 
