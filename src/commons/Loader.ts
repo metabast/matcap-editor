@@ -89,13 +89,29 @@ class Loader {
         this.handleJSON(data);
     }
 
-    private handleJSON = (data: MatcapProject) => {
-        // TODO: add JSON Matcap validation
-        switch (data.metadata.type.toLowerCase()) {
-            case 'matcap':
-                events.emit('matcap:project:read', data);
-                break;
+    /**
+     * Narrows a parsed JSON payload to the project envelope. Only the envelope is
+     * checked, not the whole shape: a file claiming `metadata.type === 'matcap'`
+     * is taken at its word for the rest. Reading it is what must not throw --
+     * `handleJSON` runs inside a FileReader callback, where an exception reaches
+     * nobody and the drop fails in silence.
+     */
+    private static isMatcapEnvelope(data: unknown): data is MatcapProject {
+        if (typeof data !== 'object' || data === null) return false;
+        const { metadata } = data as { metadata?: unknown };
+        if (typeof metadata !== 'object' || metadata === null) return false;
+        const { type } = metadata as { type?: unknown };
+        return typeof type === 'string' && type.toLowerCase() === 'matcap';
+    }
+
+    private handleJSON = (data: unknown) => {
+        // TODO: validate the project body, not just its envelope.
+        if (!Loader.isMatcapEnvelope(data)) {
+            console.error('Unsupported JSON file: not a matcap project.');
+            return;
         }
+
+        events.emit('matcap:project:read', data);
     };
 }
 
