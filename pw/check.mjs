@@ -243,6 +243,131 @@ try {
     check('sphere material round trip', false, err.message.split('\n')[0]);
 }
 
+// --- export -> import round trip ---------------------------------------------
+// The acceptance criterion of the explicit project model: a project written by
+// ProjectService.serialize() must come back through the real import path — a file
+// dropped on the canvas, read by Loader, replayed by ImportProjectCommand — with
+// the material, the ambiant and the lights restored as they were.
+//
+// Every oracle is read from the rendered scene, never from a Tweakpane field: an
+// import that only refreshed the widgets while leaving the scene untouched would
+// pass on the fields and fail here, which is the whole point.
+try {
+    const ambiantIntensity = () =>
+        page.evaluate(() => {
+            const light = globalThis.matcapEditor.editorWorld.scene.children.find(
+                (child) => child.type === 'AmbientLight',
+            );
+            return light ? light.intensity : null;
+        });
+
+    const sceneLights = () =>
+        page.evaluate(() =>
+            globalThis.matcapEditor.editorWorld.scene.children
+                .filter((child) => child.isLight && child.type !== 'AmbientLight')
+                .map((light) => ({
+                    type: light.type,
+                    intensity: light.intensity,
+                    color: light.color.getHex(),
+                    position: [light.position.x, light.position.y, light.position.z].map((n) => n.toFixed(4)),
+                })),
+        );
+
+    const roughnessApplied = () =>
+        page.evaluate(() => globalThis.matcapEditor.editorWorld.content.sphereRenderMaterial.roughness);
+
+    const fillPaneInput = async (row, value) => {
+        const input = row.locator('input').first();
+        await input.fill(value);
+        await input.press('Enter');
+        await page.evaluate(() => document.activeElement instanceof HTMLElement && document.activeElement.blur());
+        await page.waitForTimeout(400);
+    };
+
+    // Distinctive values, so that a restore-to-default would not look like a
+    // successful round trip.
+    const sphereFolder = page.locator('.tp-fldv', { has: page.locator('.tp-fldv_t', { hasText: 'Sphere' }) }).first();
+
+    await fillPaneInput(
+        sphereFolder.locator('.tp-lblv', { has: page.locator('.tp-lblv_l', { hasText: 'roughness' }) }).first(),
+        '0.42',
+    );
+
+    // 'intensity' exists in several folders, so scope to the Sphere folder's
+    // Ambiant tab page rather than to the page.
+    await sphereFolder.locator('.tp-tbiv_b', { hasText: 'Ambiant' }).first().click();
+    await page.waitForTimeout(300);
+    await fillPaneInput(
+        sphereFolder.locator('.tp-lblv', { has: page.locator('.tp-lblv_l', { hasText: 'intensity' }) }).first(),
+        '0.55',
+    );
+
+    // The undo steps above emptied the scene of its light; put one back, so the
+    // round trip has lights to carry.
+    if ((await sceneLights()).length === 0) {
+        await page.mouse.move(box.x + box.width * 0.55, box.y + box.height * 0.45);
+        await page.mouse.down();
+        await page.mouse.up();
+        await page.waitForTimeout(500);
+    }
+
+    const roughnessSet = await roughnessApplied();
+    const ambiantSet = await ambiantIntensity();
+    const lightsSet = await sceneLights();
+    check(
+        'the round trip starts from distinctive values',
+        roughnessSet === 0.42 && ambiantSet === 0.55 && lightsSet.length > 0,
+        `roughness ${roughnessSet}, ambiant ${ambiantSet}, ${lightsSet.length} light(s)`,
+    );
+
+    // The Import/Export folder and its Project tab were opened by the previous
+    // block; clicking the folder again would fold it and hide the button.
+    const exported = await exportProject();
+    check(
+        'the exported project carries the light it was given',
+        Array.isArray(exported.lights) && exported.lights.length === lightsSet.length,
+        `${exported.lights?.length} serialized vs ${lightsSet.length} in the scene`,
+    );
+    check(
+        'the exported project carries a light without Three metadata leaking out of shape',
+        exported.lights?.[0]?._light?.object?.type === lightsSet[0]?.type,
+        JSON.stringify(exported.lights?.[0]?._light?.object?.type),
+    );
+
+    // Move everything away from the exported state, so that the import has
+    // something to restore rather than a scene that already matches.
+    await sphereFolder.locator('.tp-tbiv_b', { hasText: 'Material' }).first().click();
+    await page.waitForTimeout(300);
+    await fillPaneInput(
+        sphereFolder.locator('.tp-lblv', { has: page.locator('.tp-lblv_l', { hasText: 'roughness' }) }).first(),
+        '0.1',
+    );
+    const movedAway = (await roughnessApplied()) === 0.1;
+    check('the scene is moved away before importing', movedAway, String(await roughnessApplied()));
+
+    // The real import path: a file dropped on the editor canvas.
+    await page.evaluate((json) => {
+        const transfer = new DataTransfer();
+        transfer.items.add(new File([json], 'matcap.json', { type: 'application/json' }));
+        document
+            .querySelector('canvas.webgl')
+            .dispatchEvent(new DragEvent('drop', { dataTransfer: transfer, bubbles: true, cancelable: true }));
+    }, JSON.stringify(exported));
+    await page.waitForTimeout(1200);
+
+    check('importing restores the material', (await roughnessApplied()) === 0.42, String(await roughnessApplied()));
+    check('importing restores the ambiant', (await ambiantIntensity()) === 0.55, String(await ambiantIntensity()));
+
+    const lightsBack = await sceneLights();
+    check(
+        'importing restores the lights identically',
+        JSON.stringify(lightsBack) === JSON.stringify(lightsSet),
+        `${JSON.stringify(lightsSet)} -> ${JSON.stringify(lightsBack)}`,
+    );
+} catch (err) {
+    check('export -> import round trip', false, err.message.split('\n')[0]);
+}
+
 for (const { name, ok, detail } of steps) {
     console.log(`${ok ? 'ok  ' : 'FAIL'} ${name}${detail ? ` [${detail}]` : ''}`);
 }

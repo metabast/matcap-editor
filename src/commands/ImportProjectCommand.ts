@@ -3,13 +3,13 @@ import { SetAmbiantLightCommand } from './SetAmbiantLightCommand';
 import { SetSphereMaterialParamsCommand } from './SetSphereMaterialParamsCommand';
 import { Command } from '@/commons/Command';
 import LightModel from '@/matcapEditor/LightModel';
-import type { TProject } from '@/ts/types/TProject';
+import type { MatcapProject } from '@/ts/types/MatcapProject';
 import type SceneService from '@/services/SceneService';
 
 class ImportProjectCommand extends Command {
-    private _project: TProject;
+    private _project: MatcapProject;
     private _commands: Command[];
-    constructor(scene: SceneService, project: TProject) {
+    constructor(scene: SceneService, project: MatcapProject) {
         super(scene);
         this.type = 'ImportProjectCommand';
         this.name = 'Import Project';
@@ -42,7 +42,7 @@ class ImportProjectCommand extends Command {
             command.execute();
         });
 
-        this._project.lights.forEach((light: any) => {
+        this._project.lights.forEach((light) => {
             const lightModel = LightModel.createFromSerialized(light);
             const command = new AddLightCommand(this.scene, lightModel);
             this._commands.push(command);

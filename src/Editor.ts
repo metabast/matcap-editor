@@ -4,8 +4,9 @@ import { Loader } from './commons/Loader';
 import { History } from './history';
 import MatcapEditorWorld from './matcapEditor/MatcapEditorWorld';
 import MatcapPreviewWorld from './matcapPreview/MatcapPreviewWorld';
-import Project from '@/commons/Project';
+import ProjectService from '@/services/ProjectService';
 import SceneService from '@/services/SceneService';
+import { matcapEditorStore } from '@/stores/matcapEditorStore';
 import type { Command } from './commons/Command';
 
 /**
@@ -19,6 +20,8 @@ class Editor {
     private _scene: SceneService;
 
     private _loader: Loader;
+
+    private _project: ProjectService;
 
     constructor() {
         // Singleton control
@@ -41,7 +44,7 @@ class Editor {
             (globalThis as any).matcapEditor = { editorWorld, previewWorld, scene: this._scene };
         }
 
-        Project.initialize(this);
+        this._project = new ProjectService(this._scene, this._history, matcapEditorStore());
 
         bindKeyboardShortcuts(this._history);
 

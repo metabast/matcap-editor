@@ -17,16 +17,6 @@ class SphereMaterialPaneFolderCtrl extends PaneFolderControler {
 
     private _oldValues: Record<MaterialParam, number | string> = { roughness: 0, metalness: 0, color: '#ffffff' };
 
-    constructor() {
-        super();
-        if (SphereMaterialPaneFolderCtrl._instance) {
-            throw new Error(
-                'Error: Instantiation failed: Use SphereMaterialPaneFolderCtrl.getInstance() instead of new.',
-            );
-        }
-        SphereMaterialPaneFolderCtrl._instance = this;
-    }
-
     public initialize(pane: Pane, paneContainer: TabPageApi, editor: Editor) {
         super.initialize(pane, paneContainer, editor);
     }
@@ -64,14 +54,6 @@ class SphereMaterialPaneFolderCtrl extends PaneFolderControler {
             );
             this._oldValues[name] = value;
         });
-    }
-
-    private static _instance: SphereMaterialPaneFolderCtrl;
-    public static get instance(): SphereMaterialPaneFolderCtrl {
-        if (!this._instance) {
-            this._instance = new SphereMaterialPaneFolderCtrl();
-        }
-        return this._instance;
     }
 }
 

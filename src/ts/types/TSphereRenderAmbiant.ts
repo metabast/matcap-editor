@@ -1,4 +1,5 @@
 export type TSphereRenderAmbiant = {
     intensity: number;
-    color: any;
+    /** Hex string, the form Tweakpane binds to and the store holds. */
+    color: string;
 };

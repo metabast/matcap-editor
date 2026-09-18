@@ -28,8 +28,8 @@ const SpherePaneFolder = {
             ],
         });
 
-        SphereMaterialPaneFolderCtrl.instance.initialize(data.pane, data.tab.pages[0], editor);
-        SphereAmbiantPaneFolder.instance.initialize(data.pane, data.tab.pages[1], editor);
+        new SphereMaterialPaneFolderCtrl().initialize(data.pane, data.tab.pages[0], editor);
+        new SphereAmbiantPaneFolder().initialize(data.pane, data.tab.pages[1], editor);
     },
 };
 export default SpherePaneFolder;

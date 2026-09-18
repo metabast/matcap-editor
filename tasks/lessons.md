@@ -82,3 +82,16 @@ produire — ici le matériau rendu, pas le champ de saisie.
 
 **Règle :** ne jamais retenir une assertion sans l'avoir vue échouer sur une
 cassure délibérée de la ligne exacte qu'elle protège.
+
+## Ne jamais enchaîner `git stash` et `git stash pop` à l'aveugle
+
+Le wrapper `rtk git` refuse certains drapeaux courts (`-q`, `-r`) et sort en
+erreur. Dans un `A && B`, le `&&` protège ; dans un `A; B`, non : un
+`git stash -u -q` rejeté suivi d'un `git stash pop` a dépilé une remise
+préexistante de l'utilisateur et créé quatre conflits sans rapport avec le
+travail en cours.
+
+Règle : pour mesurer une baseline, comparer avec `git worktree add` sur un
+commit, ou lire les chiffres déjà produits plus tôt dans la session. Si un
+`stash` est vraiment nécessaire, vérifier `git stash list` avant *et* après le
+push, et ne dépiler que par `git stash pop stash@{n}` avec le n vérifié.

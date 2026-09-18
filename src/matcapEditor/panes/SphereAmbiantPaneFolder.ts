@@ -11,14 +11,6 @@ class SphereAmbiantPaneFolder extends PaneFolderControler {
 
     private _oldValues: Record<AmbiantParam, number | string> = { intensity: 0, color: '#ffffff' };
 
-    constructor() {
-        super();
-        if (SphereAmbiantPaneFolder._instance) {
-            throw new Error('Error: Instantiation failed: Use SphereAmbiantPaneFolder.getInstance() instead of new.');
-        }
-        SphereAmbiantPaneFolder._instance = this;
-    }
-
     protected _generate(): void {
         super._generate();
         if (!this._paneFolder) return;
@@ -47,12 +39,6 @@ class SphereAmbiantPaneFolder extends PaneFolderControler {
             );
             this._oldValues[name] = value;
         });
-    }
-
-    private static _instance: SphereAmbiantPaneFolder;
-    public static get instance(): SphereAmbiantPaneFolder {
-        if (!this._instance) this._instance = new SphereAmbiantPaneFolder();
-        return this._instance;
     }
 }
 

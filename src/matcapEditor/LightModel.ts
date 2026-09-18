@@ -1,5 +1,6 @@
 import { Matrix4, PointLight, RectAreaLight, SpotLight, Vector2, Vector3 } from 'three';
 import type { LightModelPositions } from '@/ts/types/PanesTypes';
+import type { SerializedLight, SerializedLightEnvelope } from '@/ts/types/MatcapProject';
 
 type LightType = PointLight | RectAreaLight | SpotLight;
 
@@ -178,7 +179,30 @@ class LightModel {
         else lightModel.setPositionZ(-lightPosition.z);
     };
 
-    static createFromSerialized = (serializedModel: any): LightModel => {
+    /**
+     * The exported form. `_light` is Three's own `Object3D.toJSON()` envelope,
+     * which is what the file format has always carried; the surrounding keys keep
+     * the private-field names for the same reason. `_oldPositions` is left out:
+     * it is drag-time state, and the import path never reads it.
+     */
+    toSerialized(): SerializedLight {
+        const vector3 = ({ x, y, z }: Vector3) => ({ x, y, z });
+        return {
+            // Three types `toJSON()` as the generic Object3D envelope, which does
+            // not declare the light fields it actually writes (color, intensity,
+            // width, height). The cast states what the emitted JSON contains.
+            _light: this._light.toJSON() as unknown as SerializedLightEnvelope,
+            _screenPosition: { x: this._screenPosition.x, y: this._screenPosition.y },
+            _distance: this._distance,
+            _sphereFaceNormal: vector3(this._sphereFaceNormal),
+            _positionOnSphere: vector3(this._positionOnSphere),
+            _positionTarget: vector3(this._positionTarget),
+            _lookAtTarget: this._lookAtTarget,
+            _front: this._front,
+        };
+    }
+
+    static createFromSerialized = (serializedModel: SerializedLight): LightModel => {
         const lightModel = new LightModel();
 
         switch (serializedModel._light.object.type) {
