@@ -93,5 +93,30 @@ travail en cours.
 
 Règle : pour mesurer une baseline, comparer avec `git worktree add` sur un
 commit, ou lire les chiffres déjà produits plus tôt dans la session. Si un
-`stash` est vraiment nécessaire, vérifier `git stash list` avant *et* après le
+`stash` est vraiment nécessaire, vérifier `git stash list` avant _et_ après le
 push, et ne dépiler que par `git stash pop stash@{n}` avec le n vérifié.
+
+## Un `stash` avorté suivi d'un `pop` déroule le stash de quelqu'un d'autre
+
+`git stash -q` échoue sous le proxy rtk (il rejette les options inconnues).
+Enchaîné avec `; git stash pop`, le `pop` s'exécute quand même et dépile
+l'entrée précédente — ici un stash `docker compose dev/build` vieux de plusieurs
+commits, qui a produit quatre conflits dans l'arbre de travail.
+
+Règle : jamais de `;` entre un `stash` et son `pop` — uniquement `&&`, et
+uniquement après avoir lu `git stash list`. Pour une baseline, préférer
+`git worktree add`, qui ne touche pas à l'arbre courant.
+
+## Les pixels d'un canvas WebGL ne sont pas un oracle en headless
+
+Le renderer tourne avec `preserveDrawingBuffer: false`, et sous SwiftShader
+(headless Chromium) le readback hors frame rend du transparent : `toBlob()` sur
+le canvas de l'éditeur produit une image vide, donc le grid de snapshots reste
+vierge dans `pw/` alors qu'il fonctionne dans un vrai navigateur. Une sonde qui
+lit `getImageData` d'un canvas alimenté par ces blobs mesure cette limite, pas
+l'application.
+
+Règle : ne jamais conclure à une panne applicative depuis des pixels lus en
+headless. Les oracles utilisables restent l'état applicatif lu par
+`globalThis.matcapEditor` et le DOM. Et une sonde jamais vue passer ne prouve
+rien, exactement comme une assertion jamais vue échouer.

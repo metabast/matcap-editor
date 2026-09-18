@@ -1,23 +1,24 @@
 import events from './Events';
-import { EVENT_FILES_DROPPED } from './Constants';
 import { AddObjectCommand } from '@/commands/AddObjectCommand';
 import type Editor from '@/Editor.js';
-
-type JSON_Matcap = {
-    metadata: {
-        type: string;
-    };
-};
+import type { MatcapProject } from '@/ts/types/MatcapProject';
+import type { Unsubscribe } from 'nanoevents';
 
 class Loader {
     private _editor: Editor;
 
+    private _unsubscribe: Unsubscribe;
+
     constructor(editor: Editor) {
         this._editor = editor;
-        events.on(EVENT_FILES_DROPPED, this.onFilesDropped.bind(this));
+        this._unsubscribe = events.on('files:dropped', this.onFilesDropped.bind(this));
     }
 
-    public onFilesDropped(files: File[]): void {
+    public dispose(): void {
+        this._unsubscribe();
+    }
+
+    public onFilesDropped(files: FileList): void {
         if (files.length > 0) {
             for (let i = 0; i < files.length; i++) {
                 this.loadFile(files[i]);
@@ -88,7 +89,7 @@ class Loader {
         this.handleJSON(data);
     }
 
-    private handleJSON = (data: JSON_Matcap) => {
+    private handleJSON = (data: MatcapProject) => {
         // TODO: add JSON Matcap validation
         switch (data.metadata.type.toLowerCase()) {
             case 'matcap':

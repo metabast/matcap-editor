@@ -14,7 +14,7 @@
 <script lang="ts" setup>
 import events from '@/commons/Events';
 import type LightModel from '@/matcapEditor/LightModel';
-import { computed } from 'vue';
+import { computed, onUnmounted } from 'vue';
 import { matcapEditorStore } from '@/stores/matcapEditorStore';
 import MatcapProperties from './MatcapProperties.vue';
 
@@ -49,12 +49,15 @@ const onMouseDown = (lightModel: LightModel): void => {
     events.emit('matcap:light:startMoving', lightModel);
 };
 
-events.on('matcap:ui:light:update:current', (lightModel: LightModel) => {
-    currentLight = lightModel;
-});
+const unsubscribes = [
+    events.on('matcap:ui:light:update:current', (lightModel: LightModel) => {
+        currentLight = lightModel;
+    }),
+    events.on('matcap:editor:light:added', lightAdded),
+    events.on('matcap:editor:light:remove', (lightModel: LightModel) => {
+        store.value.removeLight(lightModel);
+    }),
+];
 
-events.on('matcap:editor:light:added', lightAdded);
-events.on('matcap:editor:light:remove', (lightModel: LightModel) => {
-    store.value.removeLight(lightModel);
-});
+onUnmounted(() => unsubscribes.forEach((unsubscribe) => unsubscribe()));
 </script>

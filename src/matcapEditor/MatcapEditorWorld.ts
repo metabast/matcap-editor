@@ -66,6 +66,11 @@ class MatcapEditorWorld {
         this.stats.end();
         requestAnimationFrame(this.tick);
     };
+
+    /** Releases what outlives the DOM on its own: the bus subscriptions. */
+    dispose(): void {
+        this.content.dispose();
+    }
 }
 
 export default MatcapEditorWorld;

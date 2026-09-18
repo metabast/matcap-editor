@@ -3,7 +3,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, onMounted } from 'vue';
+import { computed, onMounted, onUnmounted } from 'vue';
 import { Pane } from 'tweakpane';
 
 import { matcapEditorStore } from '@/stores/matcapEditorStore';
@@ -26,28 +26,34 @@ function getStyles() {
     `;
 }
 
-// Commands change the store; the pane has to be told to re-read it.
-events.on('matcap:ui:pane:refresh', () => {
-    if (pane) refreshPane(pane);
-});
+const unsubscribes = [
+    // Commands change the store; the pane has to be told to re-read it.
+    events.on('matcap:ui:pane:refresh', () => {
+        if (pane) refreshPane(pane);
+    }),
+    events.on('matcap:editor:ready', (editor: Editor) => {
+        CreatePaneFolder.initialize(pane);
 
-events.on('matcap:editor:ready', (editor: Editor) => {
-    CreatePaneFolder.initialize(pane);
+        pane.addBinding(store.value.create, 'front', {
+            label: 'front/back',
+        });
+        pane.addButton({
+            title: 'generate',
+        }).on('click', () => {
+            events.emit('matcap:generate', { exported: true });
+        });
 
-    pane.addBinding(store.value.create, 'front', {
-        label: 'front/back',
-    });
-    pane.addButton({
-        title: 'generate',
-    }).on('click', () => {
-        events.emit('matcap:generate', { exported: true });
-    });
+        ImportExportMatcapPaneFolder.initialize(pane);
 
-    ImportExportMatcapPaneFolder.initialize(pane);
+        SpherePaneFolder.initialize(pane, editor);
 
-    SpherePaneFolder.initialize(pane, editor);
+        LightPaneFolder.initialize(pane, editor);
+    }),
+];
 
-    LightPaneFolder.initialize(pane, editor);
+onUnmounted(() => {
+    unsubscribes.forEach((unsubscribe) => unsubscribe());
+    LightPaneFolder.dispose();
 });
 
 onMounted(() => {

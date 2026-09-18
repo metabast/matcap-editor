@@ -12,6 +12,7 @@ import type MatcapEditorContent from '../MatcapEditorContent';
 import type LightModel from '../LightModel';
 import type { Pane } from 'tweakpane';
 import type { FolderApi } from '@tweakpane/core';
+import type { Unsubscribe } from 'nanoevents';
 
 export type DataLightPaneFolder = {
     editor: Editor;
@@ -19,15 +20,20 @@ export type DataLightPaneFolder = {
     paneContainer: FolderApi;
     content: MatcapEditorContent;
     currentLightModel?: LightModel;
+    /** Unsubscribers owned by the bindings currently in the folder. */
+    bindingUnsubscribes?: Unsubscribe[];
 };
 
 let data: DataLightPaneFolder;
+let _unsubscribe: Unsubscribe | undefined;
 
-const generate = (content: MatcapEditorContent) => {
-    data.content = content;
-};
-
+/**
+ * Bindings are rebuilt on every light selection, so whatever they subscribed to
+ * has to go with them — disposing the widget does not detach its listener.
+ */
 const clean = (): void => {
+    data.bindingUnsubscribes?.forEach((unsubscribe) => unsubscribe());
+    data.bindingUnsubscribes = [];
     data.paneContainer?.children.forEach((child) => {
         child.dispose();
     });
@@ -75,8 +81,14 @@ const LightPaneFolder = {
             pane,
             paneContainer,
             content,
+            bindingUnsubscribes: [],
         };
-        events.on('matcap:light:update:current', updateCurrentLight);
+        _unsubscribe = events.on('matcap:light:update:current', updateCurrentLight);
+    },
+
+    dispose() {
+        _unsubscribe?.();
+        _unsubscribe = undefined;
     },
 };
 

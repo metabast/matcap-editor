@@ -5,7 +5,7 @@ import { getScreenPosition } from '@/commons/VectorHelpers';
 
 import { AddLightCommand } from '@/commands';
 import { SetLightModelPositionCommand } from '@/commands/SetLightPositionCommand';
-import events, { emitSnapshot } from '@/commons/Events';
+import events from '@/commons/Events';
 import { matcapEditorStore } from '@/stores/matcapEditorStore';
 import {
     AmbientLight,
@@ -24,6 +24,7 @@ import {
 } from 'three';
 import type MatcapEditorWorld from './MatcapEditorWorld';
 import type { ValuesCommand } from '@/ts/types/PanesTypes';
+import type { Unsubscribe } from 'nanoevents';
 
 const data = {
     halfSize: 0.3,
@@ -35,6 +36,8 @@ data.heightSegments = data.widthSegments / (4 / 3);
 
 class MatcapEditorContent {
     private _store: any;
+
+    private _unsubscribes: Unsubscribe[] = [];
     private _world: MatcapEditorWorld;
 
     private _cameraSnapshot: OrthographicCamera;
@@ -116,15 +119,13 @@ class MatcapEditorContent {
         this._world.canvas.addEventListener('mouseover', this.onMouseOver);
         this._world.canvas.addEventListener('mouseout', this.onMouseOut);
 
-        events.on('matcap:ambiant:update', this.onAmbiantChanged);
-
-        events.on('matcap:light:delete', this.deleteLight);
-        events.on('matcap:light:startMoving', this.onLightStartMoving);
-        events.on('matcap:light:stopMoving', this.onLightStopMoving);
-        events.on('matcap:material:update', this.onMaterialUpdate);
+        this._unsubscribes.push(events.on('matcap:light:startMoving', this.onLightStartMoving));
         this._world.canvas.addEventListener('pointerup', this.onPointerUp);
+    }
 
-        events.emit('matcap:content:ready', this);
+    public dispose(): void {
+        this._unsubscribes.forEach((unsubscribe) => unsubscribe());
+        this._unsubscribes = [];
     }
 
     public get world(): MatcapEditorWorld {
@@ -151,13 +152,6 @@ class MatcapEditorContent {
     public get ambiantLight(): AmbientLight {
         return this._ambiantLight;
     }
-
-    private onAmbiantChanged = () => {
-        this._ambiantLight.intensity = this._store.ambiant.intensity;
-        this._ambiantLight.color.set(this._store.ambiant.color);
-        RenderManager.snapshot();
-        emitSnapshot();
-    };
 
     private onMouseOver = () => {
         this._arrowHelper.visible = true;
@@ -280,13 +274,6 @@ class MatcapEditorContent {
         this.currentLightModel = lightModel;
         lightModel.pickCurrentPositions();
     };
-
-    private onLightStopMoving = () => {
-        this.currentLightModel = null;
-        RenderManager.snapshot();
-    };
-
-    private onMaterialUpdate = () => {};
 
     public deleteLight = (lightModel: LightModel) => {
         lightModel.dispose();

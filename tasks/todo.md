@@ -52,3 +52,50 @@ Les trois nouvelles assertions ont été falsifiées avant d'être crues : lumi�
 non rejouées à l'import -> « importing restores the lights identically » échoue ;
 matériau et ambiant corrompus à la sérialisation -> les deux assertions
 correspondantes échouent.
+
+## MATC-5 · 6/6 — Bus d'événements typé et désabonnable
+
+- [x] `EventMap` (nom → signature de callback) dans `src/commons/Events.ts`
+- [x] `on()` renvoie l'`Unsubscribe` de nanoevents ; `emit()` variadique typé
+- [x] supprimer `getNewEmitter()` (mort) et la constante `EVENT_FILES_DROPPED`
+      (remplacée par le canal littéral `files:dropped`)
+- [x] supprimer les canaux morts : emits commentés de `PreviewMaterialFolder`,
+      `matcap:content:ready` (aucun écouteur), et les abonnements sans émetteur
+      `matcap:ambiant:update`, `matcap:light:delete`, `matcap:light:stopMoving`,
+      `matcap:material:update` — avec les handlers devenus inutilisés
+      (`onAmbiantChanged`, `onLightStopMoving`, `onMaterialUpdate` ; `deleteLight`
+      reste, `SceneService` l'appelle)
+- [x] désabonnement : `onUnmounted` dans `MatcapLights.vue`, `CanvasSnapshots.vue`,
+      `MatcapProperties.vue`, `DragAndDropHelper.vue` ; `dispose()` dans
+      `MatcapEditorContent`, `MatcapPreviewContent`, `ProjectService`, `Loader`,
+      `RenderManager`, `LightPaneFolder`, `PreviewMaterialFolder`
+- [x] `npm run type-check` + `lint:check` + `pw/check.mjs` verts
+
+### Revue
+
+- `EventMap` : 24 canaux typés dans `src/commons/Events.ts`, `on()` renvoie
+  l'`Unsubscribe` de nanoevents, `emit()` est variadique sur
+  `Parameters<EventMap[K]>`.
+- Falsification : renommer `matcap:light:startMoving` dans l'`EventMap` fait
+  échouer `vue-tsc` sur ses deux appelants (critère vérifié en le voyant rouge).
+- Canaux morts supprimés : `matcap:content:ready` (aucun écouteur),
+  `matcap:ambiant:update`, `matcap:light:delete`, `matcap:light:stopMoving`,
+  `matcap:material:update` (aucun émetteur), plus les `emit` commentés de
+  `PreviewMaterialFolder`. Audit final : aucun canal déclaré sans usage, aucun
+  émetteur sans écouteur, aucun écouteur sans émetteur.
+- Fuite réelle trouvée au passage : `LightModelBoolean` s'abonnait à
+  `light:change` à chaque sélection de lumière, et `clean()` ne disposait que le
+  widget. Les désabonnements sont désormais possédés par `LightPaneFolder`
+  (`data.bindingUnsubscribes`) et purgés dans `clean()`.
+- Seam de teardown : `Editor.dispose()` → worlds → `content.dispose()`, plus
+  `RenderManager`, `ProjectService`, `Loader`, et libération du slot singleton.
+  Les panneaux se disposent depuis le `onUnmounted` de leur composant.
+- Vérifications : `type-check` vert, `build` vert, `lint:check` 194 anomalies
+  (baseline ~196, aucune nouvelle sur les fichiers touchés), `pw/check.mjs` 22/22
+  sans erreur console, plus deux sondes ad hoc — sélection de mesh qui rafraîchit
+  le pane matériau (0.00 -> 0.33) et chaîne `generate` du grid de snapshots.
+- Le grid de snapshots n'est pas observable en headless : le contexte WebGL a
+  `preserveDrawingBuffer: false` et SwiftShader rend un readback vide, donc
+  `toBlob()` ne produit que du transparent et `canvas.snapshots` reste vierge —
+  y compris sur `HEAD`. Ce n'est pas un oracle : à vérifier dans un vrai
+  navigateur, pas dans `pw/`.

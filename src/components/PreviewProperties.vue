@@ -3,7 +3,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, onMounted } from 'vue';
+import { computed, onMounted, onUnmounted } from 'vue';
 import { Pane } from 'tweakpane';
 import PreviewMaterialPaneFolder from '@/matcapPreview/panes/PreviewMaterialFolder';
 import { matcapPreviewStore } from '@/stores/matcapPreviewStore';
@@ -21,4 +21,6 @@ onMounted(() => {
 
     pane.addBinding(store.value, 'showGrid').on('change', () => {});
 });
+
+onUnmounted(() => PreviewMaterialPaneFolder.dispose());
 </script>

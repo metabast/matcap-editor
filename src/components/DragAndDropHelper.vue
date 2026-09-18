@@ -11,7 +11,7 @@
 
 <script setup lang="ts">
 import events from '@/commons/Events';
-import { ref } from 'vue';
+import { onUnmounted, ref } from 'vue';
 const isVisible = ref(false);
 const defaultMsg = '*.json for project, *.glb for object';
 const msg = ref(defaultMsg);
@@ -21,13 +21,15 @@ defineProps({
         default: false,
     },
 });
-events.on('show:dragNdrop', (payload) => {
+const unsubscribe = events.on('show:dragNdrop', (payload) => {
     isVisible.value = true;
     msg.value = payload?.msg || defaultMsg;
     setTimeout(() => {
         isVisible.value = false;
     }, 2000);
 });
+
+onUnmounted(unsubscribe);
 </script>
 
 <style>

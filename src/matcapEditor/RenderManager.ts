@@ -1,6 +1,7 @@
 import events from '@/commons/Events';
 import { matcapEditorStore } from '@/stores/matcapEditorStore';
 import type MatcapEditorContent from './MatcapEditorContent';
+import type { Unsubscribe } from 'nanoevents';
 
 let _store: any;
 
@@ -11,6 +12,7 @@ let _snapshotsArray: string[] = [];
 let _snapshotLimit = 1;
 let _exported = false;
 let _blobURL = '';
+let _unsubscribes: Unsubscribe[] = [];
 
 const RenderManager = {
     initialize: (content: MatcapEditorContent) => {
@@ -18,9 +20,17 @@ const RenderManager = {
         _initialized = true;
         _content = content;
         _store = matcapEditorStore();
-        events.on('matcap:snapshot', RenderManager.snapshot);
-        events.on('matcap:export:png', RenderManager.snapshot);
-        events.on('matcap:generate', RenderManager.snapshots);
+        _unsubscribes = [
+            events.on('matcap:snapshot', RenderManager.snapshot),
+            events.on('matcap:export:png', RenderManager.snapshot),
+            events.on('matcap:generate', RenderManager.snapshots),
+        ];
+    },
+
+    dispose: () => {
+        _unsubscribes.forEach((unsubscribe) => unsubscribe());
+        _unsubscribes = [];
+        _initialized = false;
     },
 
     snapshots: () => {

@@ -50,7 +50,7 @@ const generate = () => {
     });
 
     _tab.pages[0].addButton({ title: 'Export grid' }).on('click', () => {
-        events.emit('matcap:export:grid:png', { exported: true });
+        events.emit('matcap:export:grid:png');
     });
 
     _tab.pages[1].addButton({ title: 'Import project' }).on('click', () => {

@@ -4,6 +4,7 @@ import type { MatcapProject } from '@/ts/types/MatcapProject';
 import type { History } from '@/history';
 import type SceneService from '@/services/SceneService';
 import type { Lights, matcapEditorStore } from '@/stores/matcapEditorStore';
+import type { Unsubscribe } from 'nanoevents';
 
 type Store = ReturnType<typeof matcapEditorStore>;
 
@@ -20,13 +21,22 @@ class ProjectService {
 
     private _store: Store;
 
+    private _unsubscribes: Unsubscribe[];
+
     constructor(scene: SceneService, history: History, store: Store) {
         this._scene = scene;
         this._history = history;
         this._store = store;
 
-        events.on('matcap:export:project', () => this.export());
-        events.on('matcap:project:read', (project: MatcapProject) => this.import(project));
+        this._unsubscribes = [
+            events.on('matcap:export:project', () => this.export()),
+            events.on('matcap:project:read', (project: MatcapProject) => this.import(project)),
+        ];
+    }
+
+    public dispose(): void {
+        this._unsubscribes.forEach((unsubscribe) => unsubscribe());
+        this._unsubscribes = [];
     }
 
     /**

@@ -1,4 +1,3 @@
-import { EVENT_FILES_DROPPED } from './Constants';
 import events from './Events';
 
 const acceptedFileTypes = ['glb'];
@@ -21,7 +20,8 @@ const DroppedFileManager = {
     onDrop: (event: DragEvent) => {
         event.preventDefault();
         const files = event.dataTransfer?.files;
-        events.emit(EVENT_FILES_DROPPED, files);
+        if (!files) return;
+        events.emit('files:dropped', files);
     },
 };
 

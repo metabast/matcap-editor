@@ -5,7 +5,7 @@
 <script lang="ts" setup>
 import events from '@/commons/Events';
 import { matcapPreviewStore } from '@/stores/matcapPreviewStore';
-import { computed, onMounted } from 'vue';
+import { computed, onMounted, onUnmounted } from 'vue';
 
 const debugCellsWithNumbers = false;
 const store = computed(() => matcapPreviewStore());
@@ -30,40 +30,43 @@ const onBlobReady = (blob: Blob | null) => {
     });
 };
 
-events.on('matcap:snapshots:blobs:ready', (urls: [string]) => {
-    const promises = [];
-    refreshNb = urls.length;
-    for (let i = 0; i < urls.length; i++) {
-        const url: string = urls[i];
-        const img = new Image();
-        promises.push(
-            new Promise((resolve) => {
-                img.onload = () => {
-                    var posY = Math.floor(i / 3);
-                    var posX = i % 3;
-                    context.drawImage(img, posX * 256, posY * 256, 256, 256);
-                    if (debugCellsWithNumbers) {
-                        context.font = '30px Arial';
-                        context.fillStyle = 'red';
-                        context.textAlign = 'center';
-                        context.fillText(String(i), 256 * 0.5 + posX * 256, 256 * 0.5 + posY * 256);
-                    }
-                    resolve(true);
-                };
-                img.src = url;
-            }),
-        );
-    }
-    Promise.all(promises).then(() => {
-        canvas.toBlob(onBlobReady, 'image/png', 1.0);
-    });
-});
+const unsubscribes = [
+    events.on('matcap:snapshots:blobs:ready', (urls: string[]) => {
+        const promises = [];
+        refreshNb = urls.length;
+        for (let i = 0; i < urls.length; i++) {
+            const url: string = urls[i];
+            const img = new Image();
+            promises.push(
+                new Promise((resolve) => {
+                    img.onload = () => {
+                        var posY = Math.floor(i / 3);
+                        var posX = i % 3;
+                        context.drawImage(img, posX * 256, posY * 256, 256, 256);
+                        if (debugCellsWithNumbers) {
+                            context.font = '30px Arial';
+                            context.fillStyle = 'red';
+                            context.textAlign = 'center';
+                            context.fillText(String(i), 256 * 0.5 + posX * 256, 256 * 0.5 + posY * 256);
+                        }
+                        resolve(true);
+                    };
+                    img.src = url;
+                }),
+            );
+        }
+        Promise.all(promises).then(() => {
+            canvas.toBlob(onBlobReady, 'image/png', 1.0);
+        });
+    }),
+    events.on('matcap:export:grid:png', () => {
+        if (!currentBlobURL) return;
+        const a = document.createElement('a');
+        a.href = currentBlobURL;
+        a.download = 'matcap.png';
+        a.click();
+    }),
+];
 
-events.on('matcap:export:grid:png', () => {
-    if (!currentBlobURL) return;
-    const a = document.createElement('a');
-    a.href = currentBlobURL;
-    a.download = 'matcap.png';
-    a.click();
-});
+onUnmounted(() => unsubscribes.forEach((unsubscribe) => unsubscribe()));
 </script>

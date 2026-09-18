@@ -47,15 +47,14 @@ const LightModelBoolean = {
                 }
             });
 
-        events.on('light:change', (payload) => {
+        const unsubscribe = events.on('light:change', (payload) => {
             if (!data.pane) return;
-            // paneCtrl.history = false;
             if (payload.propertyName === propertyName) {
                 paneCtrl.value = payload.value;
                 data.pane.refresh();
             }
-            // paneCtrl.history = true;
         });
+        data.bindingUnsubscribes?.push(unsubscribe);
     },
 };
 

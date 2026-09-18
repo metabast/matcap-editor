@@ -3,6 +3,7 @@ import { matcapPreviewStore } from '@/stores/matcapPreviewStore';
 import events from '@/commons/Events';
 import { Clock, Material, Mesh, Object3D, Raycaster, Texture, TextureLoader, TorusKnotGeometry, Vector2 } from 'three';
 import type MatcapEditorWorld from './MatcapPreviewWorld';
+import type { Unsubscribe } from 'nanoevents';
 
 class MatcapPreviewContent {
     private _store: any;
@@ -19,6 +20,8 @@ class MatcapPreviewContent {
 
     private raycaster: Raycaster = new Raycaster();
 
+    private _unsubscribes: Unsubscribe[] = [];
+
     constructor(world: MatcapEditorWorld) {
         this._store = matcapPreviewStore();
 
@@ -31,14 +34,22 @@ class MatcapPreviewContent {
 
         this.addObject(torusKnot);
 
-        events.on('matcap:editor:snapshots:ready', this.onSnapshotsReady);
-        events.on('object:power:update', this.onObjectPowerUpdate);
-        events.on('object:roughness:update', this.onObjectRoughnessUpdate);
-        events.on('object:metalness:update', this.onObjectMetalnessUpdate);
+        this._unsubscribes = [
+            events.on('matcap:editor:snapshots:ready', this.onSnapshotsReady),
+            events.on('object:power:update', this.onObjectPowerUpdate),
+            events.on('object:roughness:update', this.onObjectRoughnessUpdate),
+            events.on('object:metalness:update', this.onObjectMetalnessUpdate),
+        ];
 
         this._world.canvas.addEventListener('pointerdown', this.onPointerDown);
 
         events.emit('matcap:preview:content:ready', this);
+    }
+
+    public dispose(): void {
+        this._unsubscribes.forEach((unsubscribe) => unsubscribe());
+        this._unsubscribes = [];
+        this._world.canvas.removeEventListener('pointerdown', this.onPointerDown);
     }
 
     public get world() {

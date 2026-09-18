@@ -4,6 +4,7 @@ import { Loader } from './commons/Loader';
 import { History } from './history';
 import MatcapEditorWorld from './matcapEditor/MatcapEditorWorld';
 import MatcapPreviewWorld from './matcapPreview/MatcapPreviewWorld';
+import RenderManager from './matcapEditor/RenderManager';
 import ProjectService from '@/services/ProjectService';
 import SceneService from '@/services/SceneService';
 import { matcapEditorStore } from '@/stores/matcapEditorStore';
@@ -51,6 +52,23 @@ class Editor {
         events.emit('matcap:editor:ready', this);
     }
 
+    /**
+     * Detaches every bus subscription this editor owns and frees the singleton
+     * slot, so that a second editor can be built on the same page. Without it
+     * the listeners of a discarded editor keep answering — and keep it alive.
+     */
+    public dispose(): void {
+        this._scene.editorWorld.dispose();
+        this._scene.previewWorld.dispose();
+        RenderManager.dispose();
+        this._project.dispose();
+        this._loader.dispose();
+        if (import.meta.env.DEV) {
+            Reflect.deleteProperty(globalThis, 'matcapEditor');
+        }
+        Editor._instance = undefined;
+    }
+
     public get scene() {
         return this._scene;
     }
@@ -81,7 +99,7 @@ class Editor {
 
     // Guard against a second editor. There is no public accessor: every
     // collaborator receives what it needs from the composition root.
-    private static _instance: Editor;
+    private static _instance?: Editor;
 
     /** The one construction path, called by the composition root in main.ts. */
     public static bootstrap(): Editor {

@@ -5,8 +5,11 @@ import { SetPreviewMetalnessCommand } from '@/commands/SetPreviewMetalnessComman
 import { computed } from 'vue';
 import type { FolderApi } from '@tweakpane/core';
 import type { Pane } from 'tweakpane';
+import type { Mesh } from 'three';
 import type { ValuesPaneCtrl } from '@/ts/types/PanesTypes';
 import type MatcapPreviewContent from '../MatcapPreviewContent';
+import type { MeshMatcapORMMaterial } from '../../../three-matcap-orm-material/src/materials/MeshMatcapORMMaterial';
+import type { Unsubscribe } from 'nanoevents';
 
 const store = computed(() => matcapPreviewStore());
 
@@ -16,23 +19,21 @@ let _paneFolder: FolderApi;
 
 let roughnessCtrl: ValuesPaneCtrl;
 let metalnessCtrl: ValuesPaneCtrl;
+let _unsubscribes: Unsubscribe[] = [];
 
-events.on('matcap:preview:mesh:selected', (mesh) => {
-    // _paneFolder?.children.forEach((child) => {
-    //     child.dispose();
-    // });
-    // generate(_content);
+const onMeshSelected = (mesh: Mesh | undefined) => {
     if (!mesh) return;
-    roughnessCtrl.value = Number(mesh.material.roughness);
-    roughnessCtrl.oldValue = Number(mesh.material.roughness);
-    metalnessCtrl.value = Number(mesh.material.metalness);
-    metalnessCtrl.oldValue = Number(mesh.material.metalness);
+    const material = mesh.material as MeshMatcapORMMaterial;
+    roughnessCtrl.value = Number(material.roughness);
+    roughnessCtrl.oldValue = Number(material.roughness);
+    metalnessCtrl.value = Number(material.metalness);
+    metalnessCtrl.oldValue = Number(material.metalness);
     roughnessCtrl.history = false;
     metalnessCtrl.history = false;
     _pane.refresh();
     roughnessCtrl.history = true;
     metalnessCtrl.history = true;
-});
+};
 
 const generate = (content: MatcapPreviewContent) => {
     _content = content;
@@ -81,9 +82,6 @@ const generate = (content: MatcapPreviewContent) => {
                         metalnessCtrl,
                     ),
                 );
-                // store.value.metalness = 1 - event.value;
-                // events.emit('object:roughness:update');
-                // _pane.refresh();
             }
         });
 
@@ -108,9 +106,6 @@ const generate = (content: MatcapPreviewContent) => {
                         roughnessCtrl,
                     ),
                 );
-                // store.value.roughness = 1 - event.value;
-                // events.emit('object:metalness:update');
-                // _pane.refresh();
             }
         });
 };
@@ -122,7 +117,15 @@ const PreviewMaterialPaneFolder = {
             title: 'Material',
             expanded: true,
         });
-        events.on('matcap:preview:content:ready', generate);
+        _unsubscribes = [
+            events.on('matcap:preview:content:ready', generate),
+            events.on('matcap:preview:mesh:selected', onMeshSelected),
+        ];
+    },
+
+    dispose() {
+        _unsubscribes.forEach((unsubscribe) => unsubscribe());
+        _unsubscribes = [];
     },
 };
 
