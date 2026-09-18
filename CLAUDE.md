@@ -79,6 +79,29 @@ issues :
 `src/**` appartient à la fois au projet app et au projet vitest, donc chaque
 erreur est rapportée deux fois. Comparer des totaux, pas des occurrences.
 
+## Tests unitaires
+
+`vitest` tourne sur `src/**/*.spec.ts` (`vitest.config.ts` réutilise les alias
+de `vite.config.ts`). Même réflexe que `type-check` et `lint:check` :
+
+```bash
+docker compose exec app npm run test:unit
+```
+
+Couvert : `History` (exécution, numérotation, undo, redo, vidage des redos,
+`clear()`) et trois commandes contre un double manuel de `SceneService` —
+l'interface du service est assez réduite pour s'en passer d'une bibliothèque de
+mocks.
+
+Chaque assertion a été falsifiée : onze mutations d'une ligne dans `history.ts`,
+`SetSphereMaterialParamsCommand` et `AddLightCommand` (redos non vidés, `pop()`
+devenu `shift()`, undo réappliquant `value` au lieu de `oldValue`, …) rendent
+toutes au moins un test rouge. Une assertion qu'on n'a jamais vue échouer ne
+prouve rien — voir `tasks/lessons.md`.
+
+Ces tests ne remplacent pas `pw/check.mjs` : ils isolent une régression dans la
+pile d'undo, pas un câblage de dépendance cassé.
+
 ## Vérification navigateur
 
 Ni `vue-tsc` ni `vite build` ne voient une régression d'ordre d'évaluation des

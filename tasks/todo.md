@@ -99,3 +99,21 @@ correspondantes échouent.
   `toBlob()` ne produit que du transparent et `canvas.snapshots` reste vierge —
   y compris sur `HEAD`. Ce n'est pas un oracle : à vérifier dans un vrai
   navigateur, pas dans `pw/`.
+
+## Tests de caractérisation sur History et les commandes
+
+- [x] `History` : exécution, undo, redo, vidage des redos, `clear()` (11 tests)
+- [x] trois commandes contre un double manuel de `SceneService` (5 tests)
+- [x] 11 mutations d'une ligne passées sur `history.ts`,
+      `SetSphereMaterialParamsCommand` et `AddLightCommand` : toutes rendent au
+      moins un test rouge
+- [x] `npm run test:unit` ajouté et documenté dans `CLAUDE.md` au même titre que
+      `type-check` et `lint:check`
+
+### Review
+
+`vitest` n'était pas installé malgré `tsconfig.vitest.json` : ajouté en
+devDependency (`npm install -D --legacy-peer-deps`, le conflit de peer deps
+`eslint-config-airbnb-base` vs ESLint 9 étant préexistant). `vitest.config.ts`
+importe `./vite.config.js` — l'extension `.ts` fait échouer `vue-tsc`
+(TS5097), l'absence d'extension déclenche un avertissement Vite.
